@@ -1,75 +1,8 @@
 # This file is placed in the Public Domain.
 
-"botlib"
+"objects"
 
-__version__ = 1
-
-import atexit
-import builtins
-import datetime
-import getpass
-import importlib
-import inspect
-import json as js
-import os
-import pathlib
-import pkgutil
-import pwd
-import queue
-import readline
-import sys
-import termios
-import threading
-import time
-import types
-import uuid
-
-resume = {}
 wd = ""
-
-
-class Restart(Exception):
-
-    pass
-
-class Break(Exception):
-
-    pass
-
-
-class NotImplemented(Exception):
-
-    pass
-
-
-class Restart(Exception):
-
-    pass
-
-
-class Stop(Exception):
-
-    pass
-
-
-class NoBot(Exception):
-
-    pass
-
-
-class NoFile(Exception):
-
-    pass
-
-
-class NoModule(Exception):
-
-    pass
-
-
-class NoType(Exception):
-
-    pass
 
 
 def cdir(path):
