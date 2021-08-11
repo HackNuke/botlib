@@ -8,10 +8,9 @@ import pkgutil
 import sys
 
 from .bus import Bus
-from .obj import Default, List, Object, cdir, wd
+from .obj import Default, List, Object, cdir, spl, wd
 from .prs import parse_txt
 from .hdl import Dispatcher, Handler, Loop
-from .utl import spl
 
 class Cfg(Default):
 
@@ -169,3 +168,11 @@ class Test(Handler):
 
 def kernel():
     return getattr(sys.modules["__main__"], "k", None)
+
+def run(txt, p):
+    class Out(Client):
+        def raw(self, txt):
+            p(txt)
+    c = Out()
+    res = c.cmd(txt)
+    return res

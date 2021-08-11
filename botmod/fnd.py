@@ -1,16 +1,18 @@
 # This file is placed in the Public Domain.
 
-import bot
+import botl
 import time
+import botl.obj
 
-from bot.obj import Db, elapsed, fmt, fntime, kernel, listfiles
+from botl.obj import Db, elapsed, fmt, fntime, listfiles
+from botl.krn import kernel, listfiles
 
 def __dir__():
     return ("fnd",)
 
 def fnd(event):
     if not event.args:
-        fls = listfiles(bot.wd)
+        fls = listfiles(botl.obj.wd)
         if fls:
             event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
         return

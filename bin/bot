@@ -6,13 +6,14 @@ __version__ = 124
 import os, sys ; sys.path.insert(0, os.getcwd())
 
 import atexit
-import bot.obj
 import os
 import sys
 import termios
-import bot.all
+import botl.all
+import botmod.all
+import botl.obj
 
-from bot.krn import Kernel, Client, kernel
+from botl.krn import Kernel, Client, kernel
 
 resume = {}
 
@@ -93,6 +94,7 @@ def main():
     k.boot()
     k.add(ver)
     k.scan("bot")
+    k.scan("botmod")
     if k.cfg.txt:
         c = CLI()
         return c.cmd(k.cfg.otxt)

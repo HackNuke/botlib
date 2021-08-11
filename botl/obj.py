@@ -20,6 +20,10 @@ def gettype(o):
     return str(type(o)).split()[-1][1:-2]
 
 
+def spl(txt):
+    return [x for x in txt.split(",") if x]
+
+
 class O:
 
     __slots__ = ("__dict__", "__stp__", "__otype__")

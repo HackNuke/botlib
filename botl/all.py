@@ -2,12 +2,10 @@
 
 "all modules."
 
-import bot.err
-import bot.hdl
-import bot.irc
-import bot.krn
-import bot.obj
-import bot.prs
-import bot.thr
-import bot.tmr
-import bot.utl
+import botl.err
+import botl.hdl
+import botl.krn
+import botl.obj
+import botl.prs
+import botl.thr
+import botl.tmr

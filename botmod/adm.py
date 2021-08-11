@@ -5,8 +5,11 @@
 import threading
 import time
 
-from bot.obj import Bus, Object, elapsed, fmt, getname, kernel
-
+from botl.bus import Bus
+from botl.krn import kernel
+from botl.obj import Object, fmt
+from botl.thr import getname
+from botl.utl import elapsed
 
 def __dir__():
     return ("flt", "thr", "upt")
