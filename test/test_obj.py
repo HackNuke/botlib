@@ -1,17 +1,17 @@
 # This file is placed in the Public Domain.
 
-import ob
+import bot
 import os
 import unittest
 
-from ob import Db, O, Object, gettype, kernel
+from bot import Db, O, Object, gettype, kernel
 
 k = kernel()
 
-class Test_Object(unittest.TestCase):
 
+class Test_Object(unittest.TestCase):
     def setUp(self):
-        ob.wd = ".test"
+        bot.wd = ".test"
 
     def test_O(self):
         o = O()
@@ -31,7 +31,7 @@ class Test_Object(unittest.TestCase):
 
     def test_json(self):
         o = Object()
-        self.assertTrue("<ob.Object" in Object.__dorepr__(o))
+        self.assertTrue("<bot.Object" in Object.__dorepr__(o))
 
     def test_intern4(self):
         o = Object()
@@ -140,4 +140,3 @@ class Test_Object(unittest.TestCase):
         oo = Object()
         oo.load(p)
         self.assertEqual(o.o.o.test, "bla")
-      

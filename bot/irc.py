@@ -1,6 +1,5 @@
 # This file is placed in the Public Domain.
 
-import ob
 import os
 import queue
 import socket
@@ -9,7 +8,7 @@ import time
 import threading
 import _thread
 
-from ob import Bus, Default, Dispatcher, Event, Handler, Object, Output, kernel, launch, fmt
+from bot import Bus, Default, Dispatcher, Event, Handler, Object, Output, kernel, launch, fmt
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre")
@@ -478,7 +477,8 @@ def cfg(event):
     c.last()
     event.sets.delkeys(["p", "m"])
     if not event.sets:
-        return event.reply(fmt(c, skip=["username", "realname"]))
+        event.reply(fmt(c, skip=["username", "realname"]))
+        return
     c.edit(event.sets)
     c.save()
     event.reply("ok")

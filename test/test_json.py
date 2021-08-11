@@ -3,10 +3,10 @@
 import json as js
 import unittest
 
-from ob import O, Obj, Object
+from bot import O, Obj, Object
+
 
 class Test_JSON(unittest.TestCase):
-
     def test_jsonO(self):
         o = O()
         o.test = "bla"
@@ -17,7 +17,7 @@ class Test_JSON(unittest.TestCase):
         o = Object()
         o.test = "bla"
         v = js.dumps(o, default=o.__default__)
-        self.assertEqual(repr(o),v)
+        self.assertEqual(repr(o), v)
 
     def test_jsonreconstructO(self):
         o = O()
@@ -32,4 +32,3 @@ class Test_JSON(unittest.TestCase):
         v = js.dumps(o, default=o.__default__)
         vv = js.loads(v, object_hook=Obj)
         self.assertEqual(repr(o), repr(vv))
-    

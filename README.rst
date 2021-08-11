@@ -1,148 +1,136 @@
-.. _programmer:
-
-PROGRAMMER
-##########
+README
+######
 
 Welcome to BOTLIB,
 
-BOTLIB is a pure python3 bot library you can use to program bots, uses a JSON
-in file database with a versioned readonly storage and reconstructs objects
-based on type information in the path. It can be used to display RSS feeds,
-act as a UDP to IRC relay and you can program your own commands for it. 
+BOTLIB is a pure python3 IRC chat bot library that can be used to program
+bots.
 
 BOTLIB is placed in the Public Domain and has no COPYRIGHT and no LICENSE.
 
-INSTALL
+install
 =======
 
-BOTLIB can be found on pypi, see http://pypi.org/project/botlib
+installation is through pypi::
 
-installation is through pip::
+ $ sudo pip3 install botlib 
 
- > sudo pip3 install botlib --upgrade --force-reinstall
+default channel/server is #bot on localhost.
 
-BOTLIB is placed in the Public Domain and has no COPYRIGHT and no LICENSE. 
+config
+======
 
-MODULES
-=======
+you can configure the bot with the cfg command, it edits files on disk::
 
-BOTLIB provides the following modules::
+ $ bot cfg server=irc.freenode.net channel=\#dunkbots nick=botje
 
-    all            - all modules
-    bus            - list of bots
-    cfg            - configuration
-    clk            - clock/repeater
-    clt            - client
-    cmd            - command
-    cms            - commands
-    dbs            - database
-    dft            - default
-    evt            - event
-    hdl            - handler
-    irc            - internet relay chat
-    krn            - kernel
-    lst            - dict of lists
-    obj            - objects
-    opt            - output
-    prs            - parsing
-    thr            - threads
-    adm            - administrator
-    fnd            - find
-    log            - log items
-    rss            - rich site syndicate
-    slg            - slogan
-    tdo            - todo items
-    udp            - UDP to IRC relay
+users
+=====
 
-COMMANDS
-========
+if the users option is set in the irc config then users need to be added 
+before they can give commands::
 
-BOTLIB, on purpose, doesn't read modules from a directory, instead you must
-include your own written commands with a updated version fo the code.
+ $ sudo botctl cfg users=true 
 
-Use the repository at github to get the latest repo and install setuptools::
+use the met command to introduce a user::
 
- $ git clone http://github.com/bthate/botlib
- $ cd botlib
- $ sudo apt install python3-setuptools
- 
-to program your own commands, open bot/hlo.py and add the following code::
+ $ sudo botctl met ~bart@botd.io
+ ok
 
-    def register(k):
-        k.regcmd(hlo)
-
-    def hlo(event):
-        event.reply("hello %s" % event.origin)
-
-add the command in the bot/all.py module::
-
-    import bot.hlo
-
-    Kernel.addmod(bot.hlo)
-
-edit the list of modules to load in bin/bot:::
-
-    all = "adm,cms,fnd,irc,krn,log,rss,tdo,hlo"
-
-now you can type the "hlo" command, showing hello <user>::
-
- $ ./bin/bot hlo
- hello root@console
-
-PROGRAMMING
+programming
 ===========
 
-BOTLIB provides a library you can use to program objects under python3. It 
-provides a basic BigO Object, that mimics a dict while using attribute access
-and provides a save/load to/from json files on disk. Objects can be searched
-with a little database module, it uses read-only files to improve persistence
-and a type in filename for reconstruction.
+the bot package provides a library you can use to program objects 
+under python3. It provides a basic Object, that mimics a dict while using 
+attribute access and provides a save/load to/from json files on disk. objects
+can be searched with a little database module, it uses read-only files to
+improve persistence and a type in filename for reconstruction.
 
-Basic usage is this:
+basic usage is this::
 
- >>> from bot.obj import Object
+ >>> from bot import Object
  >>> o = Object()
  >>> o.key = "value"
  >>> o.key
  'value'
 
-Objects try to mimic a dictionary while trying to be an object with normal
-attribute access as well. Hidden methods are provided as are the basic
+objects try to mimic a dictionary while trying to be an object with normal
+attribute access as well. hidden methods are provided as are the basic
 methods like get, items, keys, register, set, update, values.
 
-The bot.obj module has the basic methods like load and save as a object
-function using an obj as the first argument:
+the ob.py module has the basic methods like load/save to disk providing bare
+persistence::
 
- >>> import bot.obj
- >>> bot.obj.wd = "data"
- >>> o = bot.obj.Object()
+ >>> import bot
+ >>> bot.wd = "data"
+ >>> o = bot.Object()
  >>> o["key"] = "value"
  >>> p = o.save()
  >>> p
- 'bot.obj.Object/4b58abe2-3757-48d4-986b-d0857208dd96/2021-04-12/21:15:33.734994
- >>> oo = bot.obj.Object()
+ 'bot.Object/4b58abe2-3757-48d4-986b-d0857208dd96/2021-04-12/21:15:33.734994
+ >>> oo = bot.Object()
  >>> oo.load(p)
  >> oo.key
  'value'
 
 great for giving objects peristence by having their state stored in files.
 
-UDP
-===
+modules
+=======
 
-BOTD also has the possibility to serve as a UDP to IRC relay where you
-can send UDP packages to the bot and have txt displayed in the channel.
-output to the IRC channel is done with the use python3 code to send a UDP
-packet to BOTD, it's unencrypted txt send to the bot and displayed in the
-joined channels::
+BOTLIB's bot package is a pure python3 bot library you can use to program 
+bots, uses a JSON in file database with a versioned readonly storage and
+reconstructs objects based on type information in the path.
 
- import socket
+the following modules are provided::
 
- def toudp(host=localhost, port=5500, txt=""):
-     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-     sock.sendto(bytes(txt.strip(), "utf-8"), host, port)
+    adm			- administration
+    all			- all modules
+    cms			- commands
+    fnd			- find
+    irc			- intermet relay chat
 
-CONTACT
+commands
+========
+
+modules are not loaded from a directory but included in the code itself, so
+if you want to program you need to clone the repositry from github::
+
+ $ git clone ssh://git@github.com/bthate/botlib
+
+or download a tar from pypi::
+
+ $ https://pypi.org/project/botlib/#files
+
+open bot/hlo.py (new file) and add the following code::
+
+    def hlo(event):
+        event.reply("hello %s" % event.origin)
+
+and add the hlo module to bot/all.py::
+
+   import bot.hlo
+
+
+the hlo command in now available::
+
+ <user> !hlo
+ hello root@console
+
+debug
+=====
+
+if you have problems starting the bot, look at /var/log/syslog is you see
+any output on exceptions::
+
+ $ sudo cat /var/log/syslog
+
+you can try you force a reinstall of the botd package if it doesn't work::
+
+ $ pip3 install botlib --upgrade --force-reinstall
+
+
+contact
 =======
 
 "contributed back"

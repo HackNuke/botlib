@@ -3,11 +3,13 @@
 
 "python3 object library"
 
-import os,sys ; sys.path.insert(0, os.getcwd())
+import os, sys
+
+sys.path.insert(0, os.getcwd())
 
 import atexit
+import bot
 import doctest
-import ob
 import os
 import readline
 import shutil
@@ -15,28 +17,24 @@ import sys
 import termios
 import unittest
 
-ob.wd = ".test"
+bot.wd = ".test"
 
-from ob import Kernel, Handler
+from bot import Kernel, Handler, Test
 
-flags = doctest.REPORT_NDIFF|doctest.FAIL_FAST|doctest.ELLIPSIS
-k = Kernel()
-k.cfg.debug = True
-k.cfg.verbose = True
-k.cfg.p = "bot"
+import bot.all
+
+flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 resume = {}
 
-def error(h, e):
-    print(e)
+class Runtime(Kernel):
 
-class Test(Handler):
+    def error(self, txt):
+        cprint(txt)
 
-    def handle(self, e):
-        k.put(e)
 
-    def raw(self, txt):
-        if k.opts("v"):
-            print(txt)
+k = Runtime()
+k.cfg.debug = True
+k.cfg.verbose = True
 
 def termsetup(fd):
     return termios.tcgetattr(fd)
@@ -65,16 +63,28 @@ def wrap(func):
     finally:
         termreset()
 
+
 def main():
     if os.path.exists(".test"):
         shutil.rmtree(".test")
-    k.error = error
+    k.boot("test")
+    k.cfg.verbose = k.opts("v")
+    for cls in k.classes.values():
+        c = cls()
+        c.txt = "bla"
+        c.save()
     k.start()
     c = Test()
     c.start()
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    doctest.testfile("../test/test1.txt", optionflags=flags, report=False, verbose=False)
+    doctest.testfile(
+        "../test/test1.txt", optionflags=flags, report=False, verbose=False
+    )
+    doctest.testfile(
+        "../test/test2.txt", optionflags=flags, report=False, verbose=False
+    )
+
 
 wrap(main)

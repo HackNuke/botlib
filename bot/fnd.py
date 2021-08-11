@@ -1,16 +1,16 @@
 # This file is placed in the Public Domain.
 
-import ob
+import bot
 import time
 
-from ob import elapsed, kernel
+from bot import Db, elapsed, fmt, fntime, kernel, listfiles
 
 def __dir__():
     return ("fnd",)
 
 def fnd(event):
     if not event.args:
-        fls = ob.listfiles(ob.wd)
+        fls = listfiles(bot.wd)
         if fls:
             event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
         return
@@ -23,12 +23,12 @@ def fnd(event):
         pass
     got = False
     k = kernel()
-    db = ob.Db()
+    db = Db()
     for fn, o in db.find(otype, event.gets, event.index, event.timed):
         nr += 1
-        txt = "%s %s" % (str(nr), ob.fmt(o, args or o.keys(), skip=event.skip.keys()))
+        txt = "%s %s" % (str(nr), fmt(o, args or o.keys(), skip=event.skip.keys()))
         if "t" in event.opts:
-            txt = txt + " %s" % (ob.elapsed(time.time() - ob.fntime(fn)))
+            txt = txt + " %s" % (elapsed(time.time() - fntime(fn)))
         got = True
         event.reply(txt)
     if not got:

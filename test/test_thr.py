@@ -1,15 +1,14 @@
 # This file is placed in the Public Domain.
 
-import ob
 import random
 import unittest
 
-from ob import Bus, kernel
+from bot import Bus, Object, kernel, launch
 
 events = []
 k = kernel()
 
-param = ob.Object()
+param = Object()
 param.add = ["test@shell", "bart", ""]
 param.cfg = ["cfg server=localhost", "cfg", ""]
 param.dne = ["test4", ""]
@@ -17,25 +16,28 @@ param.rm = ["reddit", ""]
 param.dpl = ["reddit title,summary,link", ""]
 param.log = ["test1", ""]
 param.flt = ["0", ""]
-param.fnd = ["om.irc.Cfg",
-             "om.log.Log",
-             "om.tdo.Todo",
-             "om.rss.Rss",
-             "om.irc.Cfg server==localhost",
-             "om.rss.Rss rss==reddit rss"]
+param.fnd = [
+    "bot.irc.Cfg",
+    "bot.log.Log",
+    "bot.tdo.Todo",
+    "bot.rss.Rss",
+    "bot.irc.Cfg server==localhost",
+    "bot.rss.Rss rss==reddit rss",
+]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["test4", ""]
 
-class Test_Threaded(unittest.TestCase):
 
+class Test_Threaded(unittest.TestCase):
     def test_thrs(self):
         thrs = []
         for x in range(k.cfg.index or 1):
-            thr = ob.launch(exec)
+            thr = launch(exec)
             thrs.append(thr)
         for thr in thrs:
             thr.join()
         consume()
+
 
 def consume():
     fixed = []
@@ -49,6 +51,7 @@ def consume():
         except ValueError:
             continue
     return res
+
 
 def exec():
     c = Bus.first()
