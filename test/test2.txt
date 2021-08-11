@@ -2,36 +2,24 @@
 
 >>> import bot
 >>> bot.wd = ".testdata"
+>>> k = bot.Kernel()
 >>> from bot import run
 >>> run("cfg", print)
 cc=! channel=#botd nick=botd port=6667 server=localhost
->>> run("cmd")
-ban,cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,rss,tdo,thr,upt,ver
->>> run("dlt")
+>>> run("cmd", print)
+cfg,cmd,dlt,flt,fnd,met,mre,thr,upt
+>>> run("dlt", print)
 dlt <username>
->>> run("dne")
-dne <string>
->>> run("dpl")
-dpl <stringinurl> <item1,item2>
->>> run("flt")
-Test | Client | Client | Client | Client | Client | Client
->>> run("fnd")
->>> run("ftc")
->>> run("log")
-log <txt>
->>> run("met")
+>>> run("flt", print)
+Test | Out | Out | Out | Out
+>>> run("fnd", print)
+>>> run("met", print)
 met <userhost>
->>> run("mre")
+>>> run("mre", print)
 channel is not set.
->>> run("nck")
->>> run("ops")
->>> run("rem")
-rem <stringinurl>
->>> run("rss")
-rss <url>
->>> run("tdo")
-tdo <txt>
->>> run("thr")
+>>> run("nck", print)
+>>> run("ops", print)
+>>> run("thr", print)
 Runtime.loop(...s) Test.loop(...s)
->>> run("upt")
+>>> run("upt", print)
 uptime is ...s

@@ -39,12 +39,12 @@ saylock = _thread.allocate_lock()
 class Cfg(Default):
 
     cc = "!"
-    channel = "#botd"
-    nick = "botd"
+    channel = "#bot"
+    nick = "bot"
     port = 6667
     server = "localhost"
-    realname = "24/7 channel daemon"
-    username = "botd"
+    realname = "botlib"
+    username = "botlib"
     users = False
 
     def __init__(self, val=None):
@@ -302,6 +302,15 @@ class IRC(Output, Handler):
         self.cfg.last()
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
+        if not self.cfg.nick:
+            self.error("missing nick, use cfg nick=<nick>")
+            return
+        if not self.cfg.server:
+            self.error("missing server, use cfg server=<server>")
+            return
+        if not self.cfg.channel:
+            self.error("missing channel, use cfg channel=<channel>")
+            return
         self.stopped.clear()
         self.connected.clear()
         self.joined.clear()

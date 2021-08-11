@@ -756,12 +756,6 @@ class Loop(Object):
 
 
 class Handler(Dispatcher, Loop):
-    def cmd(self, txt):
-        Bus.add(self)
-        e = self.event(txt)
-        e.origin = "root@shell"
-        self.dispatch(e)
-        e.wait()
 
     def event(self, txt):
         if txt is None:
@@ -817,17 +811,6 @@ class Client(Handler):
     def handle(self, e):
         k = kernel()
         k.put(e)
-
-
-class CLI(Client):
-    def handle(self, e):
-        k = kernel()
-        k.put(e)
-        e.wait()
-
-class Console(CLI):
-    def poll(self):
-        return input("> ")
 
 
 class Test(Handler):
@@ -1214,15 +1197,9 @@ def parse_ymd(daystr):
     return total
 
 def run(txt, p):
-    class Runtime(Kernel):
-        def error(self, txt):
-           p(txt)
-           
-    class Out(CLI):
+    class Out(Client):
         def raw(self, txt):
             p(txt)
-    k = Runtime()
     c = Out()
     res = c.cmd(txt)
-    del c
     return res

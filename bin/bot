@@ -15,19 +15,31 @@ bot.wd = os.path.expanduser("~/.bot")
 
 import bot.all
 
-from bot import Kernel, Client, Console
+from bot import Kernel, Client
 
 resume = {}
+
 
 class Runtime(Kernel):
 
     def error(self, txt):
         cprint(txt)
 
+
 class CLI(Client):
 
     def raw(self, txt):
         cprint(txt)
+
+
+class Console(CLI):
+    def handle(self, e):
+        k.put(e)
+        e.wait()
+
+    def poll(self):
+        return input("> ")
+
 
 k = Runtime()
 
