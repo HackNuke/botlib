@@ -172,11 +172,14 @@ class Test(Handler):
 
 def kernel():
     return getattr(sys.modules["__main__"], "k", None)
-
+    
 def run(txt, p):
     class Out(Client):
         def raw(self, txt):
             p(txt)
+    k = Kernel()
+    k.boot()
+    k.scan("botl,botm")
     c = Out()
-    res = c.cmd(txt)
+    res = k.cmd(c, txt)
     return res

@@ -1,12 +1,10 @@
 # commands
 
->>> import botl.obj, botl.krn
->>> import botm.all
+>>> import botl.obj
 >>> botl.obj.wd = ".test"
->>> k = botl.krn.Kernel()
 >>> from botl.krn import run
 >>> run("cfg", print)
-cc=! channel=#bot nick=bot port=6667 server=localhost txt=bla users=True
+cc=! channel=#bot nick=bot port=6667 server=localhost users=True
 >>> run("cmd", print)
 cfg,cmd,dlt,flt,fnd,met,mre,thr,upt
 >>> run("dlt", print)
