@@ -27,7 +27,7 @@ def fnd(event):
     got = False
     k = kernel()
     db = Db()
-    for fn, o in db.find(otype, event.gets, event.index, event.timed):
+    for fn, o in db.findname(otype, event.gets, event.index, event.timed):
         nr += 1
         txt = "%s %s" % (str(nr), fmt(o, args or o.keys(), skip=event.skip.keys()))
         if "t" in event.opts:

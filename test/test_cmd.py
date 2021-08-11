@@ -2,7 +2,9 @@
 
 import unittest
 
-from bot import Object, Bus, kernel
+from botl.bus import Bus
+from botl.obj import Object
+from botl.krn import kernel
 
 events = []
 k = kernel()

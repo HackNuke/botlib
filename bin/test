@@ -8,7 +8,7 @@ import os, sys
 sys.path.insert(0, os.getcwd())
 
 import atexit
-import bot
+import botl
 import doctest
 import os
 import readline
@@ -16,12 +16,17 @@ import shutil
 import sys
 import termios
 import unittest
+import botl.obj
 
-bot.wd = ".test"
+botl.obj.wd = ".test"
 
-from bot import Kernel, Handler, Test
+from botl.krn import Kernel
+from botl.hdl import Handler
+from botl.krn import Test
 
 import bot.all
+import botl.all
+import botmod.all
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 resume = {}

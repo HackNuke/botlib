@@ -3,7 +3,10 @@
 import random
 import unittest
 
-from bot import Bus, Object, kernel, launch
+from botl.bus import Bus
+from botl.obj import Object
+from botl.krn import kernel
+from botl.thr import launch
 
 events = []
 k = kernel()

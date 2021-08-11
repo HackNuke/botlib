@@ -8,13 +8,13 @@ import time
 import threading
 import _thread
 
-from .bus import Bus
-from .clt import Output
-from .evt import Event
-from .krn import kernel
-from .obj import Default, Object, fmt
-from .hdl import Handler
-from .thr import launch
+from botl.bus import Bus
+from botl.clt import Output
+from botl.evt import Event
+from botl.krn import kernel
+from botl.obj import Db, Default, Object, fmt
+from botl.hdl import Handler
+from botl.thr import launch
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre")
@@ -51,7 +51,7 @@ class Cfg(Default):
     server = "localhost"
     realname = "botlib"
     username = "botlib"
-    users = False
+    users = True
 
     def __init__(self, val=None):
         super().__init__()
@@ -213,7 +213,7 @@ class IRC(Output, Handler):
 
     def logon(self, server, nick):
         self.raw("NICK %s" % nick)
-        self.raw("USER %s %s %s :%s" % (self.cfg.username or "ob", server, server, self.cfg.realname or "python3 object library"))
+        self.raw("USER %s %s %s :%s" % (self.cfg.username or "botlib", server, server, self.cfg.realname or "botlib"))
 
     def parsing(self, txt):
         rawstr = str(txt)

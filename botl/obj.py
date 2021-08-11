@@ -3,7 +3,11 @@
 "objects"
 
 import datetime
+import json
 import os
+import pathlib
+import sys
+import time
 import uuid
 
 wd = os.path.expanduser("~/.bot")
@@ -76,7 +80,7 @@ class O:
         self.__dict__[k] = v
 
     def __repr__(self):
-        return js.dumps(self, default=self.__default__, sort_keys=True)
+        return json.dumps(self, default=self.__default__, sort_keys=True)
 
     def __str__(self):
         return str(self.__dict__)
@@ -184,7 +188,7 @@ class Object(Obj):
         lpath = os.path.join(wd, "store", stp)
         if os.path.exists(lpath):
             with open(lpath, "r") as ofile:
-                d = js.load(ofile, object_hook=Obj)
+                d = json.load(ofile, object_hook=Obj)
                 self.update(d)
         self.__stp__ = stp
         return self
@@ -198,7 +202,7 @@ class Object(Obj):
         opath = os.path.join(wd, "store", self.__stp__)
         cdir(opath)
         with open(opath, "w") as ofile:
-            js.dump(self, ofile, default=self.__default__, indent=4, sort_keys=True)
+            json.dump(self, ofile, default=self.__default__, indent=4, sort_keys=True)
         os.chmod(opath, 0o444)
         return self.__stp__
 

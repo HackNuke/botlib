@@ -7,8 +7,10 @@ import os, sys ; sys.path.insert(0, os.getcwd())
 
 import atexit
 import os
+import readline
 import sys
 import termios
+import bot.all
 import botl.all
 import botmod.all
 import botl.obj
@@ -88,7 +90,7 @@ def wrap(func):
         termreset()
 
 def ver(event):
-    event.reply("BOT %s" % __version__)
+    event.reply("BOTL %s" % __version__)
 
 def main():
     k.boot()
