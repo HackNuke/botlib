@@ -143,7 +143,8 @@ class Kernel(Dispatcher, Loop):
             if not p:
                 continue
             for mn in pkgutil.walk_packages(p.__path__, pn + "."):
-                self.error("loading %s" % mn.name)
+                if self.cfg.verbose:
+                    self.error("loading %s" % mn.name)
                 zip = mn[0].find_module(mn[1])
                 mod = zip.load_module(mn[1])
                 self.introspect(mod)
