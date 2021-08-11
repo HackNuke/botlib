@@ -1,7 +1,7 @@
 # commands
 
 >>> import botl.obj, botl.krn
->>> import botmod.all
+>>> import botm.all
 >>> botl.obj.wd = ".test"
 >>> k = botl.krn.Kernel()
 >>> from botl.krn import run

@@ -61,7 +61,7 @@ class Kernel(Dispatcher, Loop):
     def init(self, mns):
         for mn in spl(mns):
             if not "." in mn:
-                mn = "bot.%s" % mn
+                mn = "botm.%s" % mn
             mod = sys.modules.get(mn, None)
             i = getattr(mod, "init", None)
             if i:
@@ -143,6 +143,7 @@ class Kernel(Dispatcher, Loop):
             if not p:
                 continue
             for mn in pkgutil.walk_packages(p.__path__, pn + "."):
+                self.error("loading %s" % mn.name)
                 zip = mn[0].find_module(mn[1])
                 mod = zip.load_module(mn[1])
                 self.introspect(mod)

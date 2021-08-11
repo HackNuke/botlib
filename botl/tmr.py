@@ -2,7 +2,11 @@
 
 "timer"
 
+import threading
+import time
+
 from .obj import Object
+from .thr import getname
 
 class Timer(Object):
     def __init__(self, sleep, func, *args, name=None):

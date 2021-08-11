@@ -24,9 +24,8 @@ from botl.krn import Kernel
 from botl.hdl import Handler
 from botl.krn import Test
 
-import bot.all
 import botl.all
-import botmod.all
+import botm.all
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 resume = {}

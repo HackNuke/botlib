@@ -10,9 +10,8 @@ import os
 import readline
 import sys
 import termios
-import bot.all
 import botl.all
-import botmod.all
+import botm.all
 import botl.obj
 
 from botl.krn import Kernel, Client, kernel
@@ -95,8 +94,7 @@ def ver(event):
 def main():
     k.boot()
     k.add(ver)
-    k.scan("bot")
-    k.scan("botmod")
+    k.scan("botl,botm")
     if k.cfg.txt:
         c = CLI()
         return c.cmd(k.cfg.otxt)

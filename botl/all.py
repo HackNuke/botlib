@@ -4,6 +4,7 @@
 
 import botl.err
 import botl.hdl
+import botl.irc
 import botl.krn
 import botl.obj
 import botl.prs
