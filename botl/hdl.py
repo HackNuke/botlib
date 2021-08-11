@@ -5,6 +5,7 @@
 import queue
 import threading
 
+from .evt import Command, Event
 from .obj import Object
 from .thr import launch
 
@@ -125,17 +126,3 @@ class Handler(Dispatcher, Loop):
         super().start()
         Bus.add(self)
 
-class Client(Handler):
-    def cmd(self, txt):
-        k = kernel()
-        return k.cmd(self, txt)
-
-    def handle(self, e):
-        k = kernel()
-        k.put(e)
-
-
-class Test(Handler):
-    def handle(self, e):
-        k = kernel()
-        k.put(e)

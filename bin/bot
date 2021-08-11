@@ -10,12 +10,9 @@ import bot.obj
 import os
 import sys
 import termios
-
-bot.obj.wd = os.path.expanduser("~/.bot")
-
 import bot.all
 
-from bot.obj import Kernel, Client, kernel
+from bot.krn import Kernel, Client, kernel
 
 resume = {}
 

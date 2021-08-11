@@ -7,8 +7,10 @@ import os
 import pkgutil
 import sys
 
+from .bus import Bus
 from .obj import Default, List, Object, cdir, wd
-from .hdl import Dispatcher, Loop
+from .prs import parse_txt
+from .hdl import Dispatcher, Handler, Loop
 from .utl import spl
 
 class Cfg(Default):
@@ -148,6 +150,22 @@ class Kernel(Dispatcher, Loop):
     def wait():
         while 1:
             time.sleep(5.0)
+
+class Client(Handler):
+    def cmd(self, txt):
+        k = kernel()
+        return k.cmd(self, txt)
+
+    def handle(self, e):
+        k = kernel()
+        k.put(e)
+
+
+class Test(Handler):
+    def handle(self, e):
+        k = kernel()
+        k.put(e)
+
 
 def kernel():
     return getattr(sys.modules["__main__"], "k", None)
