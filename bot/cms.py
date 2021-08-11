@@ -1,9 +1,6 @@
 # This is file is placed in Public Domain.
 
-from botl.krn import kernel
-
-def __dir__():
-    return ("cmd",)
+from bot.krn import kernel
 
 def cmd(event):
     k = kernel()

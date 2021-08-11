@@ -34,6 +34,10 @@ class NoFile(Exception):
     pass
 
 
+class NoJSON(Exception):
+
+    pass
+
 class NoModule(Exception):
 
     pass

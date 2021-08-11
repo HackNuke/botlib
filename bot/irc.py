@@ -8,13 +8,13 @@ import time
 import threading
 import _thread
 
-from botl.bus import Bus
-from botl.clt import Output
-from botl.evt import Event
-from botl.krn import kernel
-from botl.obj import Db, Default, Object, fmt
-from botl.hdl import Handler
-from botl.thr import launch
+from .bus import Bus
+from .clt import Output
+from .evt import Event
+from .krn import find, kernel
+from .obj import Db, Default, Object, fmt
+from .hdl import Handler
+from .thr import launch
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre")
@@ -49,7 +49,7 @@ class Cfg(Default):
     nick = "bot"
     port = 6667
     server = "localhost"
-    realname = "botlib"
+    realname = "python3 irc bot"
     username = "botlib"
     users = True
 
@@ -432,7 +432,7 @@ class Users(Object):
     def get_users(self, origin=""):
         db = Db()
         s = {"user": origin}
-        return db.find("om.irc.User", s)
+        return find("user", s)
 
     def get_user(self, origin):
         u = list(self.get_users(origin))
@@ -504,7 +504,7 @@ def dlt(event):
         return
     db = Db()
     selector = {"user": event.args[0]}
-    for fn, o in db.find("omirc.User", selector):
+    for fn, o in find("user", selector):
         o._deleted = True
         o.save()
         event.reply("ok")

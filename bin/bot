@@ -10,11 +10,12 @@ import os
 import readline
 import sys
 import termios
-import botl.all
-import botm.all
-import botl.obj
+import bot.all
+import bot.spc
 
-from botl.krn import Kernel, Client, kernel
+bot.spc.wd = os.path.expanduser("~/.bot")
+
+from bot.krn import Kernel, Client, kernel
 
 resume = {}
 
@@ -89,12 +90,12 @@ def wrap(func):
         termreset()
 
 def ver(event):
-    event.reply("BOTL %s" % __version__)
+    event.reply("BOTLIB %s" % __version__)
 
 def main():
     k.boot()
     k.add(ver)
-    k.scan("botl,botm")
+    k.scan("bot")
     if k.cfg.txt:
         c = CLI()
         return c.cmd(k.cfg.otxt)
@@ -103,6 +104,7 @@ def main():
         k.privileges()
     k.start()
     if k.cfg.m or k.opts("c"):
+        k.scan(k.cfg.m)
         csl = Console()
         csl.start()
         k.init(k.cfg.m)

@@ -1,16 +1,16 @@
 # commands
 
->>> import botl.obj
->>> botl.obj.wd = ".test"
->>> from botl.krn import run
+>>> import bot.spc
+>>> bot.spc.wd = ".test"
+>>> from bot.krn import run
 >>> run("cfg", print)
 cc=! channel=#bot nick=bot port=6667 server=localhost users=True
 >>> run("cmd", print)
-cfg,cmd,dlt,flt,fnd,met,mre,thr,upt
+cfg,cmd,dlt,dpl,flt,fnd,ftc,met,mre,rem,rss,thr,upt
 >>> run("dlt", print)
 dlt <username>
 >>> run("flt", print)
-Test | Out | Out | Out | Out
+Out
 >>> run("fnd", print)
 >>> run("met", print)
 met <userhost>

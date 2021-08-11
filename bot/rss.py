@@ -6,11 +6,11 @@ import re
 import threading
 import urllib
 
-from botl.bus import Bus
-from botl.krn import kernel
-from botl.obj import Db, Default, Object
-from botl.tmr import Repeater
-from botl.thr import launch
+from bot.bus import Bus
+from bot.krn import find, kernel
+from bot.obj import Db, Default, Object
+from bot.tmr import Repeater
+from bot.thr import launch
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -116,7 +116,7 @@ class Fetcher(Object):
     def run(self):
         db = Db()
         thrs = []
-        for fn, o in db.findname("rss"):
+        for fn, o in find("rss"):
             thrs.append(launch(self.fetch, o))
         return thrs
 
@@ -225,7 +225,7 @@ def rem(event):
     selector = {"rss": event.args[0]}
     nr = 0
     got = []
-    for fn, o in db.findname("rss", selector):
+    for fn, o in find("rss", selector):
         nr += 1
         o._deleted = True
         got.append(o)
@@ -240,7 +240,7 @@ def rss(event):
         return
     db = Db()
     url = event.args[0]
-    res = list(db.findname("rss", {"rss": url}))
+    res = list(find("rss", {"rss": url}))
     if res:
         return
     o = Rss()

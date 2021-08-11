@@ -7,9 +7,10 @@ import os
 import pkgutil
 import sys
 import time
+import bot.spc
 
 from .bus import Bus
-from .obj import Db, Default, List, Object, cdir, spl, wd
+from .obj import Db, Default, List, O, Object, cdir, spl
 from .prs import parse_txt
 from .hdl import Dispatcher, Handler, Loop
 from .thr import launch
@@ -35,8 +36,10 @@ class Kernel(Dispatcher, Loop):
 
     def boot(self, disk=False):
         self.parse_cli(disk)
-        cdir(self.cfg.wd + os.sep)
-        cdir(os.path.join(self.cfg.wd, "store", ""))
+        bot.spc.wd = bot.spc.wd or self.cfg.wd or None
+        cdir(bot.spc.wd + os.sep)
+        cdir(os.path.join(bot.spc.wd, "store", ""))
+        self.cfg.wd = bot.spc.wd
 
     def cmd(self, clt, txt):
         if not txt:
@@ -65,6 +68,8 @@ class Kernel(Dispatcher, Loop):
             mod = sys.modules.get(mn, None)
             i = getattr(mod, "init", None)
             if i:
+                if self.opts("v"):
+                    self.error("run %s" % mn.name)
                 launch(i, self)
 
     def introspect(self, mod):
@@ -72,8 +77,25 @@ class Kernel(Dispatcher, Loop):
             if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
                 self.cmds[o.__name__] = o
         for key, o in inspect.getmembers(mod, inspect.isclass):
-            self.classes[o.__name__] = o
-            self.names.append(o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__))
+            if issubclass(o, Object):
+                self.classes[o.__name__] = o
+                self.names.append(o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__))
+
+    def find(self, pkgs):
+        res = {}
+        for pn in spl(pkgs):
+            p = pkgutil.get_loader(pn)
+            if not p:
+                continue
+            if not p.is_package:
+                self.introspect(p)
+                return
+            pp = os.path.dirname(p.path)
+            for mn in pkgutil.walk_packages([pp,], pn + "."):
+                zip = mn[0].find_module(mn[1])
+                mod = zip.load_module(mn[1])
+                self.introspect(mod)
+
 
     def opts(self, ops):
         for opt in ops:
@@ -82,7 +104,6 @@ class Kernel(Dispatcher, Loop):
         return False
 
     def parse_cli(self, disk=False):
-        global wd
         o = Default()
         if disk:
             db = Db()
@@ -95,9 +116,6 @@ class Kernel(Dispatcher, Loop):
         self.cfg.update(o)
         if o.sets:
             self.cfg.update(o.sets)
-        self.cfg.wd = (
-            wd or self.cfg.wd or (self.cfg.name and os.path.expanduser("~/.%s" % self.cfg.name)) or None
-        )
 
     @staticmethod
     def privileges(name=None):
@@ -121,7 +139,7 @@ class Kernel(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(wd, pwn.pw_uid, pwn.pw_gid)
+            os.chown(bot.spc.wd, pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])
@@ -143,7 +161,7 @@ class Kernel(Dispatcher, Loop):
             if not p:
                 continue
             for mn in pkgutil.walk_packages(p.__path__, pn + "."):
-                if self.cfg.verbose:
+                if self.opts("v"):
                     self.error("loading %s" % mn.name)
                 zip = mn[0].find_module(mn[1])
                 mod = zip.load_module(mn[1])
@@ -170,7 +188,24 @@ class Test(Handler):
         k.put(e)
 
 
+k = None
+
+
+def find(name, selector=None, index=None, timed=None):
+    k = kernel()
+    got = False
+    db = Db()
+    for n in k.names.get(name, [name,]):
+        for fn, o in db.find(n, selector, index, timed):
+            got = True
+            yield fn, o
+    if not got:
+         return (None, None)
+
+
 def kernel():
+    if k: 
+        return k
     return getattr(sys.modules["__main__"], "k", None)
     
 def run(txt, p):
@@ -178,8 +213,7 @@ def run(txt, p):
         def raw(self, txt):
             p(txt)
     k = Kernel()
-    k.boot()
-    k.scan("botl,botm")
+    k.scan("bot")
     c = Out()
     res = k.cmd(c, txt)
     return res

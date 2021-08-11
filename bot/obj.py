@@ -3,14 +3,15 @@
 "objects"
 
 import datetime
-import json
+import json as js
 import os
 import pathlib
 import sys
 import time
 import uuid
 
-wd = os.path.expanduser("~/.bot")
+from bot.err import NoJSON
+from bot.spc import wd
 
 def cdir(path):
     if os.path.exists(path):
@@ -50,7 +51,9 @@ class O:
             return iter(oo)
         if isinstance(oo, (type(str), type(True), type(False), type(int), type(float))):
             return oo
-        return O.__dorepr__(oo)
+        return str(oo)
+        #raise NoJSON(str(type(oo)))
+        #return O.__dorepr__(oo)
 
     @staticmethod
     def __dorepr__(o):
@@ -80,7 +83,7 @@ class O:
         self.__dict__[k] = v
 
     def __repr__(self):
-        return json.dumps(self, default=self.__default__, sort_keys=True)
+        return js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
 
     def __str__(self):
         return str(self.__dict__)
@@ -180,15 +183,16 @@ class Object(Obj):
         return repr(self)
 
     def load(self, opath):
-        assert wd
+        import bot.obj
+        assert bot.obj.wd
         if opath.count(os.sep) != 3:
             raise NoFile(opath)
         spl = opath.split(os.sep)
         stp = os.sep.join(spl[-4:])
-        lpath = os.path.join(wd, "store", stp)
+        lpath = os.path.join(bot.obj.wd, "store", stp)
         if os.path.exists(lpath):
             with open(lpath, "r") as ofile:
-                d = json.load(ofile, object_hook=Obj)
+                d = js.load(ofile, object_hook=Obj)
                 self.update(d)
         self.__stp__ = stp
         return self
@@ -202,7 +206,7 @@ class Object(Obj):
         opath = os.path.join(wd, "store", self.__stp__)
         cdir(opath)
         with open(opath, "w") as ofile:
-            json.dump(self, ofile, default=self.__default__, indent=4, sort_keys=True)
+            js.dump(self.__dict__, ofile, default=self.__default__, indent=4, sort_keys=True)
         os.chmod(opath, 0o444)
         return self.__stp__
 
@@ -265,7 +269,6 @@ class Db(Object):
             yield fn, o
 
     def every(self, selector=None, index=None, timed=None):
-        k = kernel()
         if selector is None:
             selector = {}
         nr = -1
@@ -300,19 +303,9 @@ class Db(Object):
         if not got:
             return (None, None)
 
-    def findname(self, name, selector=None, index=None, timed=None):
-        k = kernel()
-        got = False
-        for n in k.names.get(name, [name,]):
-            for fn, o in self.find(n, selector, index, timed):
-                got = True
-                yield fn, o
-        if not got:
-            return (None, None)
-
     def lastmatch(self, otype, selector=None, index=None, timed=None):
         res = sorted(
-            self.findname(otype, selector, index, timed), key=lambda x: fntime(x[0])
+            self.find(otype, selector, index, timed), key=lambda x: fntime(x[0])
         )
         if res:
             return res[-1]
@@ -337,6 +330,7 @@ class Db(Object):
 def fns(name, timed=None):
     if not name:
         return []
+    assert wd
     p = os.path.join(wd, "store", name) + os.sep
     res = []
     d = ""
@@ -408,7 +402,6 @@ def listfiles(wd):
     return sorted(os.listdir(path))
 
 
-
 def hook(hfn):
     if hfn.count(os.sep) > 3:
         oname = hfn.split(os.sep)[-4:]
@@ -421,7 +414,7 @@ def hook(hfn):
     if not mod:
         raise NoModule(mn)
     t = getattr(mod, cn, None)
-    if fn:
+    if t:
         o = t()
         o.load(fn)
         return o

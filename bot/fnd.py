@@ -1,19 +1,18 @@
 # This file is placed in the Public Domain.
 
-import botl
 import time
-import botl.obj
 
-from botl.obj import Db, fmt, fntime, listfiles
-from botl.krn import kernel
-from botl.tms import elapsed 
+from bot.obj import Db, fmt, fntime, listfiles
+from bot.krn import find, kernel
+from bot.spc import wd
+from bot.tms import elapsed 
 
 def __dir__():
     return ("fnd",)
 
 def fnd(event):
     if not event.args:
-        fls = listfiles(botl.obj.wd)
+        fls = listfiles(wd)
         if fls:
             event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
         return
@@ -27,7 +26,7 @@ def fnd(event):
     got = False
     k = kernel()
     db = Db()
-    for fn, o in db.findname(otype, event.gets, event.index, event.timed):
+    for fn, o in find(otype, event.gets, event.index, event.timed):
         nr += 1
         txt = "%s %s" % (str(nr), fmt(o, args or o.keys(), skip=event.skip.keys()))
         if "t" in event.opts:

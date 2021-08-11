@@ -5,9 +5,9 @@
 import socket
 import time
 
-from botl.bus import Bus
-from botl.obj import Default, Object
-from botl.thr import launch
+from bot.bus import Bus
+from bot.obj import Default, Object
+from bot.thr import launch
 
 
 def __dir__():
