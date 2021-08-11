@@ -9,7 +9,7 @@ from botl.bus import Bus
 from botl.krn import kernel
 from botl.obj import Object, fmt
 from botl.thr import getname
-from botl.utl import elapsed
+from botl.tms import elapsed
 
 def __dir__():
     return ("flt", "thr", "upt")

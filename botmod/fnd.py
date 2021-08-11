@@ -4,8 +4,9 @@ import botl
 import time
 import botl.obj
 
-from botl.obj import Db, elapsed, fmt, fntime, listfiles
-from botl.krn import kernel, listfiles
+from botl.obj import Db, fmt, fntime, listfiles
+from botl.krn import kernel
+from botl.tms import elapsed 
 
 def __dir__():
     return ("fnd",)

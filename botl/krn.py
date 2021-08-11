@@ -6,6 +6,7 @@ import inspect
 import os
 import pkgutil
 import sys
+import time
 
 from .bus import Bus
 from .obj import Default, List, Object, cdir, spl, wd

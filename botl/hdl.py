@@ -5,6 +5,7 @@
 import queue
 import threading
 
+from .bus import Bus
 from .evt import Command, Event
 from .obj import Object
 from .thr import launch
