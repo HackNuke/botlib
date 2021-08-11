@@ -1,0 +1,37 @@
+# commands
+
+>>> import bot
+>>> bot.wd = ".testdata"
+>>> from bot import run
+>>> run("cfg", print)
+cc=! channel=#botd nick=botd port=6667 server=localhost
+>>> run("cmd")
+ban,cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,rss,tdo,thr,upt,ver
+>>> run("dlt")
+dlt <username>
+>>> run("dne")
+dne <string>
+>>> run("dpl")
+dpl <stringinurl> <item1,item2>
+>>> run("flt")
+Test | Client | Client | Client | Client | Client | Client
+>>> run("fnd")
+>>> run("ftc")
+>>> run("log")
+log <txt>
+>>> run("met")
+met <userhost>
+>>> run("mre")
+channel is not set.
+>>> run("nck")
+>>> run("ops")
+>>> run("rem")
+rem <stringinurl>
+>>> run("rss")
+rss <url>
+>>> run("tdo")
+tdo <txt>
+>>> run("thr")
+Runtime.loop(...s) Test.loop(...s)
+>>> run("upt")
+uptime is ...s
