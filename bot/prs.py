@@ -2,6 +2,7 @@
 
 "parse"
 
+from .obj import Default
 
 class Token(Default):
     pass

@@ -2,6 +2,7 @@
 
 "timer"
 
+from .obj import Object
 
 class Timer(Object):
     def __init__(self, sleep, func, *args, name=None):

@@ -2,6 +2,10 @@
 
 "threads"
 
+import threading
+
+from .obj import getname
+
 class Thr(threading.Thread):
     def __init__(self, func, *args, thrname="", daemon=True):
         super().__init__(None, self.run, thrname, (), {}, daemon=daemon)

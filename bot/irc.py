@@ -8,7 +8,14 @@ import time
 import threading
 import _thread
 
-from bot.obj import Bus, Default, Dispatcher, Event, Handler, Object, Output, kernel, launch, fmt
+from .bus import Bus
+from .clt import Output
+from .evt import Event
+from .krn import kernel
+from .obj import Default, Object
+from .hdl import Handler
+from .thr import launch
+from .utl import fmt
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre")

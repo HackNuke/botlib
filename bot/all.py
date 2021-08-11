@@ -2,7 +2,12 @@
 
 "all modules."
 
-import bot.adm
-import bot.cms
-import bot.fnd
+import bot.err
+import bot.hdl
 import bot.irc
+import bot.krn
+import bot.obj
+import bot.prs
+import bot.thr
+import bot.tmr
+import bot.utl

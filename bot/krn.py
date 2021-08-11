@@ -2,6 +2,19 @@
 
 "kernel"
 
+import inspect
+import os
+import pkgutil
+import sys
+
+from .obj import Default, List, Object, cdir, wd
+from .hdl import Dispatcher, Loop
+from .utl import spl
+
+class Cfg(Default):
+
+    pass
+
 
 class Kernel(Dispatcher, Loop):
     def __init__(self):
