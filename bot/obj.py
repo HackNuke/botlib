@@ -1,5 +1,7 @@
 # This file is placed in the Public Domain.
 
+"botlib"
+
 __version__ = 1
 
 import atexit

@@ -1,6 +1,6 @@
 # This is file is placed in Public Domain.
 
-from bot import kernel
+from bot.obj import kernel
 
 def __dir__():
     return ("cmd",)

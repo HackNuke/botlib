@@ -3,7 +3,7 @@
 import bot
 import time
 
-from bot import Db, elapsed, fmt, fntime, kernel, listfiles
+from bot.obj import Db, elapsed, fmt, fntime, kernel, listfiles
 
 def __dir__():
     return ("fnd",)

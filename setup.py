@@ -14,7 +14,6 @@ setup(
     description="python3 bot library",
     long_description=read(),
     license='Public Domain',
-    py_modules=["trm"],
     packages=["bot"],
     zip_safe=True,
     classifiers=['Development Status :: 4 - Beta',

@@ -6,16 +6,16 @@ __version__ = 124
 import os, sys ; sys.path.insert(0, os.getcwd())
 
 import atexit
-import bot
+import bot.obj
 import os
 import sys
 import termios
 
-bot.wd = os.path.expanduser("~/.bot")
+bot.obj.wd = os.path.expanduser("~/.bot")
 
 import bot.all
 
-from bot import Kernel, Client
+from bot.obj import Kernel, Client, kernel
 
 resume = {}
 

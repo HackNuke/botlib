@@ -5,7 +5,7 @@
 import threading
 import time
 
-from bot import Bus, Object, elapsed, fmt, getname, kernel
+from bot.obj import Bus, Object, elapsed, fmt, getname, kernel
 
 
 def __dir__():
