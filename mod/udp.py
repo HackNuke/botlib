@@ -5,9 +5,9 @@
 import socket
 import time
 
-from bl.bus import Bus
-from bl.obj import Default, Object
-from bl.thr import launch
+from ob.bus import Bus
+from ob.obj import Default, Object
+from ob.thr import launch
 
 
 def __dir__():

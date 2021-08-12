@@ -8,16 +8,16 @@ import time
 import threading
 import _thread
 
-from bl.bus import Bus
-from bl.clt import Output
-from bl.evt import Event
-from bl.krn import find, kernel
-from bl.obj import Db, Default, Object, fmt
-from bl.hdl import Handler
-from bl.thr import launch
+from ob.bus import Bus
+from ob.clt import Output
+from ob.evt import Event
+from ob.krn import find, kernel
+from ob.obj import Db, Default, Object, fmt
+from ob.hdl import Handler
+from ob.thr import launch
 
 def __dir__():
-    return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre")
+    return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre", "nck", "ops")
 
 def init(k):
     i = IRC()
@@ -460,7 +460,7 @@ def LOG(clt, obj):
 
 def NOTICE(clt, obj):
     if obj.txt.startswith("VERSION"):
-        txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "ob")
+        txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "botlib")
         clt.command("NOTICE", obj.channel, txt)
 
 def PRIVMSG(clt, obj):
@@ -520,6 +520,7 @@ def met(event):
     user.save()
     event.reply("ok")
 
+
 def mre(event):
     if event.channel is None:
         event.reply("channel is not set.")
@@ -532,3 +533,17 @@ def mre(event):
         if txt:
             event.say(txt)
     event.reply("(+%s more)" % Output.size(event.channel))
+
+
+def nck(event):
+    bot = event.bot()
+    if type(bot) == IRC:
+        bot.command("NICK", event.rest)
+        bot.cfg.nick = event.rest
+        bot.cfg.save()
+
+
+def ops(event):
+    bot = event.bot()
+    if type(bot) == IRC:
+        bot.command("MODE", event.channel, "+o", event.nick)

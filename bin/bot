@@ -10,11 +10,11 @@ import os
 import readline
 import sys
 import termios
-import bl.spc
+import ob.spc
 
-bl.spc.wd = os.path.expanduser("~/.bot")
+ob.spc.wd = os.path.expanduser("~/.bot")
 
-from bl.krn import Kernel, Client, kernel
+from ob.krn import Kernel, Client, kernel
 
 resume = {}
 

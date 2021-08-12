@@ -2,7 +2,7 @@
 
 "todo lists"
 
-from bl.obj import Object
+from ob.obj import Object
 
 
 class Todo(Object):
