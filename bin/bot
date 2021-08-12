@@ -110,7 +110,6 @@ def main():
         k.privileges()
     k.start()
     if k.cfg.m or k.opts("c"):
-        k.scan(k.cfg.m)
         csl = Console()
         csl.start()
         k.init(k.cfg.m)
