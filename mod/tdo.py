@@ -2,17 +2,10 @@
 
 "todo lists"
 
-import ob
+from bl.obj import Object
 
 
-def __dir__():
-    return ("Todo", "dne", "tdo")
-
-
-k = ob.kernel()
-
-
-class Todo(ob.Object):
+class Todo(Object):
     def __init__(self):
         super().__init__()
         self.txt = ""

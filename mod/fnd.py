@@ -2,10 +2,10 @@
 
 import time
 
-from bot.obj import Db, fmt, fntime, listfiles
-from bot.krn import find, kernel
-from bot.spc import wd
-from bot.tms import elapsed 
+from bl.obj import Db, fmt, fntime, listfiles
+from bl.krn import find, kernel
+from bl.spc import wd
+from bl.tms import elapsed 
 
 def __dir__():
     return ("fnd",)

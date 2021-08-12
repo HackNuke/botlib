@@ -7,7 +7,7 @@ import os
 import pkgutil
 import sys
 import time
-import bot.spc
+import bl.spc
 
 from .bus import Bus
 from .obj import Db, Default, List, O, Object, cdir, spl
@@ -36,10 +36,10 @@ class Kernel(Dispatcher, Loop):
 
     def boot(self, disk=False):
         self.parse_cli(disk)
-        bot.spc.wd = bot.spc.wd or self.cfg.wd or None
-        cdir(bot.spc.wd + os.sep)
-        cdir(os.path.join(bot.spc.wd, "store", ""))
-        self.cfg.wd = bot.spc.wd
+        bl.spc.wd = bl.spc.wd or self.cfg.wd or None
+        cdir(bl.spc.wd + os.sep)
+        cdir(os.path.join(bl.spc.wd, "store", ""))
+        self.cfg.wd = bl.spc.wd
 
     def cmd(self, clt, txt):
         if not txt:
@@ -139,7 +139,7 @@ class Kernel(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(bot.spc.wd, pwn.pw_uid, pwn.pw_gid)
+            os.chown(bl.spc.wd, pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])
@@ -159,7 +159,7 @@ class Kernel(Dispatcher, Loop):
         for pn in spl(pkgs):
             p = sys.modules.get(pn, None)
             if not p:
-                continue
+                p = __import__(pn)
             for mn in pkgutil.walk_packages(p.__path__, pn + "."):
                 if self.opts("v"):
                     self.error("loading %s" % mn.name)
@@ -207,6 +207,7 @@ def kernel():
     if k: 
         return k
     return getattr(sys.modules["__main__"], "k", None)
+
     
 def run(txt, p):
     class Out(Client):

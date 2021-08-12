@@ -2,14 +2,10 @@
 
 "enter txt"
 
-import ob
+from bl.obj import Object
 
 
-def __dir__():
-    return ("Log", "log")
-
-
-class Log(ob.Object):
+class Log(Object):
     def __init__(self):
         super().__init__()
         self.txt = ""

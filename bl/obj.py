@@ -10,8 +10,8 @@ import sys
 import time
 import uuid
 
-from bot.err import NoJSON
-from bot.spc import wd
+from .err import NoJSON
+from .spc import wd
 
 def cdir(path):
     if os.path.exists(path):

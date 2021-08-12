@@ -10,12 +10,11 @@ import os
 import readline
 import sys
 import termios
-import bot.all
-import bot.spc
+import bl.spc
 
-bot.spc.wd = os.path.expanduser("~/.bot")
+bl.spc.wd = os.path.expanduser("~/.bot")
 
-from bot.krn import Kernel, Client, kernel
+from bl.krn import Kernel, Client, kernel
 
 resume = {}
 
@@ -43,9 +42,11 @@ class Console(CLI):
 
 k = Runtime()
 
+
 def cprint(txt):
     print(txt)
     sys.stdout.flush()
+
     
 def daemon():
     pid = os.fork()
@@ -65,12 +66,14 @@ def daemon():
 def termsetup(fd):
     return termios.tcgetattr(fd)
 
+
 def termreset():
     if "old" in resume:
         try:
             termios.tcsetattr(resume["fd"], termios.TCSADRAIN, resume["old"])
         except termios.error:
             pass
+
 
 def termsave():
     try:
@@ -89,13 +92,16 @@ def wrap(func):
     finally:
         termreset()
 
+
 def ver(event):
     event.reply("BOTLIB %s" % __version__)
+
 
 def main():
     k.boot()
     k.add(ver)
     k.scan("bot")
+    k.scan("mod")
     if k.cfg.txt:
         c = CLI()
         return c.cmd(k.cfg.otxt)

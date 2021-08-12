@@ -1,6 +1,6 @@
 # This is file is placed in Public Domain.
 
-from bot.krn import kernel
+from bl.krn import kernel
 
 def cmd(event):
     k = kernel()
