@@ -215,6 +215,7 @@ def run(txt, p):
             p(txt)
     k = Kernel()
     k.scan("bot")
+    k.scan("mod")
     c = Out()
     res = k.cmd(c, txt)
     return res

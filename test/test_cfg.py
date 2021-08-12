@@ -2,8 +2,8 @@
 
 import unittest
 
-from bot.obj import Default
-from bot.prs import parse_txt
+from ob.obj import Default
+from ob.prs import parse_txt
 
 cfg = Default()
 

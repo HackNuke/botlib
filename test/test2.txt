@@ -1,17 +1,16 @@
 # commands
 
->>> import bot.spc
->>> bot.spc.wd = ".test"
->>> from bot.krn import run
+>>> import ob.spc
+>>> ob.spc.wd = ".test"
+>>> from ob.krn import run
 >>> run("cfg", print)
 cc=! channel=#bot nick=bot port=6667 server=localhost users=True
->>> run("cmd", print)
-cfg,cmd,dlt,dpl,flt,fnd,ftc,met,mre,rem,rss,thr,upt
 >>> run("dlt", print)
 dlt <username>
 >>> run("flt", print)
-Out
+Test | Out | Out | Out
 >>> run("fnd", print)
+cfg,dcc,event,irc,user,users,log,feed,fetcher,rss,seen,todo,cfg,udp,object
 >>> run("met", print)
 met <userhost>
 >>> run("mre", print)
@@ -22,3 +21,5 @@ channel is not set.
 Runtime.loop(...s) Test.loop(...s)
 >>> run("upt", print)
 uptime is ...s
+>>> run("cmd", print)
+cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,rss,slg,tdo,thr,upt,ver

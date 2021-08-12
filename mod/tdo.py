@@ -3,7 +3,7 @@
 "todo lists"
 
 from ob.obj import Object
-
+from ob.krn import find
 
 class Todo(Object):
     def __init__(self):
@@ -16,8 +16,7 @@ def dne(event):
         event.reply("dne <string>")
         return
     s = {"txt": event.args[0]}
-    db = ob.Db()
-    for fn, o in db.findname("todo", s):
+    for fn, o in find("todo", s):
         o._deleted = True
         o.save()
         event.reply("ok")

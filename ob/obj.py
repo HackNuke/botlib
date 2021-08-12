@@ -9,9 +9,9 @@ import pathlib
 import sys
 import time
 import uuid
+import ob.spc
 
 from .err import NoJSON
-from .spc import wd
 
 def cdir(path):
     if os.path.exists(path):
@@ -183,13 +183,12 @@ class Object(Obj):
         return repr(self)
 
     def load(self, opath):
-        import bot.obj
-        assert bot.obj.wd
+        assert ob.spc.wd
         if opath.count(os.sep) != 3:
             raise NoFile(opath)
         spl = opath.split(os.sep)
         stp = os.sep.join(spl[-4:])
-        lpath = os.path.join(bot.obj.wd, "store", stp)
+        lpath = os.path.join(ob.spc.wd, "store", stp)
         if os.path.exists(lpath):
             with open(lpath, "r") as ofile:
                 d = js.load(ofile, object_hook=Obj)
@@ -198,12 +197,12 @@ class Object(Obj):
         return self
 
     def save(self, tab=False):
-        assert wd
+        assert ob.spc.wd
         prv = os.sep.join(self.__stp__.split(os.sep)[:2])
         self.__stp__ = os.path.join(
             prv, os.sep.join(str(datetime.datetime.now()).split())
         )
-        opath = os.path.join(wd, "store", self.__stp__)
+        opath = os.path.join(ob.spc.wd, "store", self.__stp__)
         cdir(opath)
         with open(opath, "w") as ofile:
             js.dump(self.__dict__, ofile, default=self.__default__, indent=4, sort_keys=True)
@@ -272,7 +271,7 @@ class Db(Object):
         if selector is None:
             selector = {}
         nr = -1
-        for otype in os.listdir(os.path.join(wd, "store")):
+        for otype in os.listdir(os.path.join(ob.spc.wd, "store")):
             for fn in fns(otype, timed):
                 o = hook(fn)
                 if selector and not o.search(selector):
@@ -330,8 +329,8 @@ class Db(Object):
 def fns(name, timed=None):
     if not name:
         return []
-    assert wd
-    p = os.path.join(wd, "store", name) + os.sep
+    assert ob.spc.wd
+    p = os.path.join(ob.spc.wd, "store", name) + os.sep
     res = []
     d = ""
     for rootdir, dirs, _files in os.walk(p, topdown=False):

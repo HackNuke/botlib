@@ -3,6 +3,8 @@
 
 "python3 object library"
 
+__version__ = 124
+
 import os, sys
 
 sys.path.insert(0, os.getcwd())
@@ -15,12 +17,13 @@ import shutil
 import sys
 import termios
 import unittest
-import bot.spc
+import ob.spc
 
-bot.spc.wd = ".test"
-from bot.krn import Kernel
-from bot.hdl import Handler
-from bot.krn import Test
+ob.spc.wd = ".test"
+
+from ob.krn import Kernel
+from ob.hdl import Handler
+from ob.krn import Test
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -71,13 +74,18 @@ def wrap(func):
         termreset()
 
 
+def ver(event):
+    event.reply("BOTLIB %s" % __version__)
+
+
 def main():
     if os.path.exists(".test"):
         shutil.rmtree(".test")
     k.boot()
+    k.add(ver)
     k.scan("bot")
+    k.scan("mod")
     k.cfg.verbose = k.opts("v")
-    print(bot.obj.wd)
     for cls in k.classes.values():
         c = cls()
         c.txt = "bla"

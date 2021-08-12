@@ -2,17 +2,17 @@
 
 import os
 import unittest
-import bot.obj
+import ob.spc
 
-from bot.obj import Db, O, Object, gettype
-from bot.krn import kernel
+from ob.obj import Db, O, Object, gettype
+from ob.krn import kernel
 
 k = kernel()
 
 
 class Test_Object(unittest.TestCase):
     def setUp(self):
-        bot.obj.wd = ".test"
+        ob.spc.wd = ".test"
 
     def test_O(self):
         o = O()
@@ -32,7 +32,7 @@ class Test_Object(unittest.TestCase):
 
     def test_json(self):
         o = Object()
-        self.assertTrue("<bot.obj.Object" in Object.__dorepr__(o))
+        self.assertTrue("<ob.obj.Object" in Object.__dorepr__(o))
 
     def test_intern4(self):
         o = Object()
