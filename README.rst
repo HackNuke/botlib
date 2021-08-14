@@ -64,6 +64,48 @@ the hlo command in now available::
  <bart> !hlo
  hello root@console
 
+RSS
+===
+
+BOTD doesn't depend on other software so running rss is optional, you need
+to install feedparser seperately::
+
+ $ sudo apt install python3-feedparser
+
+add an url use the rss command with an url::
+
+ $ bot rss https://github.com/bthate/botd/commits/master.atom
+ ok
+
+run the fnd (find) command to see what urls are registered::
+
+ $ bot fnd rss
+ 0 https://github.com/bthate/botd/commits/master.atom
+
+the ftc (fetch) command can be used to poll the added feeds::
+
+ $ bot ftc
+ fetched 20
+
+UDP
+===
+
+there is also the possibility to serve as a UDP to IRC relay where you
+can send UDP packages to the bot and have txt displayed in the channel.
+output to the IRC channel is done with the use python3 code to send a UDP
+packet to BOTD, it's unencrypted txt send to the bot and displayed in the
+joined channels::
+
+ import socket
+
+ def toudp(host=localhost, port=5500, txt=""):
+     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+     sock.sendto(bytes(txt.strip(), "utf-8"), host, port)
+
+to have the udp relay running, add udp to modules to load at start of the
+program::
+
+ m = "bot.irc,bot.rss,bot.udp"
 
 PROGRAMMING
 ===========
