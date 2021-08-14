@@ -20,13 +20,17 @@ setup(
     include_package_data=True,
     data_files=[
         (
-            "share/botd/",
+            "share/botlib/",
             [
                 "files/bot.1.md",
+                "files/botctl.8.md",
+                "files/botd.8.md",
+                "files/botd.service",
+                "files/botd",
             ],
         ),
     ],
-    scripts=["bin/bot"],
+    scripts=["bin/bot", "bin/botc", "bin/botd", "bin/botctl"],
     classifiers=['Development Status :: 4 - Beta',
                  'License :: Public Domain',
                  'Operating System :: Unix',

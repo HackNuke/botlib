@@ -1,0 +1,14 @@
+# This file is in the Public Domain
+
+apt install joe git irssi ircd-irc2 python3-setuptools python3-pip python3-virtualenv twine tilix gnome-shell-extension-* gnome-tweaks libavcodec-extra ffmpeg audacious ubuntu-restricted-extras mtools
+apt update
+apt upgrade
+systemctl stop apt-daily.timer
+systemctl disable apt-daily.timer
+systemctl disable apt-daily.service
+systemctl stop apt-daily-upgrade.timer
+systemctl disable apt-daily-upgrade.timer
+systemctl disable apt-daily-upgrade.service
+apt purge update-notifier-common
+apt purge unattended-upgrades
+apt install linux-lowlatency
