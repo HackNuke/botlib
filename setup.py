@@ -17,6 +17,7 @@ setup(
     py_modules=["trm"],
     packages=["bot"],
     zip_safe=True,
+    scripts=["bin/bot"],
     classifiers=['Development Status :: 4 - Beta',
                  'License :: Public Domain',
                  'Operating System :: Unix',
