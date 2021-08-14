@@ -15,7 +15,12 @@ installation is through pypi::
 
  $ sudo pip3 install botlib 
 
-default channel/server is #bot on localhost.
+if you want to bot to start after reboot::
+
+ $ sudo cp /usr/local/share/botlib/botd.service /etc/systemd/system
+ $ sudo systemctl enable botd --now
+
+default channel/server is #botd on localhost.
 
 CONFIG
 ======
@@ -24,8 +29,9 @@ you can configure the bot with the cfg command, it edits files on disk::
 
  $ bot cfg server=botd.io channel=\#botd nick=botje
 
-USERS
-=====
+or if you run 24/7::
+
+ $ sudo botctl cfg server=irc.freenode.net channel=\#dunkbots nick=botje
 
 if the users option is set in the irc config then users need to be added 
 before they can give commands::
