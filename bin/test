@@ -17,13 +17,12 @@ import shutil
 import sys
 import termios
 import unittest
-import ob.spc
+import bot.spc
 
-ob.spc.wd = ".test"
+bot.spc.wd = ".test"
 
-from ob.krn import Kernel
-from ob.hdl import Handler
-from ob.krn import Test
+from bot.krn import Kernel, Test
+from bot.hdl import Handler
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -84,7 +83,6 @@ def main():
     k.boot()
     k.add(ver)
     k.scan("bot")
-    k.scan("mod")
     k.cfg.verbose = k.opts("v")
     for cls in k.classes.values():
         c = cls()

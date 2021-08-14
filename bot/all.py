@@ -2,13 +2,21 @@
 
 "all modules."
 
-import ob.bus
-import ob.err
-import ob.evt
-import ob.hdl
-import ob.krn
-import ob.opt
-import ob.prs
-import ob.thr
-import ob.tmrr
-import ob.tms
+import bot.adm
+import bot.bus
+import bot.cms
+import bot.err
+import bot.evt
+import bot.fnd
+import bot.hdl
+import bot.hlp
+import bot.irc
+import bot.krn
+import bot.log
+import bot.opt
+import bot.prs
+import bot.rss
+import bot.thr
+import bot.tmr
+import bot.tms
+import bot.udp

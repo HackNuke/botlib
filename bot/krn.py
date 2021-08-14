@@ -4,16 +4,14 @@
 
 import getpass
 import inspect
-import ob
 import os
 import pkgutil
 import pwd
 import sys
 import time
-import ob.spc
 
 from .bus import Bus
-from .obj import Db, Default, List, O, Object, cdir, spl
+from .obj import Db, Default, List, O, Object, cdir, spl, getwd
 from .prs import parse_txt
 from .hdl import Dispatcher, Handler, Loop
 from .thr import launch
@@ -41,10 +39,10 @@ class Kernel(Dispatcher, Loop):
     def boot(self, disk=False):
         "set system paths."
         self.parse_cli(disk)
-        ob.spc.wd = ob.spc.wd or self.cfg.wd or None
-        cdir(ob.spc.wd + os.sep)
-        cdir(os.path.join(ob.spc.wd, "store", ""))
-        self.cfg.wd = ob.spc.wd
+        wd = getwd() or self.cfg.wd or None
+        cdir(wd + os.sep)
+        cdir(os.path.join(wd, "store", ""))
+        self.cfg.wd = wd
 
     def cmd(self, clt, txt):
         "execute a command and display on the client."
@@ -139,7 +137,7 @@ class Kernel(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(ob.spc.wd, pwn.pw_uid, pwn.pw_gid)
+            os.chown(bot.spc.wd, pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])

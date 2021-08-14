@@ -2,7 +2,7 @@
 
 "shows help text"
 
-from ob.obj import Object
+from bot.obj import Object
 
 #:
 cmds = "cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,req,rss,slg,tdo,thr,upt"

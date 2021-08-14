@@ -4,10 +4,11 @@
 
 import time
 
-from ob.krn import find, kernel
-from ob.obj import Db, fmt, fntime, listfiles
-from ob.spc import wd
-from ob.tms import elapsed 
+from .krn import find, kernel
+from .obj import Db, fmt, fntime, listfiles, getwd
+from .tms import elapsed 
+
+wd = getwd()
 
 def __dir__():
     return ("fnd",)

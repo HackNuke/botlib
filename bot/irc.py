@@ -11,13 +11,13 @@ import time
 import threading
 import _thread
 
-from ob.bus import Bus
-from ob.evt import Event
-from ob.krn import find, kernel
-from ob.hdl import Handler
-from ob.obj import Db, Default, Object, fmt
-from ob.opt import Output
-from ob.thr import launch
+from .bus import Bus
+from .evt import Event
+from .krn import find, kernel
+from .hdl import Handler
+from .obj import Db, Default, Object, fmt
+from .opt import Output
+from .thr import launch
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre", "nck", "ops")

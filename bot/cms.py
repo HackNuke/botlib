@@ -2,7 +2,7 @@
 
 "cms shows list of commands"
 
-from ob.krn import kernel
+from bot.krn import kernel
 
 def cmd(event):
     k = kernel()
