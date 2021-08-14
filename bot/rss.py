@@ -43,19 +43,19 @@ class Feed(Default):
     pass
 
 
-class Rss(Object):
+class Rss(Default):
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
-class Seen(Object):
+class Seen(Default):
     def __init__(self):
         super().__init__()
         self.urls = []
 
 
-class Fetcher(Object):
+class Fetcher(Default):
 
     cfg = Cfg()
     seen = Seen()
@@ -240,6 +240,9 @@ def rss(event):
         return
     db = Db()
     url = event.args[0]
+    if "http" not in url:
+        event.reply("%s is not an url" % url)
+        return
     res = list(find("rss", {"rss": url}))
     if res:
         return

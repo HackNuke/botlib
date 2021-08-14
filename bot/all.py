@@ -15,7 +15,7 @@ import bot.krn
 import bot.log
 import bot.opt
 import bot.prs
-import bot.rss
+import bot.rss as rss
 import bot.thr
 import bot.tmr
 import bot.tms

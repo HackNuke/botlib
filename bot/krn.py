@@ -11,7 +11,7 @@ import sys
 import time
 
 from .bus import Bus
-from .obj import Db, Default, List, O, Object, cdir, spl, getwd
+from .obj import Db, Default, List, Obj, Object, cdir, spl, getwd
 from .prs import parse_txt
 from .hdl import Dispatcher, Handler, Loop
 from .thr import launch
@@ -67,7 +67,7 @@ class Kernel(Dispatcher, Loop):
     def init(self, mns):
         for mn in spl(mns):
             if not "." in mn:
-                mn = "botm.%s" % mn
+                mn = "bot.%s" % mn
             mod = sys.modules.get(mn, None)
             i = getattr(mod, "init", None)
             if i:
@@ -80,9 +80,8 @@ class Kernel(Dispatcher, Loop):
             if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
                 self.cmds[o.__name__] = o
         for key, o in inspect.getmembers(mod, inspect.isclass):
-            if issubclass(o, Object):
-                self.classes[o.__name__] = o
-                self.names.append(o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__))
+            self.classes[o.__name__] = o
+            self.names.append(o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__))
 
     def opts(self, ops):
         for opt in ops:

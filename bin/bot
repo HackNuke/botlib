@@ -10,6 +10,7 @@ import os
 import readline
 import sys
 import termios
+import bot.all
 
 wd = os.path.expanduser("~/.bot")
 
