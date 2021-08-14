@@ -27,11 +27,15 @@ CONFIG
 
 you can configure the bot with the cfg command, it edits files on disk::
 
- $ bot cfg server=botd.io channel=\#botd nick=botje
+ $ bot cfg server=botd.io channel=\#botd nick=botd
 
-or if you run 24/7::
+note: use can use botctl instead of bot to control the background daemon.
 
- $ sudo botctl cfg server=irc.freenode.net channel=\#dunkbots nick=botje
+if you need to login with SASL run the pwd command first and use that to
+configure a password::
+
+ $ bot pwd <nick> <password>
+ $ bot cfg password=<outputofpwd>
 
 if the users option is set in the irc config then users need to be added 
 before they can give commands::
