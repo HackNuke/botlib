@@ -204,7 +204,8 @@ def run(txt, p, m):
     class Out(Client):
         def raw(self, txt):
             p(txt)
-    k = kernel()
+    k = Kernel()
+    k.scan(m)
     c = Out()
     res = k.cmd(c, txt)
     return res

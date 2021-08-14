@@ -3,7 +3,6 @@
 >>> wd = ".test"
 >>> from bot.krn import run, kernel
 >>> k = kernel()
->>> print(k)
 >>> run("cfg", print, "bot")
 cc=! channel=#bot nick=bot port=6667 server=localhost
 >>> run("dlt", print, "bot")
@@ -21,7 +20,7 @@ channel is not set.
 >>> run("pwd", print, "bot")
 pwd <nick> <password>
 >>> run("thr", print, "bot")
-MyTest.loop(...s) Runtime.loop(...s) 
+MyTest.loop(0s) Runtime.loop(0s)
 >>> run("upt", print, "bot")
 uptime is ...s
 >>> run("cmd", print, "bot")

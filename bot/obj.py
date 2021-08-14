@@ -53,8 +53,10 @@ class O:
 
     @staticmethod
     def __default__(oo):
-        if isinstance(oo, O):
+        try:
             return vars(oo)
+        except TypeError:
+            pass
         if isinstance(oo, dict):
             return oo.items()
         if isinstance(oo, list):
@@ -91,7 +93,7 @@ class O:
         self.__dict__[k] = v
 
     def __repr__(self):
-        return js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
+        return js.dumps(self, default=self.__default__, sort_keys=True)
 
     def __str__(self):
         return str(self.__dict__)
