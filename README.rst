@@ -1,12 +1,7 @@
 README
 ######
 
-Welcome to BOTLIB,
-
-BOTLIB is a pure python3 IRC chat bot library that can be used to program
-bots.
-
-BOTLIB is placed in the Public Domain and has no COPYRIGHT and no LICENSE.
+Welcome to BOTLIB, a pure python3 IRC chat bot library
 
 INSTALL
 =======
@@ -161,6 +156,11 @@ DEBUG
 you can try you force a reinstall of the botd package if it doesn't work::
 
  $ pip3 install botlib --upgrade --force-reinstall
+
+LICENSE
+=======
+
+BOTLIB is placed in the Public Domain and has no COPYRIGHT and no LICENSE.
 
 CONTACT
 =======
