@@ -27,6 +27,11 @@ class Runtime(Kernel):
         cprint(txt)
 
 
+    def log(self, txt):
+        if self.opts("v"):
+            cprint(txt)
+
+
 class CLI(Client):
 
     def raw(self, txt):

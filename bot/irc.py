@@ -145,12 +145,12 @@ class IRC(Output, Handler):
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock = ctx.wrap_socket(sock) 
-            k.error("connect to %s:%s" % (server, port))
+            k.log("connect to %s:%s" % (server, port))
             self.sock.connect((server, port))
             self.raw("CAP LS 302")
         else:
             addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
-            k.error("connect to %s:%s" % addr)
+            k.log("connect to %s:%s" % addr)
             self.sock = socket.create_connection(addr)
         os.set_inheritable(self.fileno(), os.O_RDWR)
         self.sock.setblocking(True)
@@ -234,7 +234,7 @@ class IRC(Output, Handler):
         self.raw("USER %s %s %s :%s" % (self.cfg.username or "botlib", server, server, self.cfg.realname or "botlib"))
 
     def parsing(self, txt):
-        k.error(txt)
+        k.log(txt)
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
@@ -299,7 +299,7 @@ class IRC(Output, Handler):
 
     def raw(self, txt):
         txt = txt.rstrip()
-        k.error(txt)
+        k.log(txt)
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
@@ -496,7 +496,7 @@ def LOG(clt, obj):
     pass
 
 def NOTICE(clt, obj):
-    k.error(obj.txt)
+    k.log(obj.txt)
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "botlib")
         clt.command("NOTICE", obj.channel, txt)
