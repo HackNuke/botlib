@@ -167,5 +167,5 @@ CONTACT
 
 "contributed back"
 
-| Bart Thate (bthate@dds.nl, thatebart@gmail.com)
-| botfather on #dunkbots irc.freenode.net
+| Bart Thate - bthate67@gmail.com
+| botfather on #dunkbots irc.freenode.net/irc.libera.chat
