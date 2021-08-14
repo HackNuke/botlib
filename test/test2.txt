@@ -1,25 +1,26 @@
 # commands
 
->>> import ob.spc
->>> ob.spc.wd = ".test"
->>> from ob.krn import run
->>> run("cfg", print)
-cc=! channel=#bot nick=bot port=6667 server=localhost users=True
->>> run("dlt", print)
+>>> wd = ".test"
+>>> from bot.krn import run
+>>> run("cfg", print, "bot")
+cc=! channel=#bot nick=bot port=6667 server=localhost
+>>> run("dlt", print, "bot")
 dlt <username>
->>> run("flt", print)
-Test | Out | Out | Out
->>> run("fnd", print)
-cfg,dcc,event,irc,user,users,log,feed,fetcher,rss,seen,todo,cfg,udp,object
->>> run("met", print)
+>>> run("flt", print, "bot")
+Out
+>>> run("fnd", print, "bot")
+bus,command,error,dispatcher,handler,loop,cfg,dcc,event,irc,user,users,cfg,client,kernel,test,log,db,default,list,object,rss
+>>> run("met", print, "bot")
 met <userhost>
->>> run("mre", print)
+>>> run("mre", print, "bot")
 channel is not set.
->>> run("nck", print)
->>> run("ops", print)
->>> run("thr", print)
+>>> run("nck", print, "bot")
+>>> run("ops", print, "bot")
+>>> run("pwd", print, "bot")
+pwd <nick> <password>
+>>> run("thr", print, "bot")
 Runtime.loop(...s) Test.loop(...s)
->>> run("upt", print)
+>>> run("upt", print, "bot")
 uptime is ...s
->>> run("cmd", print)
-cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,rss,slg,tdo,thr,upt,ver
+>>> run("cmd", print, "bot")
+cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,rss,thr,upt,ver

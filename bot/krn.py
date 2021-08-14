@@ -188,10 +188,18 @@ class Client(Handler):
 
 class Test(Handler):
     "in case of tests."
+
+    def __init__(self):
+        super().__init__()
+        self.cfg = Cfg()
+
     def handle(self, e):
         k = kernel()
         k.put(e)
 
+
+    def raw(self, txt):
+        pass
 
 #:
 k = None

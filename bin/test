@@ -17,9 +17,8 @@ import shutil
 import sys
 import termios
 import unittest
-import bot.spc
 
-bot.spc.wd = ".test"
+wd = ".test"
 
 from bot.krn import Kernel, Test
 from bot.hdl import Handler
@@ -33,15 +32,6 @@ class Runtime(Kernel):
     def error(self, txt):
         print(txt)
 
-
-class Test(Handler):
-    def handle(self, e):
-        k = kernel()
-        k.put(e)
-
-    def raw(self, txt):
-        if k.cfg.verbose:
-            print(txt)
 
 k = Runtime()
 

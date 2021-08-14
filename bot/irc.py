@@ -585,7 +585,7 @@ def nck(event):
 
 def ops(event):
     bot = event.bot()
-    if bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
+    if "cfg" in bot and bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
         return
     if type(bot) == IRC:
         bot.command("MODE", event.channel, "+o", event.nick)

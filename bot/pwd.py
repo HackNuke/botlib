@@ -7,7 +7,7 @@ import sys
 
 def pwd(event):
     if len(event.args) != 1:
-        print("pwd <nick> <password>")
+        event.reply("pwd <nick> <password>")
         return
     m = "\x00%s\x00%s" % (event.cmd, event.args[0])
     mb = m.encode('ascii')

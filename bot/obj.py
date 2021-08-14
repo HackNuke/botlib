@@ -10,8 +10,6 @@ import sys
 import time
 import uuid
 
-from .err import NoJSON
-
 def cdir(path):
     if os.path.exists(path):
         return
@@ -23,10 +21,23 @@ def cdir(path):
 def gettype(o):
     return str(type(o)).split()[-1][1:-2]
 
+def getwd():
+    try:
+        return getattr(sys.modules["__main__"], "wd", "")
+    except:
+        raise ENOWD
 
 def spl(txt):
     return [x for x in txt.split(",") if x]
 
+class NoJSON(Exception):
+
+    pass
+
+
+class Nowd(Exception):
+
+    pass
 
 class O:
 
@@ -182,6 +193,8 @@ class Object(Obj):
         return repr(self)
 
     def load(self, opath):
+        wd = getwd()
+        assert wd
         if opath.count(os.sep) != 3:
             raise NoFile(opath)
         spl = opath.split(os.sep)  
@@ -195,6 +208,8 @@ class Object(Obj):
         return self
 
     def save(self, tab=False):
+        wd = getwd()
+        assert wd
         prv = os.sep.join(self.__stp__.split(os.sep)[:2])
         self.__stp__ = os.path.join(
             prv, os.sep.join(str(datetime.datetime.now()).split())
@@ -265,6 +280,8 @@ class Db(Object):
             yield fn, o
 
     def every(self, selector=None, index=None, timed=None):
+        wd = getwd()
+        assert wd
         if selector is None:
             selector = {}
         nr = -1
@@ -326,6 +343,7 @@ class Db(Object):
 def fns(name, timed=None):
     if not name:
         return []
+    wd = getwd()
     assert wd
     p = os.path.join(wd, "store", name) + os.sep
     res = []
@@ -391,13 +409,7 @@ def fntime(daystr):
     return t
 
 
-def getwd():
-    "return the working directory."
-    try:
-        return getattr(sys.modules["__main__"], "wd", None)
-    except:
-        return ""
-
+        
 def listfiles(wd):
     path = os.path.join(wd, "store")
     if not os.path.exists(path):
@@ -422,5 +434,3 @@ def hook(hfn):
         o.load(fn)
         return o
     raise NoType(cname)
-
-wd = getwd()
