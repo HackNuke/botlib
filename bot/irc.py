@@ -1,20 +1,23 @@
 # This file is placed in the Public Domain.
 
+"internet relay chat bot"
+
 import os
 import queue
 import socket
+import ssl
 import textwrap
 import time
 import threading
 import _thread
 
-from ob.bus import Bus
-from ob.clt import Output
-from ob.evt import Event
-from ob.krn import find, kernel
-from ob.obj import Db, Default, Object, fmt
-from ob.hdl import Handler
-from ob.thr import launch
+from obj.bus import Bus
+from obj.evt import Event
+from obj.krn import find, kernel
+from obj.hdl import Handler
+from obj.opt import Output
+from obj.thr import launch
+from obj import Db, Default, Object, fmt
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre", "nck", "ops")
@@ -51,7 +54,7 @@ class Cfg(Default):
     server = "localhost"
     realname = "python3 irc bot"
     username = "botlib"
-    users = True
+    users = False
 
     def __init__(self, val=None):
         super().__init__()
@@ -107,6 +110,10 @@ class IRC(Output, Handler):
         self.threaded = False
         self.users = Users()
         self.zelf = ""
+        self.register("903", h903)
+        self.register("904", h903)
+        self.register("AUTHENTICATE", AUTH)
+        self.register("CAP", CAP)
         self.register("ERROR", ERROR)
         self.register("LOG", LOG)
         self.register("NOTICE", NOTICE)
@@ -132,8 +139,19 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
-        addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
-        self.sock = socket.create_connection(addr)
+        if self.cfg.password:
+            port = 6697
+            ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
+            ctx.check_hostname = False
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = ctx.wrap_socket(sock) 
+            k.error("connect to %s:%s" % (server, port))
+            self.sock.connect((server, port))
+            self.raw("CAP LS 302")
+        else:
+            addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
+            k.error("connect to %s:%s" % addr)
+            self.sock = socket.create_connection(addr)
         os.set_inheritable(self.fileno(), os.O_RDWR)
         self.sock.setblocking(True)
         self.sock.settimeout(180.0)
@@ -145,9 +163,9 @@ class IRC(Output, Handler):
         while not self.stopped.isSet():
             self.state.nrconnect += 1
             if self.connect(server, port):
+                self.logon(server, nick)
                 break
             time.sleep(10.0 * self.state.nrconnect)
-        self.logon(server, nick)
 
     def dosay(self, channel, txt):
         wrapper = TextWrap()
@@ -216,6 +234,7 @@ class IRC(Output, Handler):
         self.raw("USER %s %s %s :%s" % (self.cfg.username or "botlib", server, server, self.cfg.realname or "botlib"))
 
     def parsing(self, txt):
+        k.error(txt)
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
@@ -280,6 +299,7 @@ class IRC(Output, Handler):
 
     def raw(self, txt):
         txt = txt.rstrip()
+        k.error(txt)
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
@@ -448,9 +468,26 @@ class Users(Object):
             user.save()
         return user
 
+def AUTH(clt, obj):
+    clt.raw("AUTHENTICATE %s"% clt.cfg.password)
+
+
+def CAP(clt, obj):
+    if clt.cfg.password and "ACK" in obj.arguments:
+        clt.raw("AUTHENTICATE PLAIN")
+    else:
+        clt.raw("CAP REQ :sasl")
+
+def h903(clt, obj):
+    clt.raw("CAP END")
+
+def h904(clt, obj):
+    clt.raw("CAP END")
+
 def ERROR(clt, obj):
     clt.state.nrerror += 1
     clt.state.error = obj.error
+    k.error(obj.error)
 
 def KILL(clt, obj):
     pass
@@ -459,6 +496,7 @@ def LOG(clt, obj):
     pass
 
 def NOTICE(clt, obj):
+    k.error(obj.txt)
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "botlib")
         clt.command("NOTICE", obj.channel, txt)
@@ -478,6 +516,8 @@ def PRIVMSG(clt, obj):
             obj.txt = obj.txt[1:]
         elif obj.txt.startswith("%s:" % clt.cfg.nick):
             obj.txt = obj.txt[len(clt.cfg.nick)+1:]
+        else:
+            return
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         obj.type = "cmd"
@@ -545,5 +585,7 @@ def nck(event):
 
 def ops(event):
     bot = event.bot()
+    if bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
+        return
     if type(bot) == IRC:
         bot.command("MODE", event.channel, "+o", event.nick)
