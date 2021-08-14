@@ -61,9 +61,7 @@ class O:
             return iter(oo)
         if isinstance(oo, (type(str), type(True), type(False), type(int), type(float))):
             return oo
-        return str(oo)
-        #raise NoJSON(str(type(oo)))
-        #return O.__dorepr__(oo)
+        return O.__dorepr__(oo)
 
     @staticmethod
     def __dorepr__(o):

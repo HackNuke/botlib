@@ -17,11 +17,10 @@ from .hdl import Dispatcher, Handler, Loop
 from .thr import launch
 
 class Cfg(Default):
-    "kernel config"
+    pass
 
 
 class Kernel(Dispatcher, Loop):
-    "the runtime kernel"
     def __init__(self):
         Dispatcher.__init__(self)
         Loop.__init__(self)
@@ -32,12 +31,10 @@ class Kernel(Dispatcher, Loop):
         self.register("cmd", self.handle)
 
     def add(self, func):
-        "add a command to the kernel."
         n = func.__name__
         self.cmds[n] = func
 
     def boot(self, disk=False):
-        "set system paths."
         self.parse_cli(disk)
         wd = getwd() or self.cfg.wd or None
         cdir(wd + os.sep)
@@ -45,7 +42,6 @@ class Kernel(Dispatcher, Loop):
         self.cfg.wd = wd
 
     def cmd(self, clt, txt):
-        "execute a command and display on the client."
         if not txt:
             return
         Bus.add(clt)
@@ -55,14 +51,12 @@ class Kernel(Dispatcher, Loop):
         e.wait()
 
     def do(self, e):
-        "dispatch to callbacks."
         self.dispatch(e)
 
     def error(self, e):
-        "print error to stdout. defaults to off."
+        pass
 
     def handle(self, hdl, obj):
-        "check if there is a command, if so execute it and display results."
         obj.parse()
         f = self.cmds.get(obj.cmd, None)
         if f:
@@ -71,7 +65,6 @@ class Kernel(Dispatcher, Loop):
         obj.ready()
  
     def init(self, mns):
-        "initialise list of modules"
         for mn in spl(mns):
             if not "." in mn:
                 mn = "botm.%s" % mn
@@ -83,7 +76,6 @@ class Kernel(Dispatcher, Loop):
                 launch(i, self)
 
     def introspect(self, mod):
-        "scan module for commands and classes."
         for key, o in inspect.getmembers(mod, inspect.isfunction):
             if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
                 self.cmds[o.__name__] = o
@@ -93,14 +85,12 @@ class Kernel(Dispatcher, Loop):
                 self.names.append(o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__))
 
     def opts(self, ops):
-        "check commandline options."
         for opt in ops:
             if opt in self.cfg.opts:
                 return True
         return False
 
     def parse_cli(self, disk=False):
-        "parse command line options."
         o = Default()
         if disk:
             db = Db()
@@ -116,7 +106,6 @@ class Kernel(Dispatcher, Loop):
 
     @staticmethod
     def privileges(name=None):
-        "set privileges"
         if os.getuid() != 0:
             return
         try:
@@ -148,13 +137,11 @@ class Kernel(Dispatcher, Loop):
 
     @staticmethod
     def root():
-        "check if we are root."
         if os.geteuid() != 0:
             return False
         return True
 
     def scan(self, pkgs=""):
-        "scan a package."
         res = {}
         for pn in spl(pkgs):
             p = __import__("%s.all" % pn, None)
@@ -169,25 +156,20 @@ class Kernel(Dispatcher, Loop):
 
     @staticmethod
     def wait(): 
-        "loop until end."
         while 1:
             time.sleep(5.0)
 
 class Client(Handler):
-    "basic client class"
     def cmd(self, txt):
-        "run command through the kernel."
         k = kernel()
         return k.cmd(self, txt)
 
     def handle(self, e):
-        "referer to the kernel."
         k = kernel()
         k.put(e)
 
 
 class Test(Handler):
-    "in case of tests."
 
     def __init__(self):
         super().__init__()
@@ -201,12 +183,8 @@ class Test(Handler):
     def raw(self, txt):
         pass
 
-#:
-k = None
-
 
 def find(name, selector=None, index=None, timed=None):
-    "locate objects in store."
     k = kernel()
     got = False
     db = Db()
@@ -219,19 +197,14 @@ def find(name, selector=None, index=None, timed=None):
 
 
 def kernel():
-    "return the kernel."
-    if k: 
-        return k
     return getattr(sys.modules["__main__"], "k", None)
 
     
 def run(txt, p, m):
-    "run a command."
     class Out(Client):
         def raw(self, txt):
             p(txt)
-    k = Kernel()
-    k.scan(m)
+    k = kernel()
     c = Out()
     res = k.cmd(c, txt)
     return res

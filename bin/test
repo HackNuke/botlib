@@ -22,46 +22,23 @@ wd = ".test"
 
 from bot.krn import Kernel, Test
 from bot.hdl import Handler
-
+from trm import cprint, wrap
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
-resume = {}
 
 class Runtime(Kernel):
 
     def error(self, txt):
-        print(txt)
+        cprint(txt)
 
+
+class MyTest(Test):
+
+    def raw(self, txt):
+        if k.opts("v"):
+            cprint(txt)
 
 k = Runtime()
-
-def termsetup(fd):
-    return termios.tcgetattr(fd)
-
-def termreset():
-    if "old" in resume:
-        try:
-            termios.tcsetattr(resume["fd"], termios.TCSADRAIN, resume["old"])
-        except termios.error:
-            pass
-
-def termsave():
-    try:
-        resume["fd"] = sys.stdin.fileno()
-        resume["old"] = termsetup(sys.stdin.fileno())
-        atexit.register(termreset)
-    except termios.error:
-        pass
-
-def wrap(func):
-    termsave()
-    try:
-        func()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        termreset()
-
 
 def ver(event):
     event.reply("BOTLIB %s" % __version__)
@@ -79,16 +56,16 @@ def main():
         c.txt = "bla"
         c.save()
     k.start()
-    c = Test()
+    c = MyTest()
     c.start()
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
     doctest.testfile(
-        "../test/test1.txt", optionflags=flags, report=False, verbose=False
+        "../test/test1.txt", optionflags=flags, globs=globals(),report=False, verbose=False
     )
     doctest.testfile(
-        "../test/test2.txt", optionflags=flags, report=False, verbose=False
+        "../test/test2.txt", optionflags=flags, globs=globals(), report=False, verbose=False
     )
 
 
