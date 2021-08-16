@@ -6,11 +6,11 @@ import re
 import threading
 import urllib
 
-from .bus import Bus
-from .krn import find, kernel
-from .obj import Db, Default, Object
-from .tmr import Repeater
-from .thr import launch
+from ob.bus import Bus
+from ob.krn import find, kernel
+from ob.obj import Db, Default, Object
+from ob.tmr import Repeater
+from ob.thr import launch
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

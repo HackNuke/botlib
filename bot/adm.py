@@ -5,11 +5,11 @@
 import threading
 import time
 
-from .bus import Bus
-from .krn import kernel
-from .obj import Object, fmt
-from .thr import getname
-from .tms import elapsed
+from ob.bus import Bus
+from ob.krn import kernel
+from ob.obj import Object, fmt
+from ob.thr import getname
+from ob.tms import elapsed
 
 def __dir__():
     return ("flt", "thr", "upt")

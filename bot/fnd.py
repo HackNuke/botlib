@@ -4,9 +4,9 @@
 
 import time
 
-from .krn import find, kernel
-from .obj import Db, fmt, fntime, listfiles, getwd
-from .tms import elapsed 
+from ob.krn import find, kernel
+from ob.obj import Db, fmt, fntime, listfiles, getwd
+from ob.tms import elapsed 
 
 wd = getwd()
 

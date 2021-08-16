@@ -2,7 +2,7 @@
 
 "enter txt"
 
-from .obj import Object
+from ob.obj import Object
 
 
 class Log(Object):
