@@ -1,7 +1,6 @@
 # This file is placed in the Public Domain.
 
-"internet relay chat bot"
-
+import ob
 import os
 import queue
 import socket
@@ -15,7 +14,6 @@ from ob.bus import Bus
 from ob.evt import Event
 from ob.krn import find, kernel
 from ob.hdl import Handler
-from ob.obj import Db, Default, Object, fmt
 from ob.opt import Output
 from ob.thr import launch
 
@@ -45,7 +43,7 @@ def locked(l):
 
 saylock = _thread.allocate_lock()
 
-class Cfg(Default):
+class Cfg(ob.Default):
 
     cc = "!"
     channel = "#bot"
@@ -98,7 +96,7 @@ class IRC(Output, Handler):
         self.keeprunning = False
         self.outqueue = queue.Queue()
         self.speed = "slow"
-        self.state = Object()
+        self.state = ob.Object()
         self.state.needconnect = False
         self.state.error = ""
         self.state.last = 0
@@ -240,7 +238,7 @@ class IRC(Output, Handler):
         rawstr = rawstr.replace("\001", "")
         o = Event()
         o.rawstr = rawstr
-        o.orig = Object.__dorepr__(self)
+        o.orig = ob.Object.__dorepr__(self)
         o.command = ""
         o.arguments = []
         arguments = rawstr.split()
@@ -407,7 +405,7 @@ class DCC(Handler):
         e.type = "cmd"
         e.channel = self.origin
         e.origin = self.origin or "root@dcc"
-        e.orig = Object.__dorepr__(self)
+        e.orig = ob.Object.__dorepr__(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
         return e
@@ -418,7 +416,7 @@ class DCC(Handler):
     def poll(self):
         return str(self.sock.recv(512), "utf8")
 
-class User(Object):
+class User(ob.Object):
 
     def __init__(self, val=None):
         super().__init__()
@@ -427,9 +425,9 @@ class User(Object):
         if val:
             self.update(val)
 
-class Users(Object):
+class Users(ob.Object):
 
-    userhosts = Object()
+    userhosts = ob.Object()
 
     def allowed(self, origin, perm):
         perm = perm.upper()
@@ -450,7 +448,7 @@ class Users(Object):
                 pass
 
     def get_users(self, origin=""):
-        db = Db()
+        db = ob.Db()
         s = {"user": origin}
         return find("user", s)
 
@@ -532,7 +530,7 @@ def cfg(event):
     c.last()
     event.sets.delkeys(["p", "m"])
     if not event.sets:
-        event.reply(fmt(c, skip=["username", "realname"]))
+        event.reply(ob.fmt(c, skip=["username", "realname"]))
         return
     c.edit(event.sets)
     c.save()
@@ -542,7 +540,7 @@ def dlt(event):
     if not event.args:
         event.reply("dlt <username>")
         return
-    db = Db()
+    db = ob.Db()
     selector = {"user": event.args[0]}
     for fn, o in find("user", selector):
         o._deleted = True

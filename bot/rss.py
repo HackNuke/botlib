@@ -1,15 +1,13 @@
 # This file is placed in the Public Domain.
 
-"rich site syndicate"
-
+import ob
 import re
 import threading
 import urllib
 
 from ob.bus import Bus
 from ob.krn import find, kernel
-from ob.obj import Db, Default, Object
-from ob.tmr import Repeater
+from ob.tme import Repeater
 from ob.thr import launch
 
 from urllib.error import HTTPError, URLError
@@ -30,7 +28,7 @@ def init(k):
 k = kernel()
 
 
-class Cfg(Default):
+class Cfg(ob.Default):
     def __init__(self):
         super().__init__()
         self.dosave = False
@@ -38,24 +36,24 @@ class Cfg(Default):
         self.tinyurl = False
 
 
-class Feed(Default):
+class Feed(ob.Default):
 
     pass
 
 
-class Rss(Default):
+class Rss(ob.Default):
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
-class Seen(Default):
+class Seen(ob.Default):
     def __init__(self):
         super().__init__()
         self.urls = []
 
 
-class Fetcher(Default):
+class Fetcher(ob.Default):
 
     cfg = Cfg()
     seen = Seen()
@@ -114,7 +112,7 @@ class Fetcher(Default):
         return counter
 
     def run(self):
-        db = Db()
+        db = ob.Db()
         thrs = []
         for fn, o in find("rss"):
             thrs.append(launch(self.fetch, o))
@@ -129,6 +127,7 @@ class Fetcher(Default):
 
 
 def getfeed(url):
+    from ob import Object
     try:
         import feedparser
     except ModuleNotFoundError:
@@ -195,7 +194,7 @@ def dpl(event):
     if len(event.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
-    db = Db()
+    db = ob.Db()
     setter = {"display_list": event.args[1]}
     fn, o = db.lastmatch("rss", {"rss": event.args[0]})
     if o:
@@ -221,7 +220,7 @@ def rem(event):
     if not event.args:
         event.reply("rem <stringinurl>")
         return
-    db = Db()
+    db = ob.Db()
     selector = {"rss": event.args[0]}
     nr = 0
     got = []
@@ -238,7 +237,7 @@ def rss(event):
     if not event.args:
         event.reply("rss <url>")
         return
-    db = Db()
+    db = ob.Db()
     url = event.args[0]
     if "http" not in url:
         event.reply("%s is not an url" % url)

@@ -1,8 +1,6 @@
 # This file is in the Public Domain.
 
-"enter txt"
-
-from ob.obj import Object
+from ob import Object
 
 
 class Log(Object):

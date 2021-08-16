@@ -1,12 +1,10 @@
 # This file is placed in the Public Domain.
 
-"udp to irc relay"
-
+import ob
 import socket
 import time
 
 from ob.bus import Bus
-from ob.obj import Default, Object
 from ob.thr import launch
 
 
@@ -20,7 +18,7 @@ def init(k):
     return u
 
 
-class Cfg(Default):
+class Cfg(ob.Default):
 
     host = "localhost"
     port = 5500
@@ -31,7 +29,7 @@ class Cfg(Default):
         self.port = Cfg.port
 
 
-class UDP(Object):
+class UDP(ob.Object):
     def __init__(self):
         super().__init__()
         self.stopped = False

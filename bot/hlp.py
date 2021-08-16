@@ -1,14 +1,10 @@
 # This file is placed in the Public Domain.
 
-"shows help text"
+import ob
 
-from ob.obj import Object
-
-#:
 cmds = "cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,req,rss,slg,tdo,thr,upt"
 
-#:
-h = Object()
+h = ob.Object()
 h.cfg = "cfg <key=val> sets a irc configuration value, no val shows the config content"
 h.cmd = "cmd shows list of commands"
 h.dlt = "dlt <userhost> deletes a user"
@@ -29,7 +25,6 @@ h.thr = "lists running threads"
 h.upt = "display uptime"
 
 def hlp(event):
-    "hlp <command> shows help text"
     if not event.rest:
         event.reply("hlp <%s>" % "|".join(h.keys()))
         return

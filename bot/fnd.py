@@ -1,14 +1,12 @@
 # This file is placed in the Public Domain.
 
-"fnd locates objects"
-
+import ob
 import time
 
 from ob.krn import find, kernel
-from ob.obj import Db, fmt, fntime, listfiles, getwd
-from ob.tms import elapsed 
+from ob.tme import elapsed 
 
-wd = getwd()
+wd = ob.getwd()
 
 def __dir__():
     return ("fnd",)
@@ -35,7 +33,7 @@ def fnd(event):
 
     """
     if not event.args:
-        fls = listfiles(wd)
+        fls = ob.listfiles(wd)
         if fls:
             event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
         return
@@ -48,12 +46,11 @@ def fnd(event):
         pass
     got = False
     k = kernel()
-    db = Db()
     for fn, o in find(otype, event.gets, event.index, event.timed):
         nr += 1
-        txt = "%s %s" % (str(nr), fmt(o, args or o.keys(), skip=event.skip.keys()))
+        txt = "%s %s" % (str(nr), ob.fmt(o, args or o.keys(), skip=event.skip.keys()))
         if "t" in event.opts:
-            txt = txt + " %s" % (elapsed(time.time() - fntime(fn)))
+            txt = txt + " %s" % (elapsed(time.time() - ob.fntime(fn)))
         got = True
         event.reply(txt)
     if not got:

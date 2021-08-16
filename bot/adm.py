@@ -2,14 +2,14 @@
 
 "administrator"
 
+import ob
 import threading
 import time
 
 from ob.bus import Bus
 from ob.krn import kernel
-from ob.obj import Object, fmt
 from ob.thr import getname
-from ob.tms import elapsed
+from ob.tme import elapsed
 
 def __dir__():
     return ("flt", "thr", "upt")
@@ -23,7 +23,7 @@ def flt(event):
     "flt shows a list of bots"
     try:
         index = int(event.args[0])
-        event.reply(fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
+        event.reply(ob.fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
         return
     except (TypeError, IndexError):
         pass
@@ -37,7 +37,7 @@ def thr(event):
     for thr in sorted(threading.enumerate(), key=lambda x: x.getName()):
         if str(thr).startswith("<_"):
             continue
-        o = Object()
+        o = ob.Object()
         o.update(vars(thr))
         if o.get("sleep", None):
             up = o.sleep - int(time.time() - o.state.latest)
