@@ -52,12 +52,10 @@ class Console(CLI):
         return input("> ")
 
 
-c = CLI()
+clt = CLI()
 k = Kernel()
 
-
 import bot.all
-
 
 def wrap(func):
     fd = sys.stdin.fileno()
@@ -78,13 +76,14 @@ def main():
     k.boot()
     k.scan("bot")
     k.add(ver)
-    if k.cfg.txt:
+    if "txt" in k.cfg and k.cfg.txt:
         return k.cmd(k.cfg.otxt)
-    if k.opts("c") or k.cfg.m:
+    if k.opts("c") or ("m" in k.cfg and k.cfg.m):
         k.start()
         csl = Console()
         csl.start()
-        k.init(k.cfg.m)
+        if "m" in k.cfg and k.cfg.m:
+            k.init(k.cfg.m)
         k.wait()
 
 wrap(main)

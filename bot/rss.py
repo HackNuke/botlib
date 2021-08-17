@@ -27,7 +27,7 @@ def init(k):
 k = kernel()
 
 
-class Cfg(ob.Default):
+class Cfg(ob.Object):
     def __init__(self):
         super().__init__()
         self.dosave = False
@@ -35,24 +35,29 @@ class Cfg(ob.Default):
         self.tinyurl = False
 
 
-class Feed(ob.Default):
+class Feed(ob.Object):
+
+    def __init__(self, *args, **kwargs):
+        if val is None:
+            val = {}
+        super().__init__()
 
     pass
 
 
-class Rss(ob.Default):
+class Rss(ob.Object):
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
-class Seen(ob.Default):
+class Seen(ob.Object):
     def __init__(self):
         super().__init__()
         self.urls = []
 
 
-class Fetcher(ob.Default):
+class Fetcher(ob.Object):
 
     cfg = Cfg()
     seen = Seen()

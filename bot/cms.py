@@ -1,9 +1,7 @@
 # This is file is placed in Public Domain.
 
-"cms shows list of commands"
-
-from ob.krn import kernel
+import ob
 
 def cmd(event):
-    k = kernel()
+    k = ob.krn.kernel()
     event.reply(",".join(sorted(k.cmds)))

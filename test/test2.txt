@@ -2,7 +2,7 @@
 
 >>> import ob
 >>> ob.wd = ".test"
->>> c = ob.krn.client()
+>>> clt = ob.krn.client()
 >>> k = ob.krn.kernel()
 >>> k.cmd("cfg")
 cc=! channel=#bot nick=bot port=6667 server=localhost

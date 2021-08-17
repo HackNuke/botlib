@@ -1,36 +1,24 @@
 # This file is in the Public Domain.
 
-"administrator"
-
 import ob
 import threading
 import time
 
-from ob.bus import Bus
-from ob.krn import kernel
-from ob.tms import elapsed
-
-def __dir__():
-    return ("flt", "thr", "upt")
-
-
-k = kernel()
+k = ob.krn.kernel()
 starttime = time.time()
 
 
 def flt(event):
-    "flt shows a list of bots"
     try:
         index = int(event.args[0])
-        event.reply(ob.fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
+        event.reply(ob.fmt(ob.bus.Bus.objs[index], skip=["queue", "ready", "iqueue"]))
         return
     except (TypeError, IndexError):
         pass
-    event.reply(" | ".join([ob.getname(o) for o in Bus.objs]))
+    event.reply(" | ".join([ob.thr.getname(o) for o in Bus.objs]))
 
 
 def thr(event):
-    "thr shows running threads"
     psformat = "%s %s"
     result = []
     for thr in sorted(threading.enumerate(), key=lambda x: x.getName()):
@@ -38,7 +26,7 @@ def thr(event):
             continue
         o = ob.Object()
         o.update(vars(thr))
-        if o.get("sleep", None):
+        if ob.get(o, "sleep", None):
             up = o.sleep - int(time.time() - o.state.latest)
         else:
             up = int(time.time() - starttime)
@@ -49,11 +37,10 @@ def thr(event):
             result.append((up, thrname))
     res = []
     for up, txt in sorted(result, key=lambda x: x[0]):
-        res.append("%s(%s)" % (txt, elapsed(up)))
+        res.append("%s(%s)" % (txt, ob.tms.elapsed(up)))
     if res:
         event.reply(" ".join(res))
 
 
 def upt(event):
-    "upt shows the uptime"
-    event.reply("uptime is %s" % elapsed(time.time() - starttime))
+    event.reply("uptime is %s" % ob.tms.elapsed(time.time() - starttime))

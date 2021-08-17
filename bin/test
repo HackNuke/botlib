@@ -31,10 +31,10 @@ class Test(ob.hdl.Client):
 
     def raw(self, txt):
         if k.opts("v"):
-            cprint(txt)
+            print(txt)
 
 
-c = Test()
+clt = Test()
 k = Kernel()
 
 
@@ -70,6 +70,9 @@ def main():
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
+    g = globals()
+    print(dir(g))
+    #print(globals())
     doctest.testfile(
         "../test/test1.txt", optionflags=flags, globs=globals(),report=False, verbose=False
     )

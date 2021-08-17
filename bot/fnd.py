@@ -6,14 +6,12 @@ import time
 from ob.krn import find, kernel
 from ob.tms import elapsed 
 
-wd = ob.getwd()
-
 def __dir__():
     return ("fnd",)
 
 def fnd(event):
     if not event.args:
-        fls = ob.listfiles(wd)
+        fls = ob.listfiles(ob.wd)
         if fls:
             event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
         return

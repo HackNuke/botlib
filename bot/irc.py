@@ -42,7 +42,7 @@ def locked(l):
 
 saylock = _thread.allocate_lock()
 
-class Cfg(ob.Default):
+class Cfg(ob.Object):
 
     cc = "!"
     channel = "#bot"
@@ -53,7 +53,7 @@ class Cfg(ob.Default):
     username = "botlib"
     users = False
 
-    def __init__(self, val=None):
+    def __init__(self, *args,**kwargs):
         super().__init__()
         self.cc = Cfg.cc
         self.channel = Cfg.channel
@@ -63,8 +63,8 @@ class Cfg(ob.Default):
         self.realname = Cfg.realname
         self.username = Cfg.username
         self.users = Cfg.users
-        if val:
-            self.update(val)
+        if args:
+            self.update(args[0])
 
 class Event(Event):
 

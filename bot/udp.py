@@ -17,7 +17,7 @@ def init(k):
     return u
 
 
-class Cfg(ob.Default):
+class Cfg(ob.Object):
 
     host = "localhost"
     port = 5500
