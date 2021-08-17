@@ -1,11 +1,11 @@
 # This file is placed in the Public Domain.
 
+import ob
 import unittest
 
-from bot.obj import Default
-from bot.prs import parse_txt
+from ob.prs import parse_txt
 
-cfg = Default()
+cfg = ob.Default()
 
 
 class Test_Cfg(unittest.TestCase):

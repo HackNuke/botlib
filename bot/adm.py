@@ -8,8 +8,7 @@ import time
 
 from ob.bus import Bus
 from ob.krn import kernel
-from ob.thr import getname
-from ob.tme import elapsed
+from ob.tms import elapsed
 
 def __dir__():
     return ("flt", "thr", "upt")
@@ -27,7 +26,7 @@ def flt(event):
         return
     except (TypeError, IndexError):
         pass
-    event.reply(" | ".join([getname(o) for o in Bus.objs]))
+    event.reply(" | ".join([ob.getname(o) for o in Bus.objs]))
 
 
 def thr(event):

@@ -4,7 +4,7 @@ import ob
 import time
 
 from ob.krn import find, kernel
-from ob.tme import elapsed 
+from ob.tms import elapsed 
 
 wd = ob.getwd()
 
@@ -12,26 +12,6 @@ def __dir__():
     return ("fnd",)
 
 def fnd(event):
-    """
-    scans the datastore for matching objects
-
-    :usage: fnd [<type>] [<key==val>|<key==val>]
-
-    :param type: type of object
-    :type type:  string
-
-    without type a list of available types is shown
-
-    :param key: key==value pair to match objects with
-    :type key: string
-
-    without a key==val all the objects of a type are returned
-
-    :example: 1) fnd
-    :example: 2) fnd cfg
-    :example: 3) fnd cfg server==localhost
-
-    """
     if not event.args:
         fls = ob.listfiles(wd)
         if fls:

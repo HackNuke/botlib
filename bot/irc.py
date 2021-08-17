@@ -15,14 +15,13 @@ from ob.evt import Event
 from ob.krn import find, kernel
 from ob.hdl import Handler
 from ob.opt import Output
-from ob.thr import launch
 
 def __dir__():
     return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre", "nck", "ops")
 
 def init(k):
     i = IRC()
-    launch(i.start)
+    ob.launch(i.start)
     return i
 
 k = kernel()
@@ -347,7 +346,7 @@ class IRC(Output, Handler):
         Output.start(self)
         Bus.add(self)
         if not self.keeprunning:
-            launch(self.keep)
+            ob.launch(self.keep)
         self.wait()
 
     def stop(self):
@@ -505,7 +504,7 @@ def PRIVMSG(clt, obj):
             return
         try:
             dcc = DCC()
-            launch(dcc.connect, obj)
+            ob.launch(dcc.connect, obj)
             return
         except ConnectionError as ex:
             return

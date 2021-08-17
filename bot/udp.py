@@ -5,7 +5,6 @@ import socket
 import time
 
 from ob.bus import Bus
-from ob.thr import launch
 
 
 def __dir__():
@@ -59,7 +58,7 @@ class UDP(ob.Object):
 
     def start(self):
         self.cfg.last()
-        launch(self.server)
+        ob.launch(self.server)
 
     def stop(self):
         self.stopped = True

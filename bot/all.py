@@ -10,3 +10,4 @@ import bot.irc
 import bot.log
 import bot.rss
 import bot.udp
+import bot.ver

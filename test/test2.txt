@@ -1,27 +1,28 @@
 # commands
 
->>> wd = ".test"
->>> from bot.krn import run, kernel
->>> k = kernel()
->>> run("cfg", print, "bot")
+>>> import ob
+>>> ob.wd = ".test"
+>>> c = ob.krn.client()
+>>> k = ob.krn.kernel()
+>>> k.cmd("cfg")
 cc=! channel=#bot nick=bot port=6667 server=localhost
->>> run("dlt", print, "bot")
+>>> k.cmd("dlt")
 dlt <username>
->>> run("flt", print, "bot")
+>>> k.cmd("flt")
 Out
->>> run("fnd", print, "bot")
+>>> k.cmd("fnd")
 bus,command,error,dispatcher,handler,loop,cfg,dcc,event,irc,user,users,cfg,client,kernel,test,log,db,default,list,object,rss
->>> run("met", print, "bot")
+>>> k.cmd("met")
 met <userhost>
->>> run("mre", print, "bot")
+>>> k.cmd("mre")
 channel is not set.
->>> run("nck", print, "bot")
->>> run("ops", print, "bot")
->>> run("pwd", print, "bot")
+>>> k.cmd("nck")
+>>> k.cmd("ops")
+>>> k.cmd("pwd")
 pwd <nick> <password>
->>> run("thr", print, "bot")
-MyTest.loop(0s) Runtime.loop(0s)
->>> run("upt", print, "bot")
+>>> k.cmd("thr")
+Runtime.loop(0s) Test.loop(0s)
+>>> k.cmd("upt")
 uptime is ...s
->>> run("cmd", print, "bot")
+>>> k.cmd("cmd")
 cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,rss,thr,upt,ver

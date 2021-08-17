@@ -1,46 +1,75 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-__version__ = 127
+__version__ = 122
 
 import os, sys ; sys.path.insert(0, os.getcwd())
 
-import atexit
+import ob
 import os
 import readline
 import sys
 import termios
-import bot.all
+import time
 
-wd = os.path.expanduser("~/.bot")
+from bot.ver import __version__
 
-from bot.krn import Kernel, Client, kernel
-from trm import cprint, wrap
+ob.wd = os.path.expanduser("~/.bot")
 
-class Runtime(Kernel):
 
+class Kernel(ob.krn.Runtime):
     def error(self, txt):
-        cprint(txt)
+        print(txt)
 
     def log(self, txt):
         if self.opts("v"):
-            cprint(txt)
+            print(txt)
+            sys.stdout.flush()
 
 
-class CLI(Client):
-
-    def raw(self, txt):
-        cprint(txt)
-
-class Console(CLI):
-    def handle(self, e):
+class CLI(ob.hdl.Client):
+    def handle(self, clt, e):
         k.put(e)
         e.wait()
 
     def poll(self):
         return input("> ")
 
-k = Runtime()
+    def raw(self, txt):
+        print(txt)
+
+    def say(self, channel, txt):
+        self.raw(txt)
+        sys.stdout.flush()
+
+
+class Console(CLI):
+    def handle(self, clt, e):
+        k.put(e)
+        e.wait()
+
+    def poll(self):
+        return input("> ")
+
+
+c = CLI()
+k = Kernel()
+
+
+import bot.all
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except KeyboardInterrupt:
+        pass
+    except PermissionError as ex:
+        print(str(ex))
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 def ver(event):
     event.reply("BOT %s" % __version__)
@@ -50,8 +79,7 @@ def main():
     k.scan("bot")
     k.add(ver)
     if k.cfg.txt:
-        c = CLI()
-        return c.cmd(k.cfg.otxt)
+        return k.cmd(k.cfg.otxt)
     if k.opts("c") or k.cfg.m:
         k.start()
         csl = Console()

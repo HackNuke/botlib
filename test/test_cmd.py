@@ -1,15 +1,12 @@
 # This file is placed in the Public Domain.
 
+import ob
 import unittest
 
-from bot.bus import Bus
-from bot.obj import Object
-from bot.krn import kernel
-
 events = []
-k = kernel()
+k = ob.krn.kernel()
 
-param = Object()
+param = ob.Object()
 param.add = ["test@shell", "bart", ""]
 param.cfg = ["cfg server=localhost", "cfg", ""]
 param.dne = ["test4", ""]
@@ -31,7 +28,7 @@ param.tdo = ["test4", ""]
 
 class Test_Commands(unittest.TestCase):
     def test_commands(self):
-        c = Bus.first()
+        c = ob.bus.Bus.first()
         l = list(k.cmds)
         for cmd in l:
             for ex in getattr(param, cmd, [""]):

@@ -7,8 +7,7 @@ import urllib
 
 from ob.bus import Bus
 from ob.krn import find, kernel
-from ob.tme import Repeater
-from ob.thr import launch
+from ob.tms import Repeater
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -21,7 +20,7 @@ def __dir__():
 
 def init(k):
     f = Fetcher()
-    launch(f.start)
+    ob.launch(f.start)
     return f
 
 
@@ -115,7 +114,7 @@ class Fetcher(ob.Default):
         db = ob.Db()
         thrs = []
         for fn, o in find("rss"):
-            thrs.append(launch(self.fetch, o))
+            thrs.append(ob.launch(self.fetch, o))
         return thrs
 
     def start(self, repeat=True):
