@@ -208,7 +208,7 @@ class IRC(Output, Handler):
         for channel in self.channels:
             self.command("JOIN", channel)
 
-    def handle(self, e):
+    def handle(self, clt, e):
         self.dispatch(e)
 
     def keep(self):
