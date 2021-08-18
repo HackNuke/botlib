@@ -21,7 +21,7 @@ def __dir__():
 
 def init(k):
     i = IRC()
-    ob.launch(i.start)
+    ob.thr.launch(i.start)
     return i
 
 k = kernel()
@@ -64,7 +64,7 @@ class Cfg(ob.Object):
         self.username = Cfg.username
         self.users = Cfg.users
         if args:
-            self.update(args[0])
+            ob.update(self, args[0])
 
 class Event(Event):
 
@@ -136,7 +136,7 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
-        if self.cfg.password:
+        if "password" in self.cfg and self.cfg.password:
             port = 6697
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
@@ -237,7 +237,7 @@ class IRC(Output, Handler):
         rawstr = rawstr.replace("\001", "")
         o = Event()
         o.rawstr = rawstr
-        o.orig = ob.Object.__dorepr__(self)
+        o.orig = ob.oqn(self)
         o.command = ""
         o.arguments = []
         arguments = rawstr.split()
@@ -322,7 +322,7 @@ class IRC(Output, Handler):
         self.state.lastline = splitted[-1]
 
     def start(self):
-        self.cfg.last()
+        ob.last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         if not self.cfg.nick:
@@ -346,7 +346,7 @@ class IRC(Output, Handler):
         Output.start(self)
         Bus.add(self)
         if not self.keeprunning:
-            ob.launch(self.keep)
+            ob.thr.launch(self.keep)
         self.wait()
 
     def stop(self):
@@ -404,16 +404,19 @@ class DCC(Handler):
         e.type = "cmd"
         e.channel = self.origin
         e.origin = self.origin or "root@dcc"
-        e.orig = ob.Object.__dorepr__(self)
+        e.orig = ob.oqn(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
         return e
 
-    def handle(self, e):
+    def handle(self, ctl, e):
         k.dispatch(e)
 
     def poll(self):
         return str(self.sock.recv(512), "utf8")
+
+    def say(self, channel, txt):
+        self.raw(txt)
 
 class User(ob.Object):
 
@@ -422,7 +425,7 @@ class User(ob.Object):
         self.user = ""
         self.perms = []
         if val:
-            self.update(val)
+            ob.update(self, val)
 
 class Users(ob.Object):
 
@@ -504,7 +507,7 @@ def PRIVMSG(clt, obj):
             return
         try:
             dcc = DCC()
-            ob.launch(dcc.connect, obj)
+            ob.thr.launch(dcc.connect, obj)
             return
         except ConnectionError as ex:
             return
@@ -526,8 +529,8 @@ def QUIT(clt, obj):
 
 def cfg(event):
     c = Cfg()
-    c.last()
-    event.sets.delkeys(["p", "m"])
+    ob.last(c)
+    ob.delkeys(event.sets, ["p", "m"])
     if not event.sets:
         event.reply(ob.fmt(c, skip=["username", "realname"]))
         return

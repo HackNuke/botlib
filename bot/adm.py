@@ -25,7 +25,7 @@ def thr(event):
         if str(thr).startswith("<_"):
             continue
         o = ob.Object()
-        o.update(vars(thr))
+        ob.update(o, vars(thr))
         if ob.get(o, "sleep", None):
             up = o.sleep - int(time.time() - o.state.latest)
         else:

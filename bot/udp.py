@@ -58,7 +58,7 @@ class UDP(ob.Object):
 
     def start(self):
         self.cfg.last()
-        ob.launch(self.server)
+        ob.thr.launch(self.server)
 
     def stop(self):
         self.stopped = True

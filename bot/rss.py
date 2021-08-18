@@ -20,7 +20,7 @@ def __dir__():
 
 def init(k):
     f = Fetcher()
-    ob.launch(f.start)
+    ob.thr.launch(f.start)
     return f
 
 
@@ -95,7 +95,7 @@ class Fetcher(ob.Object):
         objs = []
         for o in reversed(list(getfeed(feed.rss))):
             f = Feed(dict(o))
-            f.update(feed)
+            ob.update(f, feed)
             u = urllib.parse.urlparse(f.link)
             if u.path and not u.path == "/":
                 url = "%s://%s/%s" % (u.scheme, u.netloc, u.path)
@@ -119,7 +119,7 @@ class Fetcher(ob.Object):
         db = ob.Db()
         thrs = []
         for fn, o in find("rss"):
-            thrs.append(ob.launch(self.fetch, o))
+            thrs.append(ob.thr.launch(self.fetch, o))
         return thrs
 
     def start(self, repeat=True):
