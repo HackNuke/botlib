@@ -26,9 +26,9 @@ def fnd(event):
     k = kernel()
     for fn, o in find(otype, event.gets, event.index, event.timed):
         nr += 1
-        txt = "%s %s" % (str(nr), ob.fmt(o, args or o.keys(), skip=event.skip.keys()))
+        txt = "%s %s" % (str(nr), ob.fmt(o, args or ob.keys(o), skip=ob.keys(event.skip)))
         if "t" in event.opts:
-            txt = txt + " %s" % (elapsed(time.time() - ob.fntime(fn)))
+            txt = txt + " %s" % (ob.tms.elapsed(time.time() - ob.fntime(fn)))
         got = True
         event.reply(txt)
     if not got:

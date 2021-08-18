@@ -26,6 +26,6 @@ h.upt = "display uptime"
 
 def hlp(event):
     if not event.rest:
-        event.reply("hlp <%s>" % "|".join(h.keys()))
+        event.reply("hlp <%s>" % "|".join(ob.keys(h)))
         return
-    event.reply(h.get(event.args[0], None) or "no help found")
+    event.reply(ob.get(h, event.args[0], None) or "no help found")

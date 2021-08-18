@@ -534,8 +534,8 @@ def cfg(event):
     if not event.sets:
         event.reply(ob.fmt(c, skip=["username", "realname"]))
         return
-    c.edit(event.sets)
-    c.save()
+    ob.edit(c, event.sets)
+    ob.save(c)
     event.reply("ok")
 
 def dlt(event):
@@ -546,7 +546,7 @@ def dlt(event):
     selector = {"user": event.args[0]}
     for fn, o in find("user", selector):
         o._deleted = True
-        o.save()
+        ob.save(o)
         event.reply("ok")
         break
 
@@ -557,7 +557,7 @@ def met(event):
     user = User()
     user.user = event.rest
     user.perms = ["USER"]
-    user.save()
+    ob.save(user)
     event.reply("ok")
 
 
@@ -580,7 +580,7 @@ def nck(event):
     if type(bot) == IRC:
         bot.command("NICK", event.rest)
         bot.cfg.nick = event.rest
-        bot.cfg.save()
+        ob.save(bot.cfg)
 
 
 def ops(event):

@@ -5,9 +5,6 @@ import re
 import threading
 import urllib
 
-from ob.bus import Bus
-from ob.krn import find, kernel
-from ob.tms import Repeater
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -24,7 +21,7 @@ def init(k):
     return f
 
 
-k = kernel()
+k = ob.krn.kernel()
 
 
 class Cfg(ob.Object):
@@ -80,7 +77,7 @@ class Fetcher(ob.Object):
         for key in dl:
             if not key:
                 continue
-            data = o.get(key, None)
+            data = ob.get(o, key, None)
             if not data:
                 continue
             data = data.replace("\n", " ")
@@ -107,26 +104,26 @@ class Fetcher(ob.Object):
             counter += 1
             objs.append(f)
             if self.cfg.dosave:
-                f.save()
+                ob.save(f)
         if objs:
-            Fetcher.seen.save()
+            ob.save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
-            Bus.announce(txt)
+            ob.bus.Bus.announce(txt)
         return counter
 
     def run(self):
         db = ob.Db()
         thrs = []
-        for fn, o in find("rss"):
+        for fn, o in ob.krn.find("rss"):
             thrs.append(ob.thr.launch(self.fetch, o))
         return thrs
 
     def start(self, repeat=True):
-        Fetcher.cfg.last()
-        Fetcher.seen.last()
+        ob.last(Fetcher.cfg)
+        ob.last(Fetcher.seen)
         if repeat:
-            repeater = Repeater(300.0, self.run)
+            repeater = ob.tms.Repeater(300.0, self.run)
             repeater.start()
 
 
@@ -202,8 +199,8 @@ def dpl(event):
     setter = {"display_list": event.args[1]}
     fn, o = db.lastmatch("rss", {"rss": event.args[0]})
     if o:
-        o.edit(setter)
-        o.save()
+        ob.edit(o, setter)
+        ob.save(o)
         event.reply("ok")
 
 
@@ -233,7 +230,7 @@ def rem(event):
         o._deleted = True
         got.append(o)
     for o in got:
-        o.save()
+        ob.save(o)
     event.reply("ok")
 
 
@@ -251,5 +248,5 @@ def rss(event):
         return
     o = Rss()
     o.rss = event.args[0]
-    o.save()
+    ob.save(o)
     event.reply("ok")
