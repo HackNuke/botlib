@@ -34,11 +34,6 @@ class Cfg(ob.Object):
 
 class Feed(ob.Object):
 
-    def __init__(self, *args, **kwargs):
-        if val is None:
-            val = {}
-        super().__init__()
-
     pass
 
 
@@ -225,7 +220,7 @@ def rem(event):
     selector = {"rss": event.args[0]}
     nr = 0
     got = []
-    for fn, o in find("rss", selector):
+    for fn, o in ob.krn.find("rss", selector):
         nr += 1
         o._deleted = True
         got.append(o)
@@ -243,7 +238,7 @@ def rss(event):
     if "http" not in url:
         event.reply("%s is not an url" % url)
         return
-    res = list(find("rss", {"rss": url}))
+    res = list(ob.krn.find("rss", {"rss": url}))
     if res:
         return
     o = Rss()
