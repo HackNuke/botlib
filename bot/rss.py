@@ -1,30 +1,32 @@
 # This file is placed in the Public Domain.
 
-import ob
 import re
 import threading
 import urllib
 
+from ob import Db, Default, Object, edit, find, get, getmain, last, save, update
 
+from ob.bus import Bus
+from ob.thr import launch
+from ob.tms import Repeater
+ 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 from urllib.request import Request, urlopen
 
 
 def __dir__():
-    return ("Cfg", "Feed", "Rss", "Seen", "Fetcher", "dpl", "ftc", "init", "rem", "rss")
+    return ("init", "Cfg", "Feed", "Rss", "Seen", "Fetcher", "dpl", "ftc", "rem", "rss")
 
 
 def init(k):
     f = Fetcher()
-    ob.thr.launch(f.start)
+    launch(f.start)
     return f
 
 
-k = ob.krn.kernel()
+class Cfg(Default):
 
-
-class Cfg(ob.Object):
     def __init__(self):
         super().__init__()
         self.dosave = False
@@ -32,24 +34,26 @@ class Cfg(ob.Object):
         self.tinyurl = False
 
 
-class Feed(ob.Object):
+class Feed(Object):
 
     pass
 
 
-class Rss(ob.Object):
+class Rss(Object):
+
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
-class Seen(ob.Object):
+class Seen(Object):
+
     def __init__(self):
         super().__init__()
         self.urls = []
 
 
-class Fetcher(ob.Object):
+class Fetcher(Object):
 
     cfg = Cfg()
     seen = Seen()
@@ -72,7 +76,7 @@ class Fetcher(ob.Object):
         for key in dl:
             if not key:
                 continue
-            data = ob.get(o, key, None)
+            data = get(o, key, None)
             if not data:
                 continue
             data = data.replace("\n", " ")
@@ -87,7 +91,7 @@ class Fetcher(ob.Object):
         objs = []
         for o in reversed(list(getfeed(feed.rss))):
             f = Feed(dict(o))
-            ob.update(f, feed)
+            update(f, feed)
             u = urllib.parse.urlparse(f.link)
             if u.path and not u.path == "/":
                 url = "%s://%s/%s" % (u.scheme, u.netloc, u.path)
@@ -99,31 +103,30 @@ class Fetcher(ob.Object):
             counter += 1
             objs.append(f)
             if self.cfg.dosave:
-                ob.save(f)
+                save(f)
         if objs:
-            ob.save(Fetcher.seen)
+            save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
-            ob.bus.Bus.announce(txt)
+            Bus.announce(txt)
         return counter
 
     def run(self):
-        db = ob.Db()
+        db = Db()
         thrs = []
-        for fn, o in ob.krn.find("rss"):
-            thrs.append(ob.thr.launch(self.fetch, o))
+        for fn, o in find("rss"):
+            thrs.append(launch(self.fetch, o))
         return thrs
 
     def start(self, repeat=True):
-        ob.last(Fetcher.cfg)
-        ob.last(Fetcher.seen)
+        last(Fetcher.cfg)
+        last(Fetcher.seen)
         if repeat:
-            repeater = ob.tms.Repeater(300.0, self.run)
+            repeater = Repeater(300.0, self.run)
             repeater.start()
 
 
 def getfeed(url):
-    from ob import Object
     try:
         import feedparser
     except ModuleNotFoundError:
@@ -142,6 +145,7 @@ def getfeed(url):
 
 
 def gettinyurl(url):
+    k = getmain("k")
     if k.cfg.debug:
         return []
     postarray = [
@@ -160,6 +164,7 @@ def gettinyurl(url):
 
 
 def geturl(url):
+    k = getmain("k")
     if k.cfg.debug:
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
@@ -177,7 +182,6 @@ def striphtml(text):
 
 def unescape(text):
     import html.parser
-
     txt = re.sub(r"\s+", " ", text)
     return html.unescape(txt)
 
@@ -190,12 +194,12 @@ def dpl(event):
     if len(event.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
-    db = ob.Db()
+    db = Db()
     setter = {"display_list": event.args[1]}
     fn, o = db.lastmatch("rss", {"rss": event.args[0]})
     if o:
-        ob.edit(o, setter)
-        ob.save(o)
+        edit(o, setter)
+        save(o)
         event.reply("ok")
 
 
@@ -216,16 +220,16 @@ def rem(event):
     if not event.args:
         event.reply("rem <stringinurl>")
         return
-    db = ob.Db()
+    db = Db()
     selector = {"rss": event.args[0]}
     nr = 0
     got = []
-    for fn, o in ob.krn.find("rss", selector):
+    for fn, o in find("rss", selector):
         nr += 1
         o._deleted = True
         got.append(o)
     for o in got:
-        ob.save(o)
+        save(o)
     event.reply("ok")
 
 
@@ -233,15 +237,15 @@ def rss(event):
     if not event.args:
         event.reply("rss <url>")
         return
-    db = ob.Db()
+    db = Db()
     url = event.args[0]
     if "http" not in url:
         event.reply("%s is not an url" % url)
         return
-    res = list(ob.krn.find("rss", {"rss": url}))
+    res = list(find("rss", {"rss": url}))
     if res:
         return
     o = Rss()
     o.rss = event.args[0]
-    ob.save(o)
+    save(o)
     event.reply("ok")

@@ -1,9 +1,8 @@
 # This file is placed in the Public Domain.
 
-import ob
 import time
 
-from ob.krn import find, kernel
+from ob import fmt, find, fntime, getname, getwd, keys, listfiles
 from ob.tms import elapsed 
 
 def __dir__():
@@ -11,9 +10,9 @@ def __dir__():
 
 def fnd(event):
     if not event.args:
-        fls = ob.listfiles(ob.wd)
+        fls = listfiles(getwd())
         if fls:
-            event.reply(",".join([x.split(".")[-1].lower() for x in fls]))
+            event.reply(",".join(sorted({x.split(".")[-1].lower() for x in fls})))
         return
     otype = event.args[0]
     nr = -1
@@ -23,12 +22,11 @@ def fnd(event):
     except IndexError:
         pass
     got = False
-    k = kernel()
     for fn, o in find(otype, event.gets, event.index, event.timed):
         nr += 1
-        txt = "%s %s" % (str(nr), ob.fmt(o, args or ob.keys(o), skip=ob.keys(event.skip)))
+        txt = "%s %s" % (str(nr), fmt(o, args or keys(o), skip=keys(event.skip)))
         if "t" in event.opts:
-            txt = txt + " %s" % (ob.tms.elapsed(time.time() - ob.fntime(fn)))
+            txt = txt + " %s" % (elapsed(time.time() - fntime(fn)))
         got = True
         event.reply(txt)
     if not got:

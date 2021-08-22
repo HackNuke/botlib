@@ -1,19 +1,12 @@
 # This file is placed in the Public Domain.
 
-import ob
 import os
 import unittest
 
-from ob import Db, O, Object, gettype, getwd
+from obj import Db, Object, gettype, load, last, merge, oqn, save
 
-k = ob.krn.kernel()
-wd = getwd()
 
 class Test_Object(unittest.TestCase):
-
-    def test_O(self):
-        o = O()
-        self.assertEqual(type(o), O)
 
     def test_Object(self):
         o = Object()
@@ -29,7 +22,7 @@ class Test_Object(unittest.TestCase):
 
     def test_json(self):
         o = Object()
-        self.assertTrue("<ob.Object" in Object.__dorepr__(o))
+        self.assertTrue("<obj.Object" in oqn(o))
 
     def test_intern4(self):
         o = Object()
@@ -42,77 +35,77 @@ class Test_Object(unittest.TestCase):
     def test_final(self):
         o = Object()
         o.test = "bla"
-        o.last()
+        last(o)
         self.assertEqual(o.test, "bla")
 
     def test_stamp(self):
         o = Object()
-        o.save()
+        save(o)
         self.assertTrue(o.__stp__)
 
     def test_uuid(self):
         o = Object()
-        p = o.save()
+        p = save(o)
         uuid1 = p.split(os.sep)[1]
-        p = o.save()
+        p = save(o)
         uuid2 = p.split(os.sep)[1]
         self.assertEqual(uuid1, uuid2)
 
     def test_attribute(self):
         o = Object()
         o.bla = "test"
-        p = o.save()
+        p = save(o)
         oo = Object()
-        oo.load(p)
+        load(oo, p)
         self.assertEqual(oo.bla, "test")
 
     def test_changeattr(self):
         o = Object()
         o.bla = "test"
-        p = o.save()
+        p = save(o)
         oo = Object()
-        oo.load(p)
+        load(oo, p)
         oo.bla = "mekker"
-        pp = oo.save()
+        pp = save(oo)
         ooo = Object()
-        ooo.load(pp)
+        load(ooo, pp)
         self.assertEqual(ooo.bla, "mekker")
 
     def test_last(self):
         o = Object()
         o.bla = "test"
-        o.save()
+        save(o)
         oo = Object()
-        oo.last()
+        last(oo)
         self.assertEqual(oo.bla, "test")
 
     def test_last2(self):
         o = Object()
-        o.save()
+        save(o)
         uuid1 = o.__stp__.split(os.sep)[1]
-        o.last()
+        last(o)
         uuid2 = o.__stp__.split(os.sep)[1]
         self.assertEqual(uuid1, uuid2)
 
     def test_last3(self):
         o = Object()
-        o.last()
+        last(o)
         s = o.__stp__
         uuid1 = o.__stp__.split(os.sep)[1]
-        o.save()
+        save(o)
         uuid2 = o.__stp__.split(os.sep)[1]
         self.assertEqual(uuid1, uuid2)
 
     def test_lastest(self):
         o = Object()
         o.bla = "test"
-        o.save()
+        save(o)
         oo = Object()
-        p = oo.last()
+        p = last(oo)
         oo.bla = "mekker"
-        oo.save()
+        save(oo)
         ooo = Object()
-        p = ooo.last()
+        p = last(ooo)
         self.assertEqual(ooo.bla, "mekker")
 
     def test_merge(self):
@@ -126,7 +119,7 @@ class Test_Object(unittest.TestCase):
         oo.b = "1"
         oo.c = ["1"]
         oo.d = {"a": 1}
-        oo.merge(o)
+        merge(oo, o)
         self.assertEqual(o.c, ["1"])
 
     def test_nested(self):
@@ -134,7 +127,7 @@ class Test_Object(unittest.TestCase):
         o.o = Object()
         o.o.o = Object()
         o.o.o.test = "bla"
-        p = o.save()
+        p = save(o)
         oo = Object()
-        oo.load(p)
+        load(oo, p)
         self.assertEqual(o.o.o.test, "bla")

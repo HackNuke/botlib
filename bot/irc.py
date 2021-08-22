@@ -1,6 +1,5 @@
 # This file is placed in the Public Domain.
 
-import ob
 import os
 import queue
 import socket
@@ -10,21 +9,24 @@ import time
 import threading
 import _thread
 
+from ob import Db, Default, Object
+from ob import delkeys, edit, getmain, find, fmt, last, oqn, save, update
+
 from ob.bus import Bus
 from ob.evt import Event
-from ob.krn import find, kernel
 from ob.hdl import Handler
 from ob.opt import Output
+from ob.thr import launch
+
 
 def __dir__():
-    return ("Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "init", "locked", "met", "mre", "nck", "ops")
+    return ("init", "Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "locked", "met", "mre", "nck", "ops")
 
 def init(k):
     i = IRC()
-    ob.thr.launch(i.start)
+    i.start()
     return i
 
-k = kernel()
 
 def locked(l):
     def lockeddec(func, *args, **kwargs):
@@ -40,16 +42,18 @@ def locked(l):
         return lockedfunc
     return lockeddec
 
+
 saylock = _thread.allocate_lock()
 
-class Cfg(ob.Object):
+
+class Cfg(Default):
 
     cc = "!"
     channel = "#bot"
     nick = "bot"
     port = 6667
     server = "localhost"
-    realname = "python3 irc bot"
+    realname = "botlib"
     username = "botlib"
     users = False
 
@@ -64,11 +68,13 @@ class Cfg(ob.Object):
         self.username = Cfg.username
         self.users = Cfg.users
         if args:
-            ob.update(self, args[0])
+            update(self, args[0])
+
 
 class Event(Event):
 
     pass
+
 
 class TextWrap(textwrap.TextWrapper):
 
@@ -95,7 +101,7 @@ class IRC(Output, Handler):
         self.keeprunning = False
         self.outqueue = queue.Queue()
         self.speed = "slow"
-        self.state = ob.Object()
+        self.state = Object()
         self.state.needconnect = False
         self.state.error = ""
         self.state.last = 0
@@ -136,18 +142,16 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
-        if "password" in self.cfg and self.cfg.password:
-            port = 6697
+        if port == 6697:
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock = ctx.wrap_socket(sock) 
-            k.log("connect to %s:%s" % (server, port))
             self.sock.connect((server, port))
-            self.raw("CAP LS 302")
+            if self.cfg.password:
+                self.raw("CAP LS 302")
         else:
             addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
-            k.log("connect to %s:%s" % addr)
             self.sock = socket.create_connection(addr)
         os.set_inheritable(self.fileno(), os.O_RDWR)
         self.sock.setblocking(True)
@@ -184,7 +188,7 @@ class IRC(Output, Handler):
             self.state.pongcheck = False
         if cmd == "001":
             self.state.needconnect = False
-            if "servermodes" in dir(self.cfg):
+            if self.cfg.servermodes:
                 self.raw("MODE %s %s" % (self.cfg.nick, self.cfg.servermodes))
             self.zelf = e.args[-1]
             self.joinall()
@@ -196,6 +200,9 @@ class IRC(Output, Handler):
             nick = self.cfg.nick + "_"
             self.cfg.nick = nick
             self.raw("NICK %s" % self.cfg.nick)
+        k = getmain("k")
+        if k.cfg.verbose:
+            k.log(txt.rstrip())
         return e
 
     def fileno(self):
@@ -231,13 +238,12 @@ class IRC(Output, Handler):
         self.raw("USER %s %s %s :%s" % (self.cfg.username or "botlib", server, server, self.cfg.realname or "botlib"))
 
     def parsing(self, txt):
-        k.log(txt)
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
         o = Event()
         o.rawstr = rawstr
-        o.orig = ob.oqn(self)
+        o.orig = oqn(self)
         o.command = ""
         o.arguments = []
         arguments = rawstr.split()
@@ -296,10 +302,12 @@ class IRC(Output, Handler):
 
     def raw(self, txt):
         txt = txt.rstrip()
-        k.log(txt)
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
+        k = getmain("k")
+        if k.cfg.verbose:
+            k.log(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
         self.sock.send(txt)
@@ -322,18 +330,13 @@ class IRC(Output, Handler):
         self.state.lastline = splitted[-1]
 
     def start(self):
-        ob.last(self.cfg)
+        k = getmain("k")
+        last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
-        if not self.cfg.nick:
-            self.error("missing nick, use cfg nick=<nick>")
-            return
-        if not self.cfg.server:
-            self.error("missing server, use cfg server=<server>")
-            return
-        if not self.cfg.channel:
-            self.error("missing channel, use cfg channel=<channel>")
-            return
+        assert self.cfg.nick
+        assert self.cfg.server
+        assert self.cfg.channel
         self.stopped.clear()
         self.connected.clear()
         self.joined.clear()
@@ -346,7 +349,7 @@ class IRC(Output, Handler):
         Output.start(self)
         Bus.add(self)
         if not self.keeprunning:
-            ob.thr.launch(self.keep)
+            launch(self.keep)
         self.wait()
 
     def stop(self):
@@ -360,6 +363,7 @@ class IRC(Output, Handler):
 
     def wait(self):
         self.joined.wait()
+
 
 class DCC(Handler):
 
@@ -404,12 +408,13 @@ class DCC(Handler):
         e.type = "cmd"
         e.channel = self.origin
         e.origin = self.origin or "root@dcc"
-        e.orig = ob.oqn(self)
+        e.orig = oqn(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
         return e
 
     def handle(self, ctl, e):
+        k = getmain("k")
         k.dispatch(e)
 
     def poll(self):
@@ -418,18 +423,20 @@ class DCC(Handler):
     def say(self, channel, txt):
         self.raw(txt)
 
-class User(ob.Object):
+
+class User(Object):
 
     def __init__(self, val=None):
         super().__init__()
         self.user = ""
         self.perms = []
         if val:
-            ob.update(self, val)
+            update(self, val)
 
-class Users(ob.Object):
 
-    userhosts = ob.Object()
+class Users(Object):
+
+    userhosts = Object()
 
     def allowed(self, origin, perm):
         perm = perm.upper()
@@ -450,7 +457,7 @@ class Users(ob.Object):
                 pass
 
     def get_users(self, origin=""):
-        db = ob.Db()
+        db = Db()
         s = {"user": origin}
         return find("user", s)
 
@@ -468,6 +475,7 @@ class Users(ob.Object):
             user.save()
         return user
 
+
 def AUTH(clt, obj):
     clt.raw("AUTHENTICATE %s"% clt.cfg.password)
 
@@ -478,28 +486,36 @@ def CAP(clt, obj):
     else:
         clt.raw("CAP REQ :sasl")
 
+
 def h903(clt, obj):
     clt.raw("CAP END")
+
 
 def h904(clt, obj):
     clt.raw("CAP END")
 
+
 def ERROR(clt, obj):
     clt.state.nrerror += 1
     clt.state.error = obj.error
+    k = getmain("k")
     k.error(obj.error)
+
 
 def KILL(clt, obj):
     pass
 
+
 def LOG(clt, obj):
     pass
 
+
 def NOTICE(clt, obj):
-    k.log(obj.txt)
+    k = getmain("k")
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "botlib")
         clt.command("NOTICE", obj.channel, txt)
+
 
 def PRIVMSG(clt, obj):
     if obj.txt.startswith("DCC CHAT"):
@@ -507,7 +523,7 @@ def PRIVMSG(clt, obj):
             return
         try:
             dcc = DCC()
-            ob.thr.launch(dcc.connect, obj)
+            launch(dcc.connect, obj)
             return
         except ConnectionError as ex:
             return
@@ -518,37 +534,45 @@ def PRIVMSG(clt, obj):
             obj.txt = obj.txt[len(clt.cfg.nick)+1:]
         else:
             return
+        splitted = obj.txt.split()
+        splitted[0] = splitted[0].lower()
+        obj.txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         obj.type = "cmd"
+        k = getmain("k")
         k.dispatch(obj)
+
 
 def QUIT(clt, obj):
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
 
+
 def cfg(event):
     c = Cfg()
-    ob.last(c)
-    ob.delkeys(event.sets, ["p", "m"])
-    if not event.sets:
-        event.reply(ob.fmt(c, skip=["username", "realname"]))
+    last(c)
+    delkeys(event.sets, ["p", "m"])
+    if "sets" not in event or not event.sets:
+        event.reply(fmt(c, skip=["username", "realname"]))
         return
-    ob.edit(c, event.sets)
-    ob.save(c)
+    edit(c, event.sets)
+    save(c)
     event.reply("ok")
+
 
 def dlt(event):
     if not event.args:
         event.reply("dlt <username>")
         return
-    db = ob.Db()
+    db = Db()
     selector = {"user": event.args[0]}
     for fn, o in find("user", selector):
         o._deleted = True
-        ob.save(o)
+        save(o)
         event.reply("ok")
         break
+
 
 def met(event):
     if not event.args:
@@ -557,7 +581,7 @@ def met(event):
     user = User()
     user.user = event.rest
     user.perms = ["USER"]
-    ob.save(user)
+    save(user)
     event.reply("ok")
 
 
@@ -580,12 +604,12 @@ def nck(event):
     if type(bot) == IRC:
         bot.command("NICK", event.rest)
         bot.cfg.nick = event.rest
-        ob.save(bot.cfg)
+        save(bot.cfg)
 
 
 def ops(event):
     bot = event.bot()
-    if "cfg" in bot and bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
+    if bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
         return
     if type(bot) == IRC:
         bot.command("MODE", event.channel, "+o", event.nick)

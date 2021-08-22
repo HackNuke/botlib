@@ -3,9 +3,7 @@
 
 import os, sys ; sys.path.insert(0, os.getcwd())
 
-import atexit
 import doctest
-import ob
 import os
 import readline
 import shutil
@@ -13,33 +11,44 @@ import sys
 import termios
 import unittest
 
-from bot.ver import __version__
+from obj import save, values
 
+from obj.run import Client, Runtime
+from obj.tbl import Table
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 wd = ".test"
 
 
-class Kernel(ob.krn.Runtime):
+class Kernel(Runtime):
 
     def error(self, txt):
         print(txt)
         sys.stdout.flush()
 
 
-class Test(ob.hdl.Client):
+    def log(self, txt):
+        print(txt)
+        sys.stdout.flush()
+
+class Silent(Client):
 
     def raw(self, txt):
         if k.opts("v"):
             print(txt)
 
 
-clt = Test()
+class Test(Client):
+
+    def raw(self, txt):
+        print(txt)
+
+clt = Silent()
+tst = Test()
 k = Kernel()
+t = Table()
 
-
-def ver(event):
-    event.reply("TEST %s" % __version__)
+import bot
 
 
 def wrap(func):
@@ -56,23 +65,22 @@ def wrap(func):
 
 
 def main():
+    global clt
     if os.path.exists(".test"):
         shutil.rmtree(".test")
     k.boot()
-    k.add(ver)
-    k.scan("bot")
-    for cls in k.classes.values():
+    k.cfg.debug = True
+    t.scan("bot")
+    for cls in values(t.classes):
         c = cls()
         c.txt = "bla"
-        c.save()
+        save(c)
     k.start()
-    c.start()
+    clt.start()
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    g = globals()
-    print(dir(g))
-    #print(globals())
+    clt = Test()
     doctest.testfile(
         "../test/test1.txt", optionflags=flags, globs=globals(),report=False, verbose=False
     )

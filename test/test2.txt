@@ -2,16 +2,15 @@
 
 >>> import ob
 >>> ob.wd = ".test"
->>> clt = ob.krn.client()
->>> k = ob.krn.kernel()
+>>> k = ob.getmain("k")
 >>> k.cmd("cfg")
 cc=! channel=#bot nick=bot port=6667 server=localhost
 >>> k.cmd("dlt")
 dlt <username>
 >>> k.cmd("flt")
-Out
+Silent | Test | Test
 >>> k.cmd("fnd")
-bus,command,error,dispatcher,handler,loop,cfg,dcc,event,irc,user,users,cfg,client,kernel,test,log,db,default,list,object,rss
+cfg,dcc,event,feed,fetcher,irc,log,object,rss,seen,udp,user,users
 >>> k.cmd("met")
 met <userhost>
 >>> k.cmd("mre")
@@ -21,8 +20,8 @@ channel is not set.
 >>> k.cmd("pwd")
 pwd <nick> <password>
 >>> k.cmd("thr")
-Runtime.loop(0s) Test.loop(0s)
+Kernel.loop(...s) Silent.loop(...s)
 >>> k.cmd("upt")
 uptime is ...s
 >>> k.cmd("cmd")
-cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,rss,thr,upt,ver
+cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,req,rss,thr,upt,ver

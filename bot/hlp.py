@@ -1,10 +1,14 @@
 # This file is placed in the Public Domain.
 
-import ob
+
+from ob import Object, keys, get
+
+def __dir__():
+    return ("hlp",)
 
 cmds = "cfg,cmd,dlt,dne,dpl,flt,fnd,ftc,log,met,mre,nck,ops,rem,req,rss,slg,tdo,thr,upt"
 
-h = ob.Object()
+h = Object()
 h.cfg = "cfg <key=val> sets a irc configuration value, no val shows the config content"
 h.cmd = "cmd shows list of commands"
 h.dlt = "dlt <userhost> deletes a user"
@@ -26,6 +30,6 @@ h.upt = "display uptime"
 
 def hlp(event):
     if not event.rest:
-        event.reply("hlp <%s>" % "|".join(ob.keys(h)))
+        event.reply("hlp <%s>" % "|".join(keys(h)))
         return
-    event.reply(ob.get(h, event.args[0], None) or "no help found")
+    event.reply(get(h, event.args[0], None) or "no help found")

@@ -1,21 +1,30 @@
 # This file is in the Public Domain.
 
-import ob
 import threading
 import time
 
-k = ob.krn.kernel()
-starttime = time.time()
+from ob import Object, fmt, get, getmain, getname, update
+
+from ob.bus import Bus
+from ob.tms import elapsed
+from ob.ver import starttime
+
+def __dir__():
+    return("cmd", "flt", "thr", "upt")
+
+def cmd(event):
+    t = getmain("t")
+    event.reply(",".join(sorted(t.modnames)))
 
 
 def flt(event):
     try:
         index = int(event.args[0])
-        event.reply(ob.fmt(ob.bus.Bus.objs[index], skip=["queue", "ready", "iqueue"]))
+        event.reply(fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
         return
     except (TypeError, IndexError):
         pass
-    event.reply(" | ".join([ob.thr.getname(o) for o in Bus.objs]))
+    event.reply(" | ".join([getname(o) for o in Bus.objs]))
 
 
 def thr(event):
@@ -24,9 +33,9 @@ def thr(event):
     for thr in sorted(threading.enumerate(), key=lambda x: x.getName()):
         if str(thr).startswith("<_"):
             continue
-        o = ob.Object()
-        ob.update(o, vars(thr))
-        if ob.get(o, "sleep", None):
+        o = Object()
+        update(o, vars(thr))
+        if get(o, "sleep", None):
             up = o.sleep - int(time.time() - o.state.latest)
         else:
             up = int(time.time() - starttime)
@@ -37,10 +46,10 @@ def thr(event):
             result.append((up, thrname))
     res = []
     for up, txt in sorted(result, key=lambda x: x[0]):
-        res.append("%s(%s)" % (txt, ob.tms.elapsed(up)))
+        res.append("%s(%s)" % (txt, elapsed(up)))
     if res:
         event.reply(" ".join(res))
 
 
 def upt(event):
-    event.reply("uptime is %s" % ob.tms.elapsed(time.time() - starttime))
+    event.reply("uptime is %s" % elapsed(time.time() - starttime))

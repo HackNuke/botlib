@@ -1,14 +1,14 @@
 # This file is placed in the Public Domain.
 
-import ob
 import socket
 import time
 
+from ob import Default, Object
 from ob.bus import Bus
-
+from ob.thr import launch
 
 def __dir__():
-    return ("Cfg", "UDP", "init", "toudp")
+    return ("init", "Cfg", "UDP", "toudp")
 
 
 def init(k):
@@ -17,7 +17,7 @@ def init(k):
     return u
 
 
-class Cfg(ob.Object):
+class Cfg(Default):
 
     host = "localhost"
     port = 5500
@@ -28,7 +28,7 @@ class Cfg(ob.Object):
         self.port = Cfg.port
 
 
-class UDP(ob.Object):
+class UDP(Object):
     def __init__(self):
         super().__init__()
         self.stopped = False
@@ -58,7 +58,7 @@ class UDP(ob.Object):
 
     def start(self):
         self.cfg.last()
-        ob.thr.launch(self.server)
+        launch(self.server)
 
     def stop(self):
         self.stopped = True

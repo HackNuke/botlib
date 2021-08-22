@@ -1,23 +1,23 @@
 # This file is placed in the Public Domain.
 
-import ob
 import unittest
 
-from ob.prs import parse_txt
+from obj import Object, edit
+from obj.prs import parse_txt
 
-cfg = ob.Default()
+cfg = Object()
 
 
 class Test_Cfg(unittest.TestCase):
     def test_parse(self):
-        parse_txt(cfg, "m=bot.irc")
-        self.assertEqual(cfg.sets.m, "bot.irc")
+        parse_txt(cfg, "m=irc")
+        self.assertEqual(cfg.sets.m, "irc")
 
     def test_parse2(self):
-        parse_txt(cfg, "m=bot.irc,bot.udp,bot.rss")
-        self.assertEqual(cfg.sets.m, "bot.irc,bot.udp,bot.rss")
+        parse_txt(cfg, "m=irc,udp,rss")
+        self.assertEqual(cfg.sets.m, "irc,udp,rss")
 
     def test_edit(self):
-        d = {"m": "bot.rss"}
-        cfg.edit(d)
-        self.assertEqual(cfg.m, "bot.rss")
+        d = Object({"m": "irc,rss,udp"})
+        edit(cfg, d)
+        self.assertEqual(cfg.m, "irc,rss,udp")

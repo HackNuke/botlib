@@ -1,14 +1,14 @@
 # basic set
 
->>> from ob import Object
+>>> from obj import Object, set
 >>> o = Object()
->>> o.set("key", "value")
+>>> set(o, "key", "value")
 >>> o.key
 'value'
 
 # attribute set
 
->>> from ob import Object
+>>> from obj import Object
 >>> o = Object()
 >>> o.key = "value"
 >>> o.key
@@ -16,15 +16,14 @@
 
 # save/load
 
->>> import ob
->>> ob.wd = ".test"
->>> o = ob.Object()
+>>> import obj
+>>> obj.wd = ".test"
+>>> o = Object()
 >>> o["key"] = "value"
->>> p = o.save()
+>>> p = obj.save(o)
 >>> p
-'ob.Object/...
->>> oo = ob.Object()
->>> oo.load(p)
-{"key": "value"}
+'obj.Object/...
+>>> oo = obj.Object()
+>>> obj.load(oo, p)
 >>> oo.key
 'value'
