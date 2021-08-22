@@ -320,7 +320,7 @@ class IRC(Output, Handler):
     def some(self):
         self.connected.wait()
         inbytes = self.sock.recv(512)
-        txt = str(inbytes, "utf-8")
+        txt = str(inbytes, "utf-8", "ignore")
         if txt == "":
             raise ConnectionResetError
         self.state.lastline += txt
