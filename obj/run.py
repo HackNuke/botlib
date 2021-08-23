@@ -135,7 +135,7 @@ class Runtime(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(ob.wd, pwn.pw_uid, pwn.pw_gid)
+            os.chown(getwd(), pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])
