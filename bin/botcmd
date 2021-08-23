@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+
+import os, sys ; sys.path.insert(0, os.getcwd())
+
+import os
+import readline
+import sys
+import termios
+import time
+
+
+wd = "/var/lib/botd/"
+
+
+from obj.run import Client, Runtime
+from obj.tbl import Table
+
+
+class Kernel(Runtime):
+
+    def error(self, txt):
+        print(txt)
+
+    def log(self, txt):
+        if self.opts("v"):
+            print(txt)
+            sys.stdout.flush()
+
+
+class CLI(Client):
+
+    def handle(self, clt, e):
+        e.wait()
+
+    def raw(self, txt):
+        print(txt)
+
+    def say(self, channel, txt):
+        self.raw(txt)
+        sys.stdout.flush()
+
+
+clt = CLI()
+k = Kernel()
+t = Table()
+
+
+import bot.all
+import botd.all
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except KeyboardInterrupt:
+        pass
+    except PermissionError as ex:
+        print(str(ex))
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+def main():
+    k.boot()
+    t.scan("bot,botd")
+    if k.cfg.txt:
+        return k.cmd(k.cfg.otxt)
+
+
+wrap(main)
