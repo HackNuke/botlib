@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from ob import Object, keys, get
+from obj import Object, keys, get
 
 def __dir__():
     return ("hlp",)

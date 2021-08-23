@@ -1,6 +1,6 @@
 # This file is in the Public Domain.
 
-"all modules."
+"all modules"
 
 import bot.adm
 import bot.fnd

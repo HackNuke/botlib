@@ -4,11 +4,11 @@ import re
 import threading
 import urllib
 
-from ob import Db, Default, Object, edit, find, get, getmain, last, save, update
+from obj import Db, Default, Object, edit, find, get, getmain, last, save, update
 
-from ob.bus import Bus
-from ob.thr import launch
-from ob.tms import Repeater
+from obj.bus import Bus
+from obj.thr import launch
+from obj.tms import Repeater
  
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

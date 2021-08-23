@@ -1,6 +1,6 @@
 # This file is in the Public Domain.
 
-from ob import Object, save
+from obj import Object, save
 
 def __dir__():
     return ("Log", "log",)

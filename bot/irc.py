@@ -9,14 +9,14 @@ import time
 import threading
 import _thread
 
-from ob import Db, Default, Object
-from ob import delkeys, edit, getmain, find, fmt, last, oqn, save, update
+from obj import Db, Default, Object
+from obj import delkeys, edit, getmain, find, fmt, last, oqn, save, update
 
-from ob.bus import Bus
-from ob.evt import Event
-from ob.hdl import Handler
-from ob.opt import Output
-from ob.thr import launch
+from obj.bus import Bus
+from obj.evt import Event
+from obj.hdl import Handler
+from obj.opt import Output
+from obj.thr import launch
 
 
 def __dir__():

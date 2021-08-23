@@ -3,9 +3,9 @@
 import socket
 import time
 
-from ob import Default, Object
-from ob.bus import Bus
-from ob.thr import launch
+from obj import Default, Object
+from obj.bus import Bus
+from obj.thr import launch
 
 def __dir__():
     return ("init", "Cfg", "UDP", "toudp")
