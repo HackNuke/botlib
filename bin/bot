@@ -10,11 +10,9 @@ import time
 
 wd = os.path.expanduser("~/.bot")
 
-from ob import keys
-
-from ob.run import Client, Runtime
-from ob.tbl import Table
-from ob.trc import get_exception
+from obj.run import Client, Runtime
+from obj.tbl import Table
+from obj.trc import get_exception
 
 
 class Kernel(Runtime):
@@ -67,12 +65,13 @@ def wrap(func):
 
 def main():
     k.boot()
+    t.scan("bot")
     if k.cfg.txt:
         return k.cmd(k.cfg.otxt)
-    t.scan("bot")
-    k.start()
-    clt.start()
-    k.wait()
+    if k.opts("c") or k.cfg.m:
+        k.start()
+        clt.start()
+        k.wait()
 
 
 wrap(main)
