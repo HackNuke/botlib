@@ -1,8 +1,8 @@
 # commands
 
->>> import ob
->>> ob.wd = ".test"
->>> k = ob.getmain("k")
+>>> import obj
+>>> obj.wd = ".test"
+>>> k = obj.getmain("k")
 >>> k.cmd("cfg")
 cc=! channel=#bot nick=bot port=6667 server=localhost
 >>> k.cmd("dlt")
@@ -24,4 +24,4 @@ Kernel.loop(...s) Silent.loop(...s)
 >>> k.cmd("upt")
 uptime is ...s
 >>> k.cmd("cmd")
-cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,req,rss,thr,upt,ver
+cfg,cmd,dlt,dpl,flt,fnd,ftc,hlp,log,met,mre,nck,ops,pwd,rem,rss,thr,upt,ver

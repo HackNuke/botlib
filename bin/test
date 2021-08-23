@@ -48,7 +48,7 @@ tst = Test()
 k = Kernel()
 t = Table()
 
-import bot
+import bot.all
 
 
 def wrap(func):

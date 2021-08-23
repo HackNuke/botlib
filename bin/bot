@@ -70,6 +70,7 @@ def main():
         return k.cmd(k.cfg.otxt)
     if k.opts("c") or k.cfg.m:
         k.start()
+        k.init(k.cfg.m)
         clt.start()
         k.wait()
 
