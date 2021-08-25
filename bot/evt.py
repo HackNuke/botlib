@@ -2,9 +2,8 @@
 
 import threading
 
-from . import Object
-
 from .bus import Bus
+from .obj import Object
 from .opt import Output
 from .prs import parse_txt
 

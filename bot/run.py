@@ -6,9 +6,8 @@ import pwd
 import sys
 import time
 
-from . import Db, Default, Object, cdir, get, getmain, getwd, spl, update
-
 from .bus import Bus
+from .obj import Db, Default, Object, cdir, get, getmain, getwd, spl, update
 from .hdl import Dispatcher, Handler, Loop
 from .prs import parse_txt
 from .thr import launch
@@ -22,7 +21,10 @@ class Cfg(Default):
 
     def __init__(self):
         super().__init__()
+        self.bork = False
         self.debug = False
+        self.index = 0
+        self.txt = ""
         self.verbose = False
 
 
@@ -34,6 +36,7 @@ class Runtime(Dispatcher, Loop):
         self.cfg = Cfg()
         self.classes = Object()
         self.cmds = Object()
+        self.opts = Object()
         self.register("cmd", self.handle)
 
 
@@ -41,7 +44,7 @@ class Runtime(Dispatcher, Loop):
         self.parse_cli(disk)
         cdir(getwd()+os.sep)
         cdir(os.path.join(getwd(), "store", ""))
-        self.cfg.verbose = self.opts("v")
+        self.cfg.verbose = "v" in self.opts
         return None
 
     def cmd(self, txt):
@@ -92,11 +95,9 @@ class Runtime(Dispatcher, Loop):
             mods.append(mod)
         return mods
 
-    def opts(self, ops):
-        if not self.cfg.opts:
-            return False
+    def opt(self, ops):
         for opt in ops:
-            if opt in self.cfg.opts:
+            if opt in self.opts:
                 return True
         return False
 
@@ -109,10 +110,15 @@ class Runtime(Dispatcher, Loop):
                 update(o, oo)
         txt = " ".join(sys.argv[1:])
         if txt:
-            parse_txt(o, txt)
-        update(self.cfg, o)
-        update(self.cfg, self.cfg.sets)
-        
+            o = Object()
+            if not self.__parsed__:
+                self.__parsed__ = Object()
+            parse_txt(self.__parsed__, txt)
+            update(self.cfg, self.__parsed__.sets)
+            update(self.opts, self.__parsed__.opts)
+            self.cfg.index = self.__parsed__.index
+            self.cfg.txt = self.__parsed__.txt
+
     @staticmethod
     def privileges(name=None):
         if os.getuid() != 0:
@@ -135,7 +141,7 @@ class Runtime(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(getwd(), pwn.pw_uid, pwn.pw_gid)
+            os.chown(ob.wd, pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])

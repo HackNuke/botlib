@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 
-from . import Object, update
+from .obj import Object, update
 
 
 class ENoTxt(Exception):

@@ -35,11 +35,12 @@ class ENoJSON(Exception):
 
 class Object:
 
-    __slots__ = ("__dict__", "__stp__", "__otype__")
+    __slots__ = ("__dict__", "__stp__", "__otype__", "__parsed__")
 
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.__otype__ = gettype(self)
+        self.__parsed__ = None
         self.__stp__ = os.path.join(
             gettype(self),
             str(uuid.uuid4()),
@@ -188,7 +189,7 @@ class Db(Object):
 
     def lastmatch(self, otype, selector=None, index=None, timed=None):
         res = sorted(
-            self.find(otype, selector, index, timed), key=lambda x: fntime(x[0])
+            find(otype, selector, index, timed), key=lambda x: fntime(x[0])
         )
         if res:
             return res[-1]
@@ -504,6 +505,10 @@ def listfiles(workdir):
         return []
     return sorted(os.listdir(path))
 
+
+def setwd(path):
+    global wd
+    wd = path
 
 def spl(txt):
     return [x for x in txt.split(",") if x]

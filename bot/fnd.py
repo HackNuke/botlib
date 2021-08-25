@@ -2,8 +2,8 @@
 
 import time
 
-from obj import fmt, find, fntime, getname, getwd, keys, listfiles
-from obj.tms import elapsed 
+from .obj import fmt, find, fntime, getname, getwd, keys, listfiles
+from .tms import elapsed 
 
 def __dir__():
     return ("fnd",)

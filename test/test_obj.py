@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from obj import Db, Object, gettype, load, last, merge, oqn, save
+from gcid.obj import Db, Object, gettype, load, last, merge, oqn, save
 
 
 class Test_Object(unittest.TestCase):
@@ -22,7 +22,7 @@ class Test_Object(unittest.TestCase):
 
     def test_json(self):
         o = Object()
-        self.assertTrue("<obj.Object" in oqn(o))
+        self.assertTrue("<gcid.obj.Object" in oqn(o))
 
     def test_intern4(self):
         o = Object()

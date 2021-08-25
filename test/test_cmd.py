@@ -2,9 +2,8 @@
 
 import unittest
 
-from obj import Object, getmain
-
-from obj.bus import Bus
+from bot.bus import Bus
+from bot.obj import Object, getmain
 
 events = []
 

@@ -4,11 +4,10 @@ import re
 import threading
 import urllib
 
-from obj import Db, Default, Object, edit, find, get, getmain, last, save, update
-
-from obj.bus import Bus
-from obj.thr import launch
-from obj.tms import Repeater
+from .bus import Bus
+from .obj import Db, Default, Object, edit, find, get, getmain, last, save, update
+from .thr import launch
+from .tms import Repeater
  
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -21,6 +20,7 @@ def __dir__():
 
 def init(k):
     f = Fetcher()
+    last(f)
     launch(f.start)
     return f
 
@@ -119,7 +119,6 @@ class Fetcher(Object):
         return thrs
 
     def start(self, repeat=True):
-        last(Fetcher.cfg)
         last(Fetcher.seen)
         if repeat:
             repeater = Repeater(300.0, self.run)

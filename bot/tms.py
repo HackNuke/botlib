@@ -4,7 +4,7 @@ import datetime
 import threading
 import time
 
-from . import Object, getname
+from .obj import Object, getname
 from .thr import launch
 
 

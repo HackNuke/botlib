@@ -1,11 +1,10 @@
-# This file is placed in the Public Domain.
+# This file is in the Public Domain.
 
-__version__ = 129
+__version__ = 10
 
-def __dir__():
-    return ("ver",)
+import time
 
-txt = "botlib"
+starttime = time.time()
 
 def ver(event):
-    event.reply("BOT %s - %s" % (__version__, txt))
+    event.reply("GCID %s" % __version__)

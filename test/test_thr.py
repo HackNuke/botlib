@@ -3,10 +3,9 @@
 import random
 import unittest
 
-from obj import Object, getmain
-
-from obj.bus import Bus
-from obj.thr import launch
+from bot.obj import Object, getmain
+from bot.bus import Bus
+from bot.thr import launch
 
 events = []
 

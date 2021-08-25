@@ -3,9 +3,9 @@
 import socket
 import time
 
-from obj import Default, Object
-from obj.bus import Bus
-from obj.thr import launch
+from .obj import Default, Object, last
+from .bus import Bus
+from .thr import launch
 
 def __dir__():
     return ("init", "Cfg", "UDP", "toudp")
@@ -13,7 +13,9 @@ def __dir__():
 
 def init(k):
     u = UDP()
+    last(u)
     u.start()
+    k.log(u.cfg)
     return u
 
 
@@ -57,7 +59,6 @@ class UDP(Object):
             self.output(data, addr)
 
     def start(self):
-        self.cfg.last()
         launch(self.server)
 
     def stop(self):

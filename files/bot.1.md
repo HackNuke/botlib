@@ -7,12 +7,15 @@ BOT - python3 irc bot
 
 # SYNOPSIS
 | bot \<cmd>\ 
-| bot cfg server=irc.freenode.net channel=\\#botd
-| bot m=bot.irc,bot.rss
+| bot cfg server=irc.freenode.net channel=\\#bot
+| bot m=irc,rss
 
 # DESCRIPTION
-BOT is the user client version of BOTD, it can be used in development of bot
-commands. Uses ~/.bot as the work directory.
+BOT an attempt to achieve OS level integration of bot technology directly
+into the operating system. A solid, non hackable bot version, that can offer
+"display in your irc channel" functionality to the unix programmer. BOTLIB
+runs on both BSD and Linux, is placed in the Public Domain, and, one day,
+will be the thing you cannot do without ;]
 
 # EXAMPLES
 
@@ -41,4 +44,4 @@ commands. Uses ~/.bot as the work directory.
 | ./mod
 
 # COPYRIGHT
-BOT is placed in the Public Domain and has no COPYRIGHT and no LICENSE.
+BOTLIB is placed in the Public Domain, no COPYRIGHT, no LICENSE.

@@ -2,8 +2,8 @@
 
 import unittest
 
-from obj import getmain
-from obj.run import Cfg
+from bot.obj import getmain
+from bot.run import Cfg
 
 k = getmain("k")
 

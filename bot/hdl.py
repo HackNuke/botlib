@@ -3,10 +3,9 @@
 import queue
 import threading
 
-from . import Object, getname, getmain
-
 from .bus import Bus
 from .evt import Command, Event
+from .obj import Object, getname, getmain
 from .thr import launch
 from .trc import get_exception
 
@@ -79,6 +78,8 @@ class Loop(Object):
             except Stop:
                 break
             except Exception:
+                if self.bork:
+                    raise
                 self.error(get_exception())
         if dorestart:
             self.restart()

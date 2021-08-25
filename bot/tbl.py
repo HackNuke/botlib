@@ -4,7 +4,7 @@ import inspect
 import pkgutil
 import sys
 
-from . import List, Object, spl
+from .obj import List, Object, spl
 
 class Table(Object):
 
@@ -29,7 +29,8 @@ class Table(Object):
             if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
                 self.add(o)
         for _k, o in inspect.getmembers(mod, inspect.isclass):
-            self.addcls(o)
+            if issubclass(o, Object):
+                self.addcls(o)
 
     def scan(self, pkgs=""):
         for pn in spl(pkgs):

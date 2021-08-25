@@ -3,7 +3,7 @@
 import queue
 import threading
 
-from . import getname
+from .obj import getname
 
 class Thr(threading.Thread):
 

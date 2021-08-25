@@ -1,171 +1,92 @@
-README
-######
+NAME
+====
 
-Welcome to BOTLIB, a pure python3 IRC chat bot library
+**BOT* - python3 irc bot - https://pypi.org/project/botlib
 
-INSTALL
-=======
-
-installation is through pypi::
-
- $ sudo pip3 install botlib 
-
-if you want to bot to start after reboot::
-
- $ sudo cp /usr/local/share/botlib/botd.service /etc/systemd/system
- $ sudo systemctl enable botd --now
-
-default channel/server is #botd on localhost.
-
-CONFIG
-======
-
-you can configure the bot with the cfg command, it edits files on disk::
-
- $ bot cfg server=botd.io channel=\#botd nick=botd
-
-note: use can use botctl instead of bot to control the background daemon.
-
-if you need to login with SASL run the pwd command first and use that to
-configure a password::
-
- $ bot pwd <nick> <password>
- $ bot cfg password=<outputofpwd>
-
-if the users option is set in the irc config then users need to be added 
-before they can give commands::
-
- $ bot cfg users=true 
-
-use the met command to introduce a user::
-
- $ bot met ~bart@botd.io
- ok
-
-COMMANDS
+SYNOPSIS
 ========
 
-modules are not loaded from a directory but included in the code itself, so
-if you want to program you need to clone the repositry from github::
-
- $ git clone ssh://git@github.com/bthate/botlib
-
-or download a tar from pypi::
-
- $ https://pypi.org/project/botlib/#files
-
-open bot/hlo.py (new file) and add the following code::
-
-    def hlo(event):
-        event.reply("hello %s" % event.origin)
-
-and add the hlo module to bot/all.py::
-
-   import bot.hlo
+bot \<cmd\> |options] [key=value] [key==value] 
 
 
-the hlo command in now available::
+CONFIGURATION
+=============
 
- <bart> !hlo
- hello root@console
+| * default channel/server is #gcid on localhost
 
-RSS
-===
+| bot cfg server=\<server\> channel=<channel> nick=\<nick\>
+| bot cfg users=True
+| bot met \<userhost\>
 
-BOTD doesn't depend on other software so running rss is optional, you need
-to install feedparser seperately::
+| bot pwd \<nickservnick\> \<nickservpass\>
+| bot cfg password=\<outputfrompwd\>
 
- $ sudo apt install python3-feedparser
+| bot rss \<url\>
 
-add an url use the rss command with an url::
-
- $ bot rss https://github.com/bthate/botd/commits/master.atom
- ok
-
-run the fnd (find) command to see what urls are registered::
-
- $ bot fnd rss
- 0 https://github.com/bthate/botd/commits/master.atom
-
-the ftc (fetch) command can be used to poll the added feeds::
-
- $ bot ftc
- fetched 20
-
-UDP
-===
-
-there is also the possibility to serve as a UDP to IRC relay where you
-can send UDP packages to the bot and have txt displayed in the channel.
-output to the IRC channel is done with the use python3 code to send a UDP
-packet to BOTD, it's unencrypted txt send to the bot and displayed in the
-joined channels::
-
- import socket
-
- def toudp(host=localhost, port=5500, txt=""):
-     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-     sock.sendto(bytes(txt.strip(), "utf-8"), host, port)
-
-to have the udp relay running, add udp to modules to load at start of the
-program::
-
- m = "bot.irc,bot.rss,bot.udp"
-
-PROGRAMMING
+DESCRIPTION
 ===========
 
+**BOT** is a IRC bot that can run as a  background
+daemon for 24/7 a day presence in a IRC channel. You can use it to
+display RSS feeds, act as a UDP to IRC gateway, program your own
+commands for it and have it log objects on disk to search them. 
+
 the bot package provides a library you can use to program objects 
-under python3. It provides a basic Object, that mimics a dict while using 
+under python3, an Object class, that mimics a dict while using 
 attribute access and provides a save/load to/from json files on disk. objects
-can be searched with a little database module, it uses read-only files to
+can be searched with database functions and uses read-only files to
 improve persistence and a type in filename for reconstruction.
 
 basic usage is this::
 
- >>> from bot.obj import Object
- >>> o = Object()
- >>> o.key = "value"
- >>> o.key
- 'value'
+>>> from bot.obj import Object
+>>> o = Object()
+>>> o.key = "value"
+>>> o.key
+>>> 'value'
 
 objects try to mimic a dictionary while trying to be an object with normal
-attribute access as well. hidden methods are provided as are the basic
-methods like get, items, keys, register, set, update, values.
+attribute access as well. hidden methods are provided, the methods are
+factored out into functions like get, items, keys, register, set, update
+and values.
 
-the bot.obj module has the basic methods like load/save to disk providing bare
-persistence::
+load/save from/to disk::
 
- >>> wd = "data"
- >>> from bot.obj import Object
- >>> o = Object()
- >>> o["key"] = "value"
- >>> p = o.save()
- >>> p
- 'bot.obj.Object/4b58abe2-3757-48d4-986b-d0857208dd96/2021-04-12/21:15:33.734994
- >>> oo = Object()
- >>> oo.load(p)
- >> oo.key
- 'value'
+>>> from bot.obj import Object, load, save
+>>> o = Object()
+>>> o.key = "value"
+>>> p = save(o)
+>>> oo = Object()
+>>> load(oo, p)
+>>> oo.key
+>>> 'value'
 
 great for giving objects peristence by having their state stored in files.
 
-DEBUG
+the library depends on 3 variables defined in the runtime:
+
+>>> def getmain(name):
+>>>     return getattr(sys.modules["__main__"], name, None)
+>>>
+>>> clt = getmain("clt")
+>>> k = getmain("k")
+>>> tbl = getmain("tbl")
+
+great for not having to store state in the library.
+
+FILES
 =====
 
-you can try you force a reinstall of the botd package if it doesn't work::
+| bin/bot
+| man/man1/bot.1.gz
 
- $ pip3 install botlib --upgrade --force-reinstall
+COPYRIGHT
+=========
 
-LICENSE
-=======
+**BOT** is placed in the Public Domain, no Copyright, no LICENSE.
 
-BOTLIB is placed in the Public Domain and has no COPYRIGHT and no LICENSE.
-
-CONTACT
-=======
-
-"contributed back"
+AUTHOR
+======
 
 | Bart Thate - bthate67@gmail.com
-| botfather on #dunkbots irc.freenode.net/irc.libera.chat
+| correspondence is under **EM_T04_OTP-CR-117_19** 

@@ -3,7 +3,7 @@
 import queue
 import threading
 
-from . import List, Object
+from .obj import List, Object
 from .thr import launch
 
 class Output(Object):

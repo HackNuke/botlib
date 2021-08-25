@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-import os, sys ; sys.path.insert(0, os.getcwd())
-
 import os
 import sys
 import termios
@@ -10,9 +8,10 @@ import time
 
 wd = os.path.expanduser("~/.bot")
 
-from obj.run import Client, Runtime
-from obj.tbl import Table
-from obj.trc import get_exception
+from bot.obj import keys, spl
+from bot.run import Client, Runtime
+from bot.tbl import Table
+from bot.trc import get_exception
 
 
 class Kernel(Runtime):
@@ -46,7 +45,9 @@ clt = Console()
 k = Kernel()
 t = Table()
 
+
 import bot.all
+
 
 def wrap(func):
     fd = sys.stdin.fileno()
@@ -65,12 +66,21 @@ def wrap(func):
 
 def main():
     k.boot()
+    if k.opt("b"):
+        k.cfg.bork = True
     t.scan("bot")
     if k.cfg.txt:
-        return k.cmd(k.cfg.otxt)
-    if k.opts("c") or k.cfg.m:
+        return k.cmd(k.cfg.txt)
+    if k.opt("c") or k.cfg.m:
+        if k.cfg.verbose:
+            k.log("BOT started at %s" % time.ctime(time.time()))
+            k.log(k.cfg)
+            k.log(",".join(sorted(keys(t.modnames))))
         k.start()
-        k.init(k.cfg.m)
+        m = ""
+        for mn in spl(k.cfg.m):
+            m += ",bot.%s" % mn
+        k.init(m)
         clt.start()
         k.wait()
 

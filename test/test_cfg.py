@@ -2,8 +2,8 @@
 
 import unittest
 
-from obj import Object, edit
-from obj.prs import parse_txt
+from gcid.obj import Object, edit
+from gcid.prs import parse_txt
 
 cfg = Object()
 

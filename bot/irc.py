@@ -9,21 +9,20 @@ import time
 import threading
 import _thread
 
-from obj import Db, Default, Object
-from obj import delkeys, edit, getmain, find, fmt, last, oqn, save, update
-
-from obj.bus import Bus
-from obj.evt import Event
-from obj.hdl import Handler
-from obj.opt import Output
-from obj.thr import launch
-
+from .bus import Bus
+from .evt import Event
+from .hdl import Handler
+from .obj import Db, Default, Object
+from .obj import delkeys, edit, getmain, find, fmt, last, oqn, save, update
+from .opt import Output
+from .thr import launch
 
 def __dir__():
     return ("init", "Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "locked", "met", "mre", "nck", "ops")
 
 def init(k):
     i = IRC()
+    last(i.cfg)
     i.start()
     return i
 
@@ -54,8 +53,8 @@ class Cfg(Default):
     port = 6667
     server = "localhost"
     realname = "botlib"
-    username = "botlib"
-    users = False
+    username = "bot"
+    users = True
 
     def __init__(self, *args,**kwargs):
         super().__init__()
@@ -142,14 +141,13 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
-        if port == 6697:
+        if self.cfg.password:
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock = ctx.wrap_socket(sock) 
             self.sock.connect((server, port))
-            if self.cfg.password:
-                self.raw("CAP LS 302")
+            self.raw("CAP LS 302")
         else:
             addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
             self.sock = socket.create_connection(addr)
@@ -235,7 +233,7 @@ class IRC(Output, Handler):
 
     def logon(self, server, nick):
         self.raw("NICK %s" % nick)
-        self.raw("USER %s %s %s :%s" % (self.cfg.username or "botlib", server, server, self.cfg.realname or "botlib"))
+        self.raw("USER %s %s %s :%s" % (self.cfg.username or "bot", server, server, self.cfg.realname or "bot"))
 
     def parsing(self, txt):
         rawstr = str(txt)
@@ -320,7 +318,7 @@ class IRC(Output, Handler):
     def some(self):
         self.connected.wait()
         inbytes = self.sock.recv(512)
-        txt = str(inbytes, "utf-8", "ignore")
+        txt = str(inbytes, "utf-8")
         if txt == "":
             raise ConnectionResetError
         self.state.lastline += txt
@@ -331,7 +329,6 @@ class IRC(Output, Handler):
 
     def start(self):
         k = getmain("k")
-        last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         assert self.cfg.nick
@@ -513,7 +510,7 @@ def LOG(clt, obj):
 def NOTICE(clt, obj):
     k = getmain("k")
     if obj.txt.startswith("VERSION"):
-        txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "botlib")
+        txt = "\001VERSION %s %s - %s\001" % (clt.cfg.name.upper(), clt.cfg.version or 1, clt.cfg.username or "bot")
         clt.command("NOTICE", obj.channel, txt)
 
 

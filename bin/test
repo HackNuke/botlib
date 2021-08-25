@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-import os, sys ; sys.path.insert(0, os.getcwd())
-
 import doctest
 import os
 import readline
@@ -11,10 +9,10 @@ import sys
 import termios
 import unittest
 
-from obj import save, values
+from bot.obj import save, values
+from bot.run import Client, Runtime
+from bot.tbl import Table
 
-from obj.run import Client, Runtime
-from obj.tbl import Table
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 wd = ".test"
@@ -34,7 +32,7 @@ class Kernel(Runtime):
 class Silent(Client):
 
     def raw(self, txt):
-        if k.opts("v"):
+        if k.opt("v"):
             print(txt)
 
 
@@ -43,10 +41,12 @@ class Test(Client):
     def raw(self, txt):
         print(txt)
 
+
 clt = Silent()
 tst = Test()
 k = Kernel()
 t = Table()
+
 
 import bot.all
 
@@ -70,9 +70,16 @@ def main():
         shutil.rmtree(".test")
     k.boot()
     k.cfg.debug = True
+    k.cfg.bork = True
     t.scan("bot")
     for cls in values(t.classes):
-        c = cls()
+        try:
+            c = cls()
+        except TypeError:
+            try:
+                c = cls("cmd")
+            except TypeError:
+                c = cls("cmd", 500)
         c.txt = "bla"
         save(c)
     k.start()

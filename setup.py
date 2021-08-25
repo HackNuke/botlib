@@ -7,14 +7,15 @@ def read():
 
 setup(
     name='botlib',
-    version='129',
+    version='130',
     url='https://github.com/bthate/botlib',
     author='Bart Thate',
     author_email='bthate@dds.nl', 
     description="python3 bot library",
     long_description=read(),
     license='Public Domain',
-    packages=["bot", "obj"],
+    packages=["bot"],
+    scripts=["bin/bot"],
     zip_safe=True,
     classifiers=['Development Status :: 4 - Beta',
                  'License :: Public Domain',
