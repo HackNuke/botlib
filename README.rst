@@ -1,13 +1,12 @@
 NAME
 ====
 
-**BOT* - python3 irc bot - https://pypi.org/project/botlib
+**BOT* - pure python3 irc bot - https://pypi.org/project/botlib
 
 SYNOPSIS
 ========
 
 bot \<cmd\> |options] [key=value] [key==value] 
-
 
 CONFIGURATION
 =============
@@ -88,5 +87,4 @@ COPYRIGHT
 AUTHOR
 ======
 
-| Bart Thate - bthate67@gmail.com
-| correspondence is under **EM_T04_OTP-CR-117_19** 
+| Bart Thate <bthate67@gmail.com>
