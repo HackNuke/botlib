@@ -113,6 +113,7 @@ class Runtime(Dispatcher, Loop):
         parse_txt(o, " ".join(sys.argv[1:]))
         update(self.cfg, o)
         update(self.cfg, o.sets)
+        update(self.opts, o.opts)
 
     @staticmethod
     def pid():

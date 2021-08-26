@@ -447,6 +447,8 @@ class Users(Object):
         if user:
             if perm in user.perms:
                 return True
+        k = getmain("k")
+        k.log("denied %s" % origin)
         return False
 
     def delete(self, origin, perm):
