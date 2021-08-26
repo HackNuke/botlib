@@ -3,6 +3,50 @@
 
 """
 
+% BOT(1) BOT version 130
+% Bart Thate <bthate67@gmail.com>
+% Aug 2021
+
+# NAME
+BOT - pure python3 irc bot
+
+# SYNOPSIS
+
+| bot \<cmd>\ [options] [key=value] [key==value]
+
+# DESCRIPTION
+
+BOT an attempt to achieve OS level integration of bot technology directly
+into the operating system. A solid, non hackable bot version, that can offer
+"display in your irc channel" functionality to the unix programmer. BOTLIB
+runs on both BSD and Linux, is placed in the Public Domain, and, one day,
+will be the thing you cannot do without ;]
+
+# OPTIONS
+
+| -b	\# bork mode
+| -c	\# start client
+| -d	\# start daemon
+| -v	\# use verbose
+ 
+# CONFIGURATION
+
+| bot cfg server=localhost channel=\#bot nick=bot
+| bot m=irc,rss
+
+| bot pwd \<nick\> \<password\>
+| bot cfg password=\<outputofpwd\>
+
+| bot cfg users=true 
+| bot met \<userhost\>
+
+| bot rss \<url\>
+
+# COPYRIGHT
+
+**BOT** is placed in the Public Domain, no COPYRIGHT, no LICENSE.
+
+"""
 
 import os
 import sys
@@ -107,7 +151,8 @@ def main():
         k.log(",".join(sorted(keys(t.modnames))))
     if k.opt("d"):
         daemon()
-    if k.opts("dc"):
+        k.cfg.m += ",irc"
+    if k.opt("dc"):
         k.start()
         initialize(k.cfg.m)
         wait = True
@@ -121,50 +166,3 @@ def main():
 
 
 wrap(main)
-% BOT(1) BOT(1)
-% Bart Thate
-% Aug 2021
-
-# NAME
-BOT - python3 irc bot
-
-# SYNOPSIS
-| bot \<cmd>\ 
-| bot cfg server=irc.freenode.net channel=\\#bot
-| bot m=irc,rss
-
-# DESCRIPTION
-BOT an attempt to achieve OS level integration of bot technology directly
-into the operating system. A solid, non hackable bot version, that can offer
-"display in your irc channel" functionality to the unix programmer. BOT
-runs on both BSD and Linux, is placed in the Public Domain, and, one day,
-will be the thing you cannot do without ;]
-
-# EXAMPLES
-
-| $ bot
-| $ 
-
-| $ bot cmd
-| cfg,cmd,dlt,ech,exc,flt,fnd,krn,met,sve,thr,upt,ver
-
-| $ bot cfg
-| cc=@ channel=#botd nick=botd port=6667 server=localhost
-
-| bot krn
-| $ cmd=krn name=bot txt=krn users=True version=1 wd=/home/bart/.bot
-
-| $ bot thr
-| CLI.handler 0s | CLI.input 0s
-
-| $ bot m=bot.irc,bot.rss
-| >
-
-# SEE ALSO
-| botd
-| botctl
-| ~/.bot
-| ./mod
-
-# COPYRIGHT
-BOT is placed in the Public Domain, no COPYRIGHT, no LICENSE.

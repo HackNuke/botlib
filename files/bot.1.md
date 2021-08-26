@@ -1,31 +1,9 @@
-% BOT(1) BOT version 130
-% Bart Thate <bthate67@gmail.com>
+% BOT(1) BOTLIB version 130
+% Bart Thate 
 % Aug 2021
 
 # NAME
-BOT - python3 irc bot
-
-# SYNOPSIS
-
-| bot \<cmd>\ [options] [key=value] [key==value]
-
-| -b	\# bork mode
-| -c	\# start client
-| -d	\# start daemon
-| -v	\# use verbose
- 
-# CONFIGURATION
-
-| bot cfg server=localhost channel=\#bot nick=bot
-| bot m=irc,rss
-
-| bot pwd \<nick\> \<password\>
-| bot cfg password=\<outputofpwd\>
-
-| bot cfg users=true 
-| bot met \<userhost\>
-
-| bot rss \<url\>
+BOT - pure python3 irc bot
 
 # DESCRIPTION
 
@@ -39,47 +17,21 @@ into the operating system. A solid, non hackable bot version, that can offer
 runs on both BSD and Linux, is placed in the Public Domain, and, one day,
 will be the thing you cannot do without ;]
 
-# ENVIRONMENT
+# SYNOPSIS
 
-the bot package provides a library you can use to program objects 
-under python3. It provides a basic Object, that mimics a dict while using 
-attribute access and provides a save/load to/from json files on disk. objects
-can be searched with a little database module, it uses read-only files to
-improve persistence and a type in filename for reconstruction::
+| bot \<cmd>\ [options] [key=value] [key==value]
+ 
+# CONFIGURATION
+| bot cfg server=localhost channel=\#bot nick=bot
+| bot m=irc,rss
+| bot pwd \<nick\> \<password\>
+| bot cfg password=\<outputofpwd\>
+| bot cfg users=true 
+| bot met \<userhost\>
+| bot rss \<url\>
 
-    def getmain(name):
-         return getattr(sys.modules["__main__"], name, None)
-    
-    clt = getmain("clt")
-    k = getmain("k")
-    tbl = getmain("tbl")
-
-objects try to mimic a dictionary while trying to be an object with normal
-attribute access as well. hidden methods are provided as are the basic
-methods like get, items, keys, register, set, update, values.
-
-basic usage is this.
-
-    from bot.obj import Object
-    o = Object()
-    o.key = "value"
-    o.key
-    'value'
-
-load/save from/to disk.
-
-    from bot.obj import Object, load, save
-    o = Object()
-    o.key = "value"
-    p = save(o)
-    oo = Object()
-    load(oo, p)
-    oo.key
-    'value'
-
-great for giving objects peristence by having their state stored in files.
-
-# COPYRIGHT
-
-**BOT** is placed in the Public Domain, no COPYRIGHT, no LICENSE.
-
+# OPTIONS
+| -b	\# bork mode
+| -c	\# start client
+| -d	\# daemon mode
+| -v	\# use verbose
