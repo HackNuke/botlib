@@ -1,13 +1,14 @@
 [Unit]
-Description=BOT - 24/7 channel daemon
+Description=BOT - pure python3 irc library
 After=multi-user.target
 
 [Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bot -d
 DynamicUser=True
 StateDirectory=bot
 LogsDirectory=bot
 CacheDirectory=bot
-ExecStart=/usr/local/bin/bot -d
 CapabilityBoundingSet=CAP_NET_RAW
 
 [Install]

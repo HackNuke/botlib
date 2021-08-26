@@ -3,7 +3,7 @@
 import socket
 import time
 
-from .obj import Default, Object, last
+from .obj import Default, Object, fmt, last
 from .bus import Bus
 from .thr import launch
 
@@ -15,7 +15,7 @@ def init(k):
     u = UDP()
     last(u)
     u.start()
-    k.log(u.cfg)
+    k.log(fmt(u.cfg))
     return u
 
 

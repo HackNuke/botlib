@@ -22,8 +22,12 @@ def __dir__():
 
 def init(k):
     i = IRC()
-    last(i.cfg)
+    p = last(i.cfg)
+    if p:
+        k.log("cfg from %s" % p)
+    k.log("connecting to %s:%s" % (i.cfg.server, i.cfg.port))
     i.start()
+    k.log("joined %s as %s cc %s" % (i.cfg.channel, i.cfg.nick, i.cfg.cc))
     return i
 
 
@@ -112,6 +116,7 @@ class IRC(Output, Handler):
         self.threaded = False
         self.users = Users()
         self.zelf = ""
+        self.register("366", h366)
         self.register("903", h903)
         self.register("904", h903)
         self.register("AUTHENTICATE", AUTH)
@@ -472,6 +477,10 @@ class Users(Object):
             user.save()
         return user
 
+
+def h366(clt, obj):
+    k = getmain("k")
+    k.cfg.verbose = False
 
 def AUTH(clt, obj):
     clt.raw("AUTHENTICATE %s"% clt.cfg.password)

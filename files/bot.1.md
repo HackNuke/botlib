@@ -13,7 +13,7 @@ feeds, act as a UDP to IRC relay and you can program your own commands for it.
 
 BOT an attempt to achieve OS level integration of bot technology directly
 into the operating system. A solid, non hackable bot version, that can offer
-"display in your irc channel" functionality to the unix programmer. BOTLIB
+"display in your irc channel" functionality to the unix programmer. BOT
 runs on both BSD and Linux, is placed in the Public Domain, and, one day,
 will be the thing you cannot do without ;]
 

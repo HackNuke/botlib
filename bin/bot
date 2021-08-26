@@ -1,65 +1,26 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-"""
-
-% BOT(1) BOT version 130
-% Bart Thate <bthate67@gmail.com>
-% Aug 2021
-
-# NAME
-BOT - pure python3 irc bot
-
-# SYNOPSIS
-
-| bot \<cmd>\ [options] [key=value] [key==value]
-
-# DESCRIPTION
-
-BOT an attempt to achieve OS level integration of bot technology directly
-into the operating system. A solid, non hackable bot version, that can offer
-"display in your irc channel" functionality to the unix programmer. BOTLIB
-runs on both BSD and Linux, is placed in the Public Domain, and, one day,
-will be the thing you cannot do without ;]
-
-# OPTIONS
-
-| -b	\# bork mode
-| -c	\# start client
-| -d	\# start daemon
-| -v	\# use verbose
- 
-# CONFIGURATION
-
-| bot cfg server=localhost channel=\#bot nick=bot
-| bot m=irc,rss
-
-| bot pwd \<nick\> \<password\>
-| bot cfg password=\<outputofpwd\>
-
-| bot cfg users=true 
-| bot met \<userhost\>
-
-| bot rss \<url\>
-
-# COPYRIGHT
-
-**BOT** is placed in the Public Domain, no COPYRIGHT, no LICENSE.
-
-"""
-
 import os
+import readline
 import sys
 import termios
 import time
 
 wd = os.path.expanduser("~/.bot")
 
-from bot.obj import keys, spl
+
+from bot.obj import fmt, keys, spl
 from bot.run import Client, Runtime
 from bot.tbl import Table
 from bot.trc import get_exception
 
+try:
+    import bot.dmp
+    tbl = bot.dmp.tbl
+except ImportError:
+    tbl = Table()
+    tbl.scan("bot")
 
 class Kernel(Runtime):
 
@@ -70,8 +31,9 @@ class Kernel(Runtime):
     def log(self, txt):
         if "PING" in txt or "PONG" in txt:
             return
-        print(txt)
-        sys.stdout.flush()
+        if k.cfg.verbose:
+            print(txt)
+            sys.stdout.flush()
 
 
 class CLI(Client):
@@ -80,8 +42,7 @@ class CLI(Client):
         k.put(e)
 
     def raw(self, txt):
-        print(txt)
-        sys.stdout.flush()
+        pass
 
 class Console(Client):
 
@@ -99,27 +60,12 @@ class Console(Client):
 
 clt = Console()
 k = Kernel()
-t = Table()
-
 
 import bot.all
 
 
-def daemon():
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", "r")
-    so = open("/dev/null", "a+")
-    se = open("/dev/null", "a+")
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
-
-
 def wrap(func):
+    import termios
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
     try:
@@ -133,36 +79,26 @@ def wrap(func):
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
-def initialize(mods):
-    m = ""
-    for mn in spl(mods):
-        m += ",bot.%s" % mn
-    k.init(m)
 
 def main(): 
     k.boot()
-    wait = False
-    t.scan("bot")
-    if k.cfg.txt:
-        return k.cmd(k.cfg.txt)
     if k.cfg.verbose:
         k.log("BOT started at %s" % time.ctime(time.time()))
-        k.log(k.cfg)
-        k.log(",".join(sorted(keys(t.modnames))))
-    if k.opt("d"):
-        daemon()
-        k.cfg.m += ",irc"
-    if k.opt("dc"):
-        k.start()
-        initialize(k.cfg.m)
-        wait = True
-    if k.opt("c") or k.cfg.m:
-        clt.start()
-        wait = True
+        k.log(fmt(k.cfg))
+    if k.cfg.verbose:
+        k.log(",".join(sorted(keys(tbl.modnames))))
     if k.opt("b"):
         k.cfg.bork = True
-    if k.opt("w") or wait:
+    if k.cfg.txt:
+        return k.cmd(k.cfg.txt)
+    do = k.cfg.mod
+    if k.opt("cw") or do:
+        k.start()
+        for mn in spl(k.cfg.mod):
+            k.init("bot.%s" % mn)
+    if k.opt("c") or do:
+        clt.start()
+    if k.opt("cw") or do:
         k.wait()
-
 
 wrap(main)

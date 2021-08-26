@@ -61,7 +61,7 @@ def consume():
 
 def exec():
     k = getmain("k")
-    t = getmain("t")
+    t = getmain("tbl")
     c = Bus.first()
     l = list(t.modnames)
     random.shuffle(l)

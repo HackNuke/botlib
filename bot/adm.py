@@ -12,8 +12,8 @@ def __dir__():
     return("cmd", "flt", "thr", "upt")
 
 def cmd(event):
-    t = getmain("t")
-    event.reply(",".join(sorted(t.modnames)))
+    tbl = getmain("tbl")
+    event.reply(",".join(sorted(tbl.modnames)))
 
 
 def flt(event):

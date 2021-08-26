@@ -4,7 +4,7 @@ import inspect
 import pkgutil
 import sys
 
-from .obj import List, Object, spl
+from .obj import List, Object, spl, getmain
 
 class Table(Object):
 
@@ -33,6 +33,7 @@ class Table(Object):
                 self.addcls(o)
 
     def scan(self, pkgs=""):
+        mods = []
         for pn in spl(pkgs):
             p = sys.modules.get(pn, None)
             if not p:
@@ -44,3 +45,7 @@ class Table(Object):
                 mod = sys.modules.get(mn[1], None)
                 if mod:
                     self.introspect(mod)
+            mods.append(p)
+        k = getmain("k")
+        k.log("tbl %s cls %s nms %s" % (len(self.modnames), len(self.classes), len(self.names)))
+        return mods

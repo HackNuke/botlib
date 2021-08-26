@@ -28,7 +28,7 @@ param.rss = ["https://www.reddit.com/r/python/.rss",]
 class Test_Commands(unittest.TestCase):
     def test_commands(self):
         k = getmain("k")
-        t = getmain("t")
+        t = getmain("tbl")
         c = Bus.first()
         l = list(t.modnames)
         for cmd in l:

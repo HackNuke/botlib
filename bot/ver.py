@@ -1,10 +1,10 @@
 # This file is in the Public Domain.
 
-__version__ = 10
+__version__ = 130
 
 import time
 
 starttime = time.time()
 
 def ver(event):
-    event.reply("GCID %s" % __version__)
+    event.reply("BOT %s" % __version__)

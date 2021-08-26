@@ -40,8 +40,8 @@ class Runtime(Dispatcher, Loop):
         self.register("cmd", self.handle)
 
 
-    def boot(self, disk=False):
-        self.parse_cli(disk)
+    def boot(self):
+        self.parse_cli()
         cdir(getwd()+os.sep)
         cdir(os.path.join(getwd(), "store", ""))
         self.cfg.verbose = "v" in self.opts
@@ -67,7 +67,7 @@ class Runtime(Dispatcher, Loop):
     def handle(self, clt, obj):
         obj.parse()
         f = None
-        t = getmain("t")
+        t = getmain("tbl")
         if t:
             mn = get(t.modnames, obj.cmd, None)
             if mn:
@@ -101,16 +101,9 @@ class Runtime(Dispatcher, Loop):
                 return True
         return False
 
-    def parse_cli(self, disk=False):
-        o = Object()
-        if disk:
-            db = Db()
-            oo = db.lastobject(self.cfg)
-            if oo:
-                update(o, oo)
+    def parse_cli(self):
         txt = " ".join(sys.argv[1:])
         if txt:
-            o = Object()
             if not self.__parsed__:
                 self.__parsed__ = Object()
             parse_txt(self.__parsed__, txt)
@@ -178,4 +171,3 @@ class Client(Handler):
 
     def say(self, channel, txt):
         self.raw(txt)
-

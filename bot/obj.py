@@ -426,7 +426,7 @@ def check(o, keyz=None):
 
 def find(name, selector=None, index=None, timed=None):
     db = Db()
-    t = getmain("t")
+    t = getmain("tbl")
     if not t:
         return
     for n in get(t.names, name, [name,],):

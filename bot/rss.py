@@ -5,7 +5,7 @@ import threading
 import urllib
 
 from .bus import Bus
-from .obj import Db, Default, Object, edit, find, get, getmain, last, save, update
+from .obj import Db, Default, Object, edit, fmt, find, get, getmain, last, save, update
 from .thr import launch
 from .tms import Repeater
  
@@ -20,8 +20,10 @@ def __dir__():
 
 def init(k):
     f = Fetcher()
-    last(f)
+    last(f.cfg)
+    k.log(fmt(f.cfg))
     launch(f.start)
+    k.log("%s feed %s cache" % (len(list(find("rss"))), len(f.seen.urls)))
     return f
 
 
