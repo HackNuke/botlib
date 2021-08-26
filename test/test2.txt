@@ -8,9 +8,9 @@ cc=! channel=#bot nick=bot port=6667 server=localhost users=True
 >>> k.cmd("dlt")
 dlt <username>
 >>> k.cmd("flt")
-Silent | Test | Client | Test
+Silent | Test | Test
 >>> k.cmd("fnd")
-bus,cfg,client,command,db,dcc,default,dispatcher,error,event,feed,fetcher,getter,handler,irc,list,log,loop,object,option,output,repeater,rss,runtime,seen,setter,skip,table,timer,token,udp,url,user,users,word
+cfg,log,object,rss
 >>> k.cmd("met")
 met <userhost>
 >>> k.cmd("mre")

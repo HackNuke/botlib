@@ -10,7 +10,6 @@ class Table(Object):
 
     def __init__(self):
         super().__init__()
-        self.classes = Object()
         self.modnames = Object()
         self.names = List()
 
@@ -19,7 +18,6 @@ class Table(Object):
         self.modnames[n] = func.__module__
 
     def addcls(self, cls):
-        self.classes[cls.__name__] = cls
         self.names.append(
             cls.__name__.lower(), "%s.%s" % (cls.__module__, cls.__name__)
         )
@@ -46,6 +44,4 @@ class Table(Object):
                 if mod:
                     self.introspect(mod)
             mods.append(p)
-        k = getmain("k")
-        k.log("tbl %s cls %s nms %s" % (len(self.modnames), len(self.classes), len(self.names)))
         return mods

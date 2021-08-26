@@ -9,6 +9,7 @@ import sys
 import termios
 import unittest
 
+from bot.dmp import tbl
 from bot.obj import save, values
 from bot.run import Client, Runtime
 from bot.tbl import Table
@@ -45,8 +46,6 @@ class Test(Client):
 clt = Silent()
 tst = Test()
 k = Kernel()
-t = Table()
-
 
 import bot.all
 
@@ -71,17 +70,6 @@ def main():
     k.boot()
     k.cfg.debug = True
     k.cfg.bork = True
-    t.scan("bot")
-    for cls in values(t.classes):
-        try:
-            c = cls()
-        except TypeError:
-            try:
-                c = cls("cmd")
-            except TypeError:
-                c = cls("cmd", 500)
-        c.txt = "bla"
-        save(c)
     k.start()
     clt.start()
     pat = "test_%s*" % "*"

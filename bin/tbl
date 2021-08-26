@@ -6,47 +6,24 @@ import os, sys ; sys.path.insert(0, os.getcwd())
 import inspect
 import pkgutil
 
-from bot.obj import Object, List, spl
-from bot.run import Runtime
+from bot.obj import getcls, items
+from bot.tbl import Table
 
-
-k = Runtime()
-modnames = Object()
-names = List()
-
-
-def scan(self, pkgs=""):
-    for pn in spl(pkgs):
-        p = sys.modules.get(pn, None)
-        if not p:
-            continue
-        if "__path__" not in dir(p):
-            introspect(p)
-            continue
-        for mn in pkgutil.walk_packages(p.__path__, pn + "."):
-            z = mn[0].find_module(mn[1])
-            mod = z.load_module(mn[1])
-            for _k, o in inspect.getmembers(mod, inspect.isfunction):
-                if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
-                    modnames[_k] = o.__module__
-            for _k, o in inspect.getmembers(mod, inspect.isclass):
-                names.append(
-                     o.__name__.lower(), "%s.%s" % (o.__module__, o.__name__)
-                )
-    return names
-
-    
 import bot.all
 
+tbl = Table()
+tbl.scan("bot")
 
-scan(k, "bot")
+
 print("# This file is placed in the Public Domain.")
 print("")
-print("from bot.obj import Object")
 print("from bot.tbl import Table")
 print("")
 print("tbl = Table()")
 print("")
-print("tbl.modnames = Object(%s)" % modnames)
-print("")
-print("tbl.names = Object(%s)" % names)
+print("tbl.classes.update(%s)" % tbl.classes)
+print("for k, cn in items(tbl.classes):")
+print("print(k, cn)")
+print("print(getcls(cn))")
+print("tbl.modnames.update(%s)" % tbl.modnames)
+print("tbl.names.update(%s)" % tbl.names)

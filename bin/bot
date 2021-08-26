@@ -85,6 +85,7 @@ def main():
     if k.cfg.verbose:
         k.log("BOT started at %s" % time.ctime(time.time()))
         k.log(fmt(k.cfg))
+    k.log("tbl %s cls %s nms %s" % (len(tbl.modnames), len(tbl.classes), len(tbl.names)))
     if k.cfg.verbose:
         k.log(",".join(sorted(keys(tbl.modnames))))
     if k.opt("b"):
@@ -100,5 +101,6 @@ def main():
         clt.start()
     if k.opt("cw") or do:
         k.wait()
+    print(k)
 
 wrap(main)

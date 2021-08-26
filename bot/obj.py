@@ -275,6 +275,12 @@ def fmt(self, keyz=None, empty=True, skip=None):
 def get(self, key, default=None):
     return self.__dict__.get(key, default)
 
+def getcls(cn):
+    mn, cn = cn.rsplit(1, ".")
+    m = sys.modules.get(mn, None)
+    if m: 
+        return getattr(mod, cn, None)
+    return None
 
 def getmain(name):
     return getattr(sys.modules["__main__"], name, None)
