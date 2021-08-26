@@ -559,8 +559,8 @@ def QUIT(clt, obj):
 def cfg(event):
     c = Cfg()
     last(c)
-    delkeys(event.sets, ["p", "m"])
-    if "sets" not in event or not event.sets:
+    delkeys(event.sets, ["mod"])
+    if not event.sets:
         event.reply(fmt(c, skip=["username", "realname"]))
         return
     edit(c, event.sets)

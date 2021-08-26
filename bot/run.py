@@ -109,20 +109,21 @@ class Runtime(Dispatcher, Loop):
         return False
 
     def parse_cli(self):
-        txt = " ".join(sys.argv[1:])
-        if txt:
-            if not self.__parsed__:
-                self.__parsed__ = Object()
-            parse_txt(self.__parsed__, txt)
-            update(self.cfg, self.__parsed__.sets)
-            update(self.opts, self.__parsed__.opts)
-            self.cfg.index = self.__parsed__.index
-            self.cfg.txt = self.__parsed__.txt
+        o = Object()
+        parse_txt(o, " ".join(sys.argv[1:]))
+        update(self.cfg, o)
+        update(self.cfg, o.sets)
 
     @staticmethod
     def pid():
         p = os.path.join(getwd(), "botd.pid")
-        return os.read(p, "r").readline()
+        try:
+            pid = os.read(p, "r").readline()
+            pid = int(pid)
+            return pid
+        except:
+            pass
+        return None
 
     @staticmethod
     def privileges(name=None):
@@ -146,7 +147,7 @@ class Runtime(Dispatcher, Loop):
         except (TypeError, KeyError):
             return False
         try:
-            os.chown(ob.wd, pwn.pw_uid, pwn.pw_gid)
+            os.chown(getwd(), pwn.pw_uid, pwn.pw_gid)
         except PermissionError:
             pass
         os.setgroups([])
@@ -170,7 +171,7 @@ class Runtime(Dispatcher, Loop):
     def writepid():
         p = os.path.join(getwd(), "botd.pid")
         f = open(p, "w")
-        f.write(os.getpid())
+        f.write(str(os.getpid()))
         f.flush()
         f.close()
 
