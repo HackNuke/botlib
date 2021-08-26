@@ -1,17 +1,17 @@
 NAME
 ====
 
-**BOT* - pure python3 irc bot - https://pypi.org/project/botlib
+**BOT** - pure python3 irc bot - https://pypi.org/project/botlib
 
 SYNOPSIS
 ========
 
-bot \<cmd\> |options] [key=value] [key==value] 
+bot \<cmd\> \|options\] \[key=value\] \[key==value\]
 
 CONFIGURATION
 =============
 
-| * default channel/server is #gcid on localhost
+| \* default channel/server is #gcid on localhost
 
 | bot cfg server=\<server\> channel=<channel> nick=\<nick\>
 | bot cfg users=True

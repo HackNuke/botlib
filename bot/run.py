@@ -7,7 +7,7 @@ import sys
 import time
 
 from .bus import Bus
-from .obj import Db, Default, Object, cdir, get, getmain, getwd, spl, update
+from .obj import Db, Default, Object, cdir, fmt, get, getmain, getwd, spl, update
 from .hdl import Dispatcher, Handler, Loop
 from .prs import parse_txt
 from .thr import launch
