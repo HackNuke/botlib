@@ -13,6 +13,10 @@ from .prs import parse_txt
 from .thr import launch
 
 
+def __dir__():
+    return ("Cfg", "Client", "Runtime", "launch", "spl")
+
+
 starttime = time.time()
 
 
@@ -95,6 +99,9 @@ class Runtime(Dispatcher, Loop):
             mods.append(mod)
         return mods
 
+    def log(self, txt):
+        pass
+
     def opt(self, ops):
         for opt in ops:
             if opt in self.opts:
@@ -111,6 +118,11 @@ class Runtime(Dispatcher, Loop):
             update(self.opts, self.__parsed__.opts)
             self.cfg.index = self.__parsed__.index
             self.cfg.txt = self.__parsed__.txt
+
+    @staticmethod
+    def pid():
+        p = os.path.join(getwd(), "botd.pid")
+        return os.read(p, "r").readline()
 
     @staticmethod
     def privileges(name=None):
@@ -153,6 +165,14 @@ class Runtime(Dispatcher, Loop):
     def wait():
         while 1:
             time.sleep(5.0)
+
+    @staticmethod
+    def writepid():
+        p = os.path.join(getwd(), "botd.pid")
+        f = open(p, "w")
+        f.write(os.getpid())
+        f.flush()
+        f.close()
 
 class Client(Handler):
 

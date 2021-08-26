@@ -23,8 +23,9 @@ def __dir__():
 def init(k):
     i = IRC()
     p = last(i.cfg)
+    k.log(fmt(i.cfg, skip=["password", "realname", "username"]))
     if p:
-        k.log("cfg from %s" % p)
+        k.log(p)
     k.log("connecting to %s:%s" % (i.cfg.server, i.cfg.port))
     i.start()
     k.log("joined %s as %s cc %s" % (i.cfg.channel, i.cfg.nick, i.cfg.cc))

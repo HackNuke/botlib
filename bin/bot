@@ -15,13 +15,6 @@ from bot.run import Client, Runtime
 from bot.tbl import Table
 from bot.trc import get_exception
 
-try:
-    import bot.dmp
-    tbl = bot.dmp.tbl
-except ImportError:
-    tbl = Table()
-    tbl.scan("bot")
-
 class Kernel(Runtime):
 
     def error(self, txt):
@@ -60,6 +53,7 @@ class Console(Client):
 
 clt = Console()
 k = Kernel()
+tbl = Table()
 
 import bot.all
 
@@ -82,16 +76,17 @@ def wrap(func):
 
 def main(): 
     k.boot()
+    tbl.scan("bot")
     if k.cfg.verbose:
         k.log("BOT started at %s" % time.ctime(time.time()))
-        k.log(fmt(k.cfg))
-    k.log("tbl %s cls %s nms %s" % (len(tbl.modnames), len(tbl.classes), len(tbl.names)))
-    if k.cfg.verbose:
         k.log(",".join(sorted(keys(tbl.modnames))))
     if k.opt("b"):
         k.cfg.bork = True
     if k.cfg.txt:
         return k.cmd(k.cfg.txt)
+    if k.cfg.verbose:
+        k.log("tbl %s nms %s" % (len(tbl.modnames), len(tbl.names)))
+        k.log(fmt(k.cfg, skip=["password"]))
     do = k.cfg.mod
     if k.opt("cw") or do:
         k.start()
@@ -100,7 +95,7 @@ def main():
     if k.opt("c") or do:
         clt.start()
     if k.opt("cw") or do:
+        k.log("using %s" % wd)
         k.wait()
-    print(k)
 
 wrap(main)

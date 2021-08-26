@@ -17,7 +17,7 @@ setup(
     packages=["bot"],
     zip_safe=True,
     include_package_data=True,
-    data_files=[("man/man1/", ["files/bot.1.gz"]),
+    data_files=[("man/man1/", ["files/bot.1.gz"])],
     scripts=["bin/bot"],
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: Public Domain',
