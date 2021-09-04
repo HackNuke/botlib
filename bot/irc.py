@@ -1,24 +1,22 @@
 # This file is placed in the Public Domain.
 
+import base64
 import os
 import queue
 import socket
 import ssl
+import sys
 import textwrap
 import time
 import threading
 import _thread
 
-from .bus import Bus
-from .evt import Event
-from .hdl import Handler
-from .obj import Db, Default, Object
-from .obj import delkeys, edit, getmain, find, fmt, last, oqn, save, update
-from .opt import Output
-from .thr import launch
+from obj import Cfg, Db, Default, Object
+from obj import edit, fmt, last, oqn, save, update
+from run import Bus, Event, Handler, Output, find, getmain, launch
 
 def __dir__():
-    return ("init", "Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "locked", "met", "mre", "nck", "ops")
+    return ("init", "Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "locked", "met", "mre", "nck", "ops", "pwd")
 
 def init(k):
     i = IRC()
@@ -52,13 +50,13 @@ saylock = _thread.allocate_lock()
 class Cfg(Default):
 
     cc = "!"
-    channel = "#bot"
-    nick = "bot"
+    channel = "#modbot"
+    nick = "modbot"
     port = 6667
     server = "localhost"
-    realname = "botlib"
-    username = "bot"
-    users = True
+    realname = "modular bot"
+    username = "modbot"
+    users = False
 
     def __init__(self, *args,**kwargs):
         super().__init__()
@@ -203,8 +201,8 @@ class IRC(Output, Handler):
             nick = self.cfg.nick + "_"
             self.cfg.nick = nick
             self.raw("NICK %s" % self.cfg.nick)
-        k = getmain("k")
-        if k.cfg.verbose:
+        if Cfg.verbose:
+            k = getmain("k")
             k.log(txt.rstrip())
         return e
 
@@ -244,6 +242,9 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
+        if Cfg.verbose:
+            k = getmain("k")
+            k.log(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
         o.orig = oqn(self)
@@ -309,7 +310,7 @@ class IRC(Output, Handler):
             txt += "\r\n"
         txt = txt[:512]
         k = getmain("k")
-        if k.cfg.verbose:
+        if Cfg.verbose:
             k.log(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
@@ -481,8 +482,7 @@ class Users(Object):
 
 
 def h366(clt, obj):
-    k = getmain("k")
-    k.cfg.verbose = False
+    Cfg.verbose = False
 
 def AUTH(clt, obj):
     clt.raw("AUTHENTICATE %s"% clt.cfg.password)
@@ -568,6 +568,11 @@ def cfg(event):
     save(c)
     event.reply("ok")
 
+def delkeys(self, keyz=None):
+    if keyz is None:
+        keyz = []
+    for k in keyz:
+        del self[k]
 
 def dlt(event):
     if not event.args:
@@ -621,3 +626,14 @@ def ops(event):
         return
     if type(bot) == IRC:
         bot.command("MODE", event.channel, "+o", event.nick)
+
+
+def pwd(event):
+    if len(event.args) != 2:
+        event.reply("pwd <nick> <password>")
+        return
+    m = "\x00%s\x00%s" % (event.args[0], event.args[1])
+    mb = m.encode('ascii')
+    bb = base64.b64encode(mb)
+    bm = bb.decode('ascii')
+    event.reply(bm)

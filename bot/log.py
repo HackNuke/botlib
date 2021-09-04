@@ -1,17 +1,13 @@
 # This file is in the Public Domain.
 
-from .obj import Object, save
 
-def __dir__():
-    return ("Log", "log",)
-
+from obj import Object, save
 
 class Log(Object):
 
     def __init__(self):
         super().__init__()
         self.txt = ""
-
 
 def log(event):
     if not event.rest:
@@ -21,3 +17,4 @@ def log(event):
     o.txt = event.rest
     save(o)
     event.reply("ok")
+

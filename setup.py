@@ -7,7 +7,7 @@ def read():
 
 setup(
     name='botlib',
-    version='130',
+    version='131',
     url='https://github.com/bthate/botlib',
     author='Bart Thate',
     author_email='bthate@dds.nl', 
@@ -16,6 +16,7 @@ setup(
     license='Public Domain',
     packages=["bot"],
     zip_safe=True,
+    py_modules=["obj", "run"],
     include_package_data=True,
     data_files=[("man/man1/", ["files/bot.1.gz"])],
     scripts=["bin/bot"],

@@ -1,46 +1,48 @@
 # This file is placed in the Public Domain.
 
+"python3 object library"
+
+__version__ = 201
+
 import datetime
 import json as js
 import os
 import pathlib
-import queue
-import re
-import threading
 import sys
 import types
 import time
 import uuid
 
-
-class ENoFile(Exception):
-
-    pass
-
-
-class ENoModule(Exception):
+class NoFile(Exception):
 
     pass
 
 
-class ENoType(Exception):
+class NoModule(Exception):
+
+    pass
+
+class NoPickle(Exception):
 
     pass
 
 
-class ENoJSON(Exception):
+class NoType(Exception):
+
     pass
 
+
+def __dir__():
+    return ("NoFile","NoModule","NoType", "Object", "Default", "List" , "Db", "cdir", "edit", "fmt", "fns", "gettype", "hook", "get", "keys", "items", "last", "load", "register", "save", "set", "update", "values")
 
 
 class Object:
 
-    __slots__ = ("__dict__", "__stp__", "__otype__", "__parsed__")
+    __slots__ = ("__dict__", "__stp__", "__otype__")
 
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.__otype__ = gettype(self)
-        self.__parsed__ = None
         self.__stp__ = os.path.join(
             gettype(self),
             str(uuid.uuid4()),
@@ -49,17 +51,16 @@ class Object:
         if args:
             self.__dict__.update(args[0])
 
-    @staticmethod
-    def __default__(oo):
-        if isinstance(oo, Object):
-            return vars(oo)
-        if isinstance(oo, dict):
-            return oo.items()
-        if isinstance(oo, list):
-            return iter(oo)
-        if isinstance(oo, (type(str), type(True), type(False), type(int), type(float))):
-            return oo
-        return oqn(oo)
+    def __default__(self):
+        if isinstance(self, Object):
+            return vars(self)
+        if isinstance(self, dict):
+            return self.items()
+        if isinstance(self, list):
+            return iter(self)
+        if isinstance(self, (type(str), type(True), type(False), type(int), type(float))):
+            return self
+        return oqn(self)
 
     def __oqn__(self):
         return "<%s.%s object at %s>" % (
@@ -77,6 +78,9 @@ class Object:
         if k in self:
             del self.__dict__[k]
 
+    def __eq__(self, o):
+        return len(self) == len(o)
+
     def __getitem__(self, k):
         return self.__dict__[k]
 
@@ -86,27 +90,35 @@ class Object:
     def __len__(self):
         return len(self.__dict__)
 
+    def __le__(self, o):
+        return len(self) <= len(o)
+
     def __lt__(self, o):
         return len(self) < len(o)
 
+    def __ge__(self, o):
+        return len(self) >= len(o)
+
+    def __gt__(self, o):
+        return len(self) > len(o)
+
+    def __hash__(self):
+        return id(self)
+
     def __setitem__(self, k, v):
         self.__dict__[k] = v
+
+    def __reduce__(self):
+        raise NoPickle
+
+    def __reduce__ex(self):
+        raise NoPickle
 
     def __repr__(self):
         return json(self)
 
     def __str__(self):
         return str(self.__dict__)
-
-
-class Default(Object):
-
-    def __getattr__(self, k):
-        try:
-            return super().__getitem__(k)
-        except KeyError:
-            self[k] = ""
-            return self[k]
 
 
 class List(Object):
@@ -125,6 +137,28 @@ class List(Object):
         for k, v in d.items():
             self.append(k, v)
 
+
+class Default(Object):
+
+    def __getattr__(self, k):
+        try:
+            return super().__getitem__(k)
+        except KeyError:
+            self[k] = ""
+            return self[k]
+
+class Cfg(Default):
+
+    pass
+
+class RunCfg(Default):
+
+    bork = False
+    console = False
+    daemon = False
+    debug = False
+    verbose = False 
+    wd = ""
 
 class Db(Object):
 
@@ -188,8 +222,9 @@ class Db(Object):
         return None
 
     def lastmatch(self, otype, selector=None, index=None, timed=None):
+        db = Db()
         res = sorted(
-            find(otype, selector, index, timed), key=lambda x: fntime(x[0])
+            db.find(otype, selector, index, timed), key=lambda x: fntime(x[0])
         )
         if res:
             return res[-1]
@@ -212,20 +247,78 @@ class Db(Object):
         return (None, None)
 
 
-def delkeys(self, keyz=None):
-    if keyz is None:
-        keyz = []
-    for k in keyz:
-        del self[k]
+def cdir(path):
+    if os.path.exists(path):
+        return
+    if path.split(os.sep)[-1].count(":") == 2:
+        path = os.path.dirname(path)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def dump(self):
-    prv = os.sep.join(self.__stp__.split(os.sep)[:2])
-    self.__stp__ = os.path.join(prv, os.sep.join(str(datetime.datetime.now()).split()))
-    wd = getmain("wd")
-    opath = os.path.join(wd, "store", self.__stp__)
-    cdir(opath)
-    return js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
+def fns(name, timed=None):
+    if not name:
+        return []
+    assert RunCfg.wd
+    p = os.path.join(RunCfg.wd, "store", name) + os.sep
+    res = []
+    d = ""
+    for rootdir, dirs, _files in os.walk(p, topdown=False):
+        if dirs:
+            d = sorted(dirs)[-1]
+            if d.count("-") == 2:
+                dd = os.path.join(rootdir, d)
+                fls = sorted(os.listdir(dd))
+                if fls:
+                    p = os.path.join(dd, fls[-1])
+                    if (
+                        timed
+                        and "from" in timed
+                        and timed["from"]
+                        and fntime(p) < timed["from"]
+                    ):
+                        continue
+                    if timed and timed.to and fntime(p) > timed.to:
+                        continue
+                    res.append(p)
+    return sorted(res, key=fntime)
+
+
+def fntime(daystr):
+    daystr = daystr.replace("_", ":")
+    datestr = " ".join(daystr.split(os.sep)[-2:])
+    if "." in datestr:
+        datestr, rest = datestr.rsplit(".", 1)
+    else:
+        rest = ""
+    t = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+    if rest:
+        t += float("." + rest)
+    else:
+        t = 0
+    return t
+
+
+def gettype(o):
+    return str(type(o)).split()[-1][1:-2]
+
+
+def hook(hfn):
+    if hfn.count(os.sep) > 3:
+        oname = hfn.split(os.sep)[-4:]
+    else:
+        oname = hfn.split(os.sep)
+    cname = oname[0]
+    fn = os.sep.join(oname)
+    mn, cn = cname.rsplit(".", 1)
+    mod = sys.modules.get(mn, None)
+    if not mod:
+        raise NoModule(mn)
+    t = getattr(mod, cn, None)
+    if t:
+        o = t()
+        load(o, fn)
+        return o
+    raise NoType(cname)
 
 
 def edit(self, setter, skip=True, skiplist=None):
@@ -256,11 +349,11 @@ def fmt(self, keyz=None, empty=True, skip=None):
         skip = []
     res = []
     txt = ""
-    for key in sorted(keyz):
+    for key in keyz:
         if key in skip:
             continue
-        if key in self:
-            val = self[key]
+        if key in dir(self):
+            val = getattr(self, key, None)
             if empty and not val:
                 continue
             val = str(val).strip()
@@ -275,35 +368,6 @@ def fmt(self, keyz=None, empty=True, skip=None):
 def get(self, key, default=None):
     return self.__dict__.get(key, default)
 
-def getcls(cn):
-    mn, cn = cn.rsplit(1, ".")
-    m = sys.modules.get(mn, None)
-    if m: 
-        return getattr(mod, cn, None)
-    return None
-
-def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
-
-
-def getwd():
-    return getmain("wd")
-
-
-def getname(o):
-    t = type(o)
-    if t == types.ModuleType:
-        return o.__name__
-    if "__self__" in dir(o):
-        return "%s.%s" % (o.__self__.__class__.__name__, o.__name__)
-    if "__class__" in dir(o) and "__name__" in dir(o):
-        return "%s.%s" % (o.__class__.__name__, o.__name__)
-    if "__class__" in dir(o):
-        return o.__class__.__name__
-    if "__name__" in dir(o):
-        return o.__name__
-    return None
-
 
 def keys(self):
     return self.__dict__.keys()
@@ -314,6 +378,14 @@ def items(self):
         return self.__dict__.items()
     except AttributeError:
         return self.items()
+
+
+def json(self):
+    s = js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
+    s = s.replace("'", "\\\"")
+    s = s.replace('"', "'")
+    return s
+
 
 def last(self):
     db = Db()
@@ -328,19 +400,13 @@ def last(self):
     return None
 
 
-def json(self):
-    s = js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
-    s = s.replace("'", "\\\"")
-    s = s.replace('"', "'")
-    return s
-
-
 def load(self, opath):
     if opath.count(os.sep) != 3:
-        raise ENoFile(opath)
+        raise NoFile(opath)
+    assert RunCfg.wd
     splitted = opath.split(os.sep)
     stp = os.sep.join(splitted[-4:])
-    lpath = os.path.join(getwd(), "store", stp)
+    lpath = os.path.join(RunCfg.wd, "store", stp)
     if os.path.exists(lpath):
         with open(lpath, "r") as ofile:
             d = js.load(ofile, object_hook=Object)
@@ -348,29 +414,8 @@ def load(self, opath):
     self.__stp__ = stp
 
 
-def merge(self, d):
-    for k, v in items(d):
-        if not v:
-            continue
-        if k in self:
-            if isinstance(self[k], dict):
-                continue
-            self[k] = self[k] + v
-        else:
-            self[k] = v
-
 def oqn(self):
     return Object.__oqn__(self)
-
-
-def overlay(self, d, keyz=None, skip=None):
-    for k, v in items(d):
-        if keyz and k not in keyz:
-            continue
-        if skip and k in skip:
-            continue
-        if v:
-            self[k] = v
 
 
 def register(self, k, v):
@@ -378,9 +423,10 @@ def register(self, k, v):
 
 
 def save(self, tab=False):
+    assert RunCfg.wd
     prv = os.sep.join(self.__stp__.split(os.sep)[:2])
     self.__stp__ = os.path.join(prv, os.sep.join(str(datetime.datetime.now()).split()))
-    opath = os.path.join(getwd(), "store", self.__stp__)
+    opath = os.path.join(RunCfg.wd, "store", self.__stp__)
     cdir(opath)
     with open(opath, "w") as ofile:
         js.dump(self.__dict__, ofile, default=self.__default__, indent=4, sort_keys=True)
@@ -412,109 +458,3 @@ def update(self, data):
 
 def values(self):
     return self.__dict__.values()
-
-
-def cdir(path):
-    if os.path.exists(path):
-        return
-    if path.split(os.sep)[-1].count(":") == 2:
-        path = os.path.dirname(path)
-    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
-
-
-def check(o, keyz=None):
-    if keyz is None:
-        keyz = []
-    for k in keyz:
-        if k in o:
-            return True
-    return False
-
-def find(name, selector=None, index=None, timed=None):
-    db = Db()
-    t = getmain("tbl")
-    if not t:
-        return
-    for n in get(t.names, name, [name,],):
-        for fn, o in db.find(n, selector, index, timed):
-            yield fn, o
-
-
-def fntime(daystr):
-    daystr = daystr.replace("_", ":")
-    datestr = " ".join(daystr.split(os.sep)[-2:])
-    if "." in datestr:
-        datestr, rest = datestr.rsplit(".", 1)
-    else:
-        rest = ""
-    t = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
-    if rest:
-        t += float("." + rest)
-    else:
-        t = 0
-    return t
-
-
-def fns(name, timed=None):
-    if not name:
-        return []
-    p = os.path.join(getwd(), "store", name) + os.sep
-    res = []
-    d = ""
-    for rootdir, dirs, _files in os.walk(p, topdown=False):
-        if dirs:
-            d = sorted(dirs)[-1]
-            if d.count("-") == 2:
-                dd = os.path.join(rootdir, d)
-                fls = sorted(os.listdir(dd))
-                if fls:
-                    p = os.path.join(dd, fls[-1])
-                    if (
-                        timed
-                        and "from" in timed
-                        and timed["from"]
-                        and fntime(p) < timed["from"]
-                    ):
-                        continue
-                    if timed and timed.to and fntime(p) > timed.to:
-                        continue
-                    res.append(p)
-    return sorted(res, key=fntime)
-
-
-def gettype(o):
-    return str(type(o)).split()[-1][1:-2]
-
-
-def hook(hfn):
-    if hfn.count(os.sep) > 3:
-        oname = hfn.split(os.sep)[-4:]
-    else:
-        oname = hfn.split(os.sep)
-    cname = oname[0]
-    fn = os.sep.join(oname)
-    mn, cn = cname.rsplit(".", 1)
-    mod = sys.modules.get(mn, None)
-    if not mod:
-        raise ENoModule(mn)
-    t = getattr(mod, cn, None)
-    if t:
-        o = t()
-        load(o, fn)
-        return o
-    raise ENoType(cname)
-
-
-def listfiles(workdir):
-    path = os.path.join(workdir, "store")
-    if not os.path.exists(path):
-        return []
-    return sorted(os.listdir(path))
-
-
-def setwd(path):
-    global wd
-    wd = path
-
-def spl(txt):
-    return [x for x in txt.split(",") if x]

@@ -3,18 +3,11 @@
 import threading
 import time
 
-from .bus import Bus
-from .obj import Object, fmt, get, getmain, getname, update
-from .tms import elapsed
-from .ver import starttime
+from run import Bus, elapsed, getmain, getname, starttime
+from obj import Object, fmt, get, update
 
 def __dir__():
-    return("cmd", "flt", "thr", "upt")
-
-def cmd(event):
-    tbl = getmain("tbl")
-    event.reply(",".join(sorted(tbl.modnames)))
-
+    return("flt", "thr", "upt")
 
 def flt(event):
     try:

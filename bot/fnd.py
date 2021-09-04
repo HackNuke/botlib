@@ -1,16 +1,13 @@
-# This file is placed in the Public Domain.
+# This file is in the Public Domain.
 
 import time
 
-from .obj import fmt, find, fntime, getname, getwd, keys, listfiles
-from .tms import elapsed 
-
-def __dir__():
-    return ("fnd",)
+from obj import Cfg, keys, fmt
+from run import elapsed, listfiles, find, fntime
 
 def fnd(event):
     if not event.args:
-        fls = listfiles(getwd())
+        fls = listfiles(Cfg.wd)
         if fls:
             event.reply(",".join(sorted({x.split(".")[-1].lower() for x in fls})))
         return

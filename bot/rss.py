@@ -4,10 +4,8 @@ import re
 import threading
 import urllib
 
-from .bus import Bus
-from .obj import Db, Default, Object, edit, fmt, find, get, getmain, last, save, update
-from .thr import launch
-from .tms import Repeater
+from run import Bus, Repeater, launch, find, getmain
+from obj import RunCfg, Db, Default, Object, edit, fmt, get, last, save, update
  
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -147,7 +145,7 @@ def getfeed(url):
 
 def gettinyurl(url):
     k = getmain("k")
-    if k.cfg.debug:
+    if RunCfg.debug:
         return []
     postarray = [
         ("submit", "submit"),
@@ -166,11 +164,11 @@ def gettinyurl(url):
 
 def geturl(url):
     k = getmain("k")
-    if k.cfg.debug:
+    if RunCfg.debug:
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)
-    req.add_header("User-agent", useragent("BOTD"))
+    req.add_header("User-agent", useragent("OBOT"))
     response = urllib.request.urlopen(req)
     response.data = response.read()
     return response
