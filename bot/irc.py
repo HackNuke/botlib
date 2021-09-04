@@ -340,6 +340,7 @@ class IRC(Output, Handler):
         assert self.cfg.nick
         assert self.cfg.server
         assert self.cfg.channel
+        save(self.cfg)
         self.stopped.clear()
         self.connected.clear()
         self.joined.clear()
