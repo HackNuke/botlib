@@ -11,7 +11,7 @@ import time
 import threading
 import _thread
 
-from obj import Cfg, Db, Default, Object
+from obj import RunCfg, Db, Default, Object
 from obj import edit, fmt, last, oqn, save, update
 from run import Bus, Event, Handler, Output, find, getmain, launch
 
@@ -201,7 +201,7 @@ class IRC(Output, Handler):
             nick = self.cfg.nick + "_"
             self.cfg.nick = nick
             self.raw("NICK %s" % self.cfg.nick)
-        if Cfg.verbose:
+        if RunCfg.verbose:
             k = getmain("k")
             k.log(txt.rstrip())
         return e
@@ -242,7 +242,7 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        if Cfg.verbose:
+        if RunCfg.verbose:
             k = getmain("k")
             k.log(txt.rstrip())
         o = Event()
@@ -310,7 +310,7 @@ class IRC(Output, Handler):
             txt += "\r\n"
         txt = txt[:512]
         k = getmain("k")
-        if Cfg.verbose:
+        if RunCfg.verbose:
             k.log(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
@@ -482,7 +482,7 @@ class Users(Object):
 
 
 def h366(clt, obj):
-    Cfg.verbose = False
+    RunCfg.verbose = False
 
 def AUTH(clt, obj):
     clt.raw("AUTHENTICATE %s"% clt.cfg.password)

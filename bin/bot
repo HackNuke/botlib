@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-__version__ = 131
+__version__ = 132
 
 import os, sys ; sys.path.insert(0, os.getcwd())
 
@@ -107,7 +107,6 @@ def ver(event):
 
 
 def main():
-    from run import __version__
     k.boot()
     tbl.add(cmd)
     tbl.add(ver)
