@@ -50,12 +50,12 @@ saylock = _thread.allocate_lock()
 class Cfg(Default):
 
     cc = "!"
-    channel = "#modbot"
-    nick = "modbot"
+    channel = "#bot"
+    nick = "bot"
     port = 6667
     server = "localhost"
-    realname = "modular bot"
-    username = "modbot"
+    realname = "python3 irc bot"
+    username = "bot"
     users = False
 
     def __init__(self, *args,**kwargs):
