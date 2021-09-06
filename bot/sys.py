@@ -3,8 +3,8 @@
 import threading
 import time
 
-from run import Bus, elapsed, getmain, getname, starttime
-from obj import Object, fmt, get, update
+from .run import Bus, elapsed, getmain, getname, starttime
+from .obj import Object, fmt, get, update
 
 def __dir__():
     return("flt", "thr", "upt")

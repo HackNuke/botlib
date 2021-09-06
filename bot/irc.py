@@ -11,9 +11,9 @@ import time
 import threading
 import _thread
 
-from obj import RunCfg, Db, Default, Object
-from obj import edit, fmt, last, oqn, save, update
-from run import Bus, Event, Handler, Output, find, getmain, launch
+from .obj import RunCfg, Db, Default, Object
+from .obj import edit, fmt, last, oqn, save, update
+from .run import Bus, Event, Handler, Output, find, getmain, launch
 
 def __dir__():
     return ("init", "Cfg", "DCC", "Event", "IRC", "User", "Users", "cfg", "dlt", "locked", "met", "mre", "nck", "ops", "pwd")

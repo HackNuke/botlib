@@ -2,8 +2,8 @@
 
 import time
 
-from obj import Cfg, keys, fmt
-from run import elapsed, listfiles, find, fntime
+from .obj import Cfg, keys, fmt
+from .run import elapsed, listfiles, find, fntime
 
 def fnd(event):
     if not event.args:

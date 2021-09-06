@@ -3,8 +3,8 @@
 import socket
 import time
 
-from run import Bus, launch
-from obj import Default, Object, fmt, last
+from .run import Bus, launch
+from .obj import Default, Object, fmt, last
 
 def __dir__():
     return ("init", "Cfg", "UDP", "toudp")

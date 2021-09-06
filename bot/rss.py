@@ -4,8 +4,8 @@ import re
 import threading
 import urllib
 
-from run import Bus, Repeater, launch, find, getmain
-from obj import RunCfg, Db, Default, Object, edit, fmt, get, last, save, update
+from .run import Bus, Repeater, launch, find, getmain
+from .obj import RunCfg, Db, Default, Object, edit, fmt, get, last, save, update
  
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

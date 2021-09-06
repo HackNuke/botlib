@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 
-__version__ = 2
+__version__ = 3
 
 import datetime
 import getpass

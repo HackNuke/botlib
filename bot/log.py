@@ -1,7 +1,7 @@
 # This file is in the Public Domain.
 
 
-from obj import Object, save
+from .obj import Object, save
 
 class Log(Object):
 
