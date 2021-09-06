@@ -385,8 +385,8 @@ class Runtime(Dispatcher, Loop):
         self.opts = Object()
         self.register("cmd", self.handle)
 
-    def boot(self, disk=False):
-        self.parse_cli(disk)
+    def boot(self):
+        self.parse_cli()
 
     def cmd(self, txt):
         if not txt:
