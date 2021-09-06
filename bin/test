@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
+import os, sys ; sys.path.insert(0, os.getcwd())
+
 import doctest
+import obj
 import os
-import readline
-import shutil
-import sys
-import termios
+import pkgutil
+import importlib
 import unittest
 
-from bot.dmp import tbl
-from bot.obj import save, values
-from bot.run import Client, Runtime
-from bot.tbl import Table
+from obj import RunCfg
+from run import Client, Runtime, Table
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
-wd = ".test"
+
+
+class CLI(Client):
+
+    def raw(self, txt):
+        if RunCfg.verbose:
+            print(txt)
+            sys.stdout.flush()
 
 
 class Kernel(Runtime):
@@ -25,63 +31,50 @@ class Kernel(Runtime):
         print(txt)
         sys.stdout.flush()
 
-
     def log(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-class Silent(Client):
-
-    def raw(self, txt):
-        if k.opt("v"):
+        if RunCfg.verbose:
             print(txt)
+            sys.stdout.flush()
 
 
-class Test(Client):
+class Table(Table):
 
-    def raw(self, txt):
-        print(txt)
-
-
-clt = Silent()
-tst = Test()
-k = Kernel()
-
-import bot.all
+    def addmod(self, mn):
+        spc = importlib.util.find_spec(mn)
+        if not spc:
+            return
+        mod = importlib.import_module(mn)
+        self.introspect(mod)
 
 
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except KeyboardInterrupt:
-        pass
-    except PermissionError as ex:
-        print(str(ex))
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    def scan(self, pn):
+        spc = importlib.util.find_spec(pn)
+        if not spc:
+            return
+        pkg = importlib.import_module(pn)
+        if "__path__" not in dir(pkg):
+            p = [os.path.dirname(pkg.__file__),]
+        else:
+            p = pkg.__path__
+        for mn in pkgutil.walk_packages(p, pn + "."):
+            mod = importlib.import_module(mn.name)
+            if mod:
+                self.introspect(mod)
+
+
+clt = CLI()
+k = Runtime()
+tbl = Table()
 
 
 def main():
-    global clt
-    if os.path.exists(".test"):
-        shutil.rmtree(".test")
     k.boot()
-    k.cfg.debug = True
-    k.cfg.bork = True
-    k.start()
-    clt.start()
+    RunCfg.debug = True
+    RunCfg.wd = ".test"
+    tbl.scan("bot")
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    clt = Test()
-    doctest.testfile(
-        "../test/test1.txt", optionflags=flags, globs=globals(),report=False, verbose=False
-    )
-    doctest.testfile(
-        "../test/test2.txt", optionflags=flags, globs=globals(), report=False, verbose=False
-    )
 
 
-wrap(main)
+main()
