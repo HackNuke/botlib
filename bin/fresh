@@ -1,0 +1,16 @@
+# This file is in the Public Domain
+
+
+keyring --disable
+apt purge update-notifier-common -y
+apt purge unattended-upgrades -y
+apt purge sysstat -y
+apt purge gnome-initial-setup
+apt-add-repository contrib
+apt-add-repository non-free
+apt update -y
+apt clean -y
+apt install -y joe git irssi ircd-irc2 python3-setuptools python3-pip python3-virtualenv python3-feedparser python3-sphinx twine tilix locate
+apt install -y gnome-tweaks libavcodec-extra ffmpeg audacious gimp vlc pandoc
+#apt install -y nvidia-driver
+apt autoremove -y

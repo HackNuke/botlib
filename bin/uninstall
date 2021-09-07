@@ -1,0 +1,10 @@
+pip3 uninstall botlib -y
+pip3 uninstall botd -y
+pip3 uninstall evrm -y
+pip3 uninstall librun -y
+pip3 uninstall koning -y
+pip3 uninstall kamer -y
+pip3 uninstall modbot -y
+pip3 uninstall libobj -y
+pip3 uninstall genocide -y
+

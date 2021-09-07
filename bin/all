@@ -1,0 +1,11 @@
+git clone ssh://git@github.com/bthate/botlib work/botlib
+git clone ssh://git@github.com/bthate/botd work/botd
+git clone ssh://git@github.com/bthate/librun work/librun
+git clone ssh://git@github.com/bthate/libobj work/libobj
+#git clone ssh://git@github.com/bthate/evrm work/evrm
+#git clone ssh://git@github.com/bthate/koning work/koning
+#git clone ssh://git@github.com/bthate/kamer work/kamer
+#git clone ssh://git@github.com/bthate/genocide work/genocide
+git clone ssh://git@github.com/bthate/modbot work/modbot
+
+
