@@ -4,20 +4,23 @@
 import os, sys ; sys.path.insert(0, os.getcwd())
 
 import doctest
-import obj
 import os
-import pkgutil
-import importlib
 import unittest
 
-from obj import RunCfg
-from run import Client, Runtime, Table
+from bot.clt import Client
+from bot.obj import Cfg
+from bot.run import Runtime
+from bot.run import Cfg as RunCfg
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 
 class CLI(Client):
+
+    def __init__(self):
+        super().__init__()
+        self.cfg = RunCfg()
 
     def raw(self, txt):
         if RunCfg.verbose:
@@ -37,41 +40,18 @@ class Kernel(Runtime):
             sys.stdout.flush()
 
 
-class Table(Table):
-
-    def addmod(self, mn):
-        spc = importlib.util.find_spec(mn)
-        if not spc:
-            return
-        mod = importlib.import_module(mn)
-        self.introspect(mod)
-
-
-    def scan(self, pn):
-        spc = importlib.util.find_spec(pn)
-        if not spc:
-            return
-        pkg = importlib.import_module(pn)
-        if "__path__" not in dir(pkg):
-            p = [os.path.dirname(pkg.__file__),]
-        else:
-            p = pkg.__path__
-        for mn in pkgutil.walk_packages(p, pn + "."):
-            mod = importlib.import_module(mn.name)
-            if mod:
-                self.introspect(mod)
-
-
 clt = CLI()
 k = Runtime()
-tbl = Table()
+
+
+import bot.all
 
 
 def main():
-    k.boot()
-    RunCfg.debug = True
-    RunCfg.wd = ".test"
-    tbl.scan("bot")
+    Runtime.cfg.debug = True
+    Cfg.wd = ".test"
+    k.cfg.mod = "bot.irc,bot.rss"
+    k.parse_cli()
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)

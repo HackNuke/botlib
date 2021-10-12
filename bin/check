@@ -1,0 +1,5 @@
+grep -R --exclude *check __import__ 
+grep -R --exclude *check popen 
+grep -R --exclude *check pkgutil 
+grep -R --exclude *check importlib 
+grep -R --exclude=*check --exclude-dir=.git --exclude-dir=bin print 
