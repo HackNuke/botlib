@@ -1,17 +1,29 @@
 # This file is in the Public Domain.
 
+
 import threading
 import time
 
-from .run import Bus, elapsed, getmain, getname, starttime
-from .obj import Object, fmt, get, update
+
+from .bus import Bus
+from .obj import Object, get, update
+from .ofn import getname, fmt
+from .run import Runtime, starttime
+from .tbl import Table
+from .tms import elapsed
+
 
 def __dir__():
-    return("flt", "thr", "upt")
+    return ("cmd", "flt", "thr", "upt", "ver")
+
+
+def cmd(event):
+    event.reply(",".join(sorted(list(Table.modnames))))
+
 
 def flt(event):
     try:
-        index = int(event.args[0])
+        index = int(event.prs.args[0])
         event.reply(fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
         return
     except (TypeError, IndexError):
@@ -20,18 +32,17 @@ def flt(event):
 
 
 def thr(event):
-    psformat = "%s %s"
     result = []
-    for thr in sorted(threading.enumerate(), key=lambda x: x.getName()):
-        if str(thr).startswith("<_"):
+    for t in sorted(threading.enumerate(), key=lambda x: x.getName()):
+        if str(t).startswith("<_"):
             continue
         o = Object()
-        update(o, vars(thr))
+        update(o, vars(t))
         if get(o, "sleep", None):
             up = o.sleep - int(time.time() - o.state.latest)
         else:
             up = int(time.time() - starttime)
-        thrname = thr.getName()
+        thrname = t.getName()
         if not thrname:
             continue
         if thrname:
@@ -45,3 +56,7 @@ def thr(event):
 
 def upt(event):
     event.reply("uptime is %s" % elapsed(time.time() - starttime))
+
+
+def ver(event):
+    event.reply("%s %s" % (Runtime.cfg.name.upper(), Runtime.cfg.version))

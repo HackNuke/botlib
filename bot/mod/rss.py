@@ -1,15 +1,31 @@
 # This file is placed in the Public Domain.
 
+import html.parser
 import re
 import threading
 import urllib
 
-from .run import Bus, Repeater, launch, find, getmain
-from .obj import RunCfg, Db, Default, Object, edit, fmt, get, last, save, update
- 
+from .bus import Bus
+from .dbs import Db, find, last
+from .rpt import Repeater
+from .run import Runtime
+from .tbl import Table
+from .thr import launch
+from .obj import Cfg, Object, get, update
+from .ofn import edit, save
+from .run import Cfg as RunCfg
+
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 from urllib.request import Request, urlopen
+
+gotparser = False
+try:
+    import feedparser
+
+    gotparser = True
+except ModuleNotFoundError:
+    pass
 
 
 def __dir__():
@@ -19,13 +35,11 @@ def __dir__():
 def init(k):
     f = Fetcher()
     last(f.cfg)
-    k.log(fmt(f.cfg))
     launch(f.start)
-    k.log("%s feed %s cache" % (len(list(find("rss"))), len(f.seen.urls)))
     return f
 
 
-class Cfg(Default):
+class Cfg(Object):
 
     def __init__(self):
         super().__init__()
@@ -36,18 +50,21 @@ class Cfg(Default):
 
 class Feed(Object):
 
-    pass
+    def __getattr__(self, k):
+        try:
+            return super().__getitem__(k)
+        except KeyError:
+            self[k] = ""
+            return self[k]
 
 
 class Rss(Object):
-
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
 class Seen(Object):
-
     def __init__(self):
         super().__init__()
         self.urls = []
@@ -90,15 +107,17 @@ class Fetcher(Object):
         counter = 0
         objs = []
         for o in reversed(list(getfeed(feed.rss))):
-            f = Feed(dict(o))
+            f = Feed()
+            update(f, dict(o))
             update(f, feed)
-            u = urllib.parse.urlparse(f.link)
-            if u.path and not u.path == "/":
-                url = "%s://%s/%s" % (u.scheme, u.netloc, u.path)
-            else:
-                url = f.link
-            if url in Fetcher.seen.urls:
-                continue
+            if "link" in f:
+                u = urllib.parse.urlparse(f.link)
+                if u.path and not u.path == "/":
+                    url = "%s://%s/%s" % (u.scheme, u.netloc, u.path)
+                else:
+                    url = f.link
+                if url in Fetcher.seen.urls:
+                    continue
             Fetcher.seen.urls.append(url)
             counter += 1
             objs.append(f)
@@ -112,9 +131,8 @@ class Fetcher(Object):
         return counter
 
     def run(self):
-        db = Db()
         thrs = []
-        for fn, o in find("rss"):
+        for _fn, o in find("rss"):
             thrs.append(launch(self.fetch, o))
         return thrs
 
@@ -126,26 +144,22 @@ class Fetcher(Object):
 
 
 def getfeed(url):
-    try:
-        import feedparser
-    except ModuleNotFoundError:
+    if not gotparser or Runtime.cfg.debug:
         return [Object(), Object()]
     try:
         result = geturl(url)
-    except (ValueError, HTTPError, URLError) as ex:
+    except (ValueError, HTTPError, URLError):
         return [Object(), Object()]
     if not result:
         return [Object(), Object()]
-    else:
-        result = feedparser.parse(result.data)
-        if result and "entries" in result:
-            for entry in result["entries"]:
-                yield entry
+    result = feedparser.parse(result.data)
+    if result and "entries" in result:
+        for entry in result["entries"]:
+            yield entry
 
 
 def gettinyurl(url):
-    k = getmain("k")
-    if RunCfg.debug:
+    if Runtime.cfg.debug:
         return []
     postarray = [
         ("submit", "submit"),
@@ -163,7 +177,6 @@ def gettinyurl(url):
 
 
 def geturl(url):
-    k = getmain("k")
     if RunCfg.debug:
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
@@ -180,7 +193,6 @@ def striphtml(text):
 
 
 def unescape(text):
-    import html.parser
     txt = re.sub(r"\s+", " ", text)
     return html.unescape(txt)
 
@@ -190,12 +202,19 @@ def useragent(txt):
 
 
 def dpl(event):
-    if len(event.args) < 2:
+    if len(event.prs.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
     db = Db()
-    setter = {"display_list": event.args[1]}
-    fn, o = db.lastmatch("rss", {"rss": event.args[0]})
+    setter = {"display_list": event.prs.args[1]}
+    names = get(
+        Table.names,
+        "rss",
+        [
+            "rss",
+        ],
+    )
+    _fn, o = db.lastmatch(names[0], {"rss": event.prs.args[0]})
     if o:
         edit(o, setter)
         save(o)
@@ -216,14 +235,13 @@ def ftc(event):
 
 
 def rem(event):
-    if not event.args:
+    if not event.prs.args:
         event.reply("rem <stringinurl>")
         return
-    db = Db()
-    selector = {"rss": event.args[0]}
+    selector = {"rss": event.prs.args[0]}
     nr = 0
     got = []
-    for fn, o in find("rss", selector):
+    for _fn, o in find("rss", selector):
         nr += 1
         o._deleted = True
         got.append(o)
@@ -233,11 +251,10 @@ def rem(event):
 
 
 def rss(event):
-    if not event.args:
+    if not event.prs.args:
         event.reply("rss <url>")
         return
-    db = Db()
-    url = event.args[0]
+    url = event.prs.args[0]
     if "http" not in url:
         event.reply("%s is not an url" % url)
         return
@@ -245,6 +262,6 @@ def rss(event):
     if res:
         return
     o = Rss()
-    o.rss = event.args[0]
+    o.rss = event.prs.args[0]
     save(o)
     event.reply("ok")
