@@ -4,48 +4,52 @@
 import os
 import unittest
 
-from obj import *
+from bot.dbs import *
+from bot.obj import *
+from bot.ofn import *
+from bot.run import Cfg as RunCfg
 
-attrs = ['Db', 'Default', 'List', 'NoFile', 'NoModule', 'NoType', 'Object',
-         'cdir', 'edit', 'fmt', 'fns', 'get', 'gettype', 'hook', 'items',
-         'keys', 'last', 'load', 'register', 'save', 'set', 'update', 'values']
+attrs = [
+    "Object",
+    "cdir",
+    "get",
+    "gettype",
+    "hook",
+    "items",
+    "keys",
+    "register",
+    "set",
+    "update",
+    "values",
+]
 
 
 class Test_Object(unittest.TestCase):
-
     def test_import(self):
-        import obj
-        self.assertEqual(dir(obj), attrs)
+        import bot.obj
 
-    def test_NoFile(self):
-        with self.assertRaises(NoFile):
-            o = Object()
-            o.key = "value"
-            p = save(o)
-            p += os.sep
-            oo = Object()
-            load(oo, p)
+        self.assertEqual(dir(bot.obj), attrs)
 
     def test_NoType(self):
-        with self.assertRaises(NoType):
+        with self.assertRaises(TypeError):
             o = Object()
             o.key = "value"
             p = save(o)
             splitted = p.split(os.sep)
-            splitted[0] = "obj.Bla"
+            splitted[0] = "bot.obj.Bla"
             pp = os.sep.join(splitted)
             hook(pp)
 
     def test_NoModule(self):
-        with self.assertRaises(NoModule):
+        with self.assertRaises(ModuleNotFoundError):
             o = Object()
             o.key = "value"
             p = save(o)
             splitted = p.split(os.sep)
-            splitted[0] = "bla.Object"
+            splitted[0] = "bot.bla.Object"
             pp = os.sep.join(splitted)
             hook(pp)
-        
+
     def test_Object(self):
         o = Object()
         self.assertTrue(type(o), Object)
@@ -55,15 +59,15 @@ class Test_Object(unittest.TestCase):
         o.__class__
         oo = o.__class__()
         self.assertTrue("Object" in str(type(oo)))
-        
+
     def test_Object__contains__(self):
         o = Object()
         o.key = "value"
-        self.assertTrue("key" in o) 
+        self.assertTrue("key" in o)
 
     def test_Object__default__(self):
         o = Object()
-        self.assertEqual(o.__default__(), {})
+        self.assertEqual(o.__default__(o), {})
 
     def test_Object__delattr__(self):
         o = Object()
@@ -83,7 +87,50 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__dir__(self):
         o = Object()
-        self.assertEqual(dir(o), ['_Object__reduce__ex','__class__', '__contains__', '__default__', '__delattr__', '__delitem__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__module__', '__ne__', '__new__', '__oqn__', '__otype__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__slots__', '__stp__', '__str__', '__subclasshook__'])
+        self.assertEqual(
+            dir(o),
+            [
+                "_Object__reduce__ex",
+                "__class__",
+                "__contains__",
+                "__default__",
+                "__delattr__",
+                "__delitem__",
+                "__dict__",
+                "__dir__",
+                "__doc__",
+                "__eq__",
+                "__format__",
+                "__ge__",
+                "__getattribute__",
+                "__getitem__",
+                "__gt__",
+                "__hash__",
+                "__hooked__",
+                "__init__",
+                "__init_subclass__",
+                "__iter__",
+                "__json__",
+                "__le__",
+                "__len__",
+                "__lt__",
+                "__module__",
+                "__ne__",
+                "__new__",
+                "__oqn__",
+                "__otype__",
+                "__reduce__",
+                "__reduce_ex__",
+                "__repr__",
+                "__setattr__",
+                "__setitem__",
+                "__sizeof__",
+                "__slots__",
+                "__stp__",
+                "__str__",
+                "__subclasshook__",
+            ],
+        )
 
     def test_Object__doc__(self):
         o = Object()
@@ -110,7 +157,8 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o.__getattribute__("key"), "value")
 
     def test_Object__getitem__(self):
-        self.assertEqual(Object({"key": "value"}).__getitem__("key"), "value")
+        o = update(Object(), {"key": "value"})
+        self.assertEqual(o.__getitem__("key"), "value")
 
     def test_Object___gt__(self):
         o = Object()
@@ -135,7 +183,12 @@ class Test_Object(unittest.TestCase):
     def test_Object__iter__(self):
         o = Object()
         o.key = "value"
-        self.assertTrue(list(o.__iter__()), ["key",])
+        self.assertTrue(
+            list(o.__iter__()),
+            [
+                "key",
+            ],
+        )
 
     def test_Object__le__(self):
         o = Object()
@@ -171,7 +224,7 @@ class Test_Object(unittest.TestCase):
         self.assertTrue("Object" in Object().__oqn__())
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "obj.Object")
+        self.assertEqual(Object().__otype__, "bot.obj.Object")
 
     def test_Object__reduce__(self):
         with self.assertRaises(NoPickle):
@@ -184,13 +237,13 @@ class Test_Object(unittest.TestCase):
             o.__reduce__()
 
     def test_Object__repr__(self):
-        self.assertTrue(Object({"key": "value"}).__repr__(), {"key": "value"})
+        self.assertTrue(update(Object(), {"key": "value"}).__repr__(), {"key": "value"})
 
     def test_Object__setattr__(self):
         o = Object()
         o.__setattr__("key", "value")
         self.assertTrue(o.key, "value")
-        
+
     def test_Object__setitem__(self):
         o = Object()
         o.__setitem__("key", "value")
@@ -204,7 +257,7 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("obj.Object" in o.__stp__)
+        self.assertTrue("bot.obj.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -213,24 +266,17 @@ class Test_Object(unittest.TestCase):
     def test_Object__subclasshook__(self):
         self.assertTrue(Object().__subclasshook__(), None)
 
-    def test_Default(self):
-        d = Default()
-        self.assertTrue(type(d), Default)
-
-    def test_List(self):
-        l = List()
-        self.assertTrue(type(l), List)
-
     def test_Db(self):
         db = Db()
         self.assertTrue(type(db), Db)
-        
+
     def test_cdir(self):
-        from obj import RunCfg
-        RunCfg.wd = ".test"
-        cdir(RunCfg.wd)        
-        self.assertTrue(os.path.exists(RunCfg.wd))
-        
+        from bot.obj import Cfg
+
+        Cfg.wd = ".test"
+        cdir(Cfg.wd)
+        self.assertTrue(os.path.exists(Cfg.wd))
+
     def test_edit(self):
         o = Object()
         d = {"key": "value"}
@@ -239,14 +285,15 @@ class Test_Object(unittest.TestCase):
 
     def test_fmt(self):
         o = Object()
-        self.assertEqual(fmt(o), '')
+        self.assertEqual(fmt(o), "")
 
     def test_fns(self):
-        from obj import RunCfg, Object, save
-        RunCfg.wd = ".test"
+        from bot.obj import Cfg, Object
+        from bot.ofn import save
+        Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("obj.Object")[0])
+        self.assertTrue("Object" in fns("bot.obj.Object")[0])
 
     def test_get(self):
         o = Object()
@@ -256,8 +303,8 @@ class Test_Object(unittest.TestCase):
     def test_gettype(self):
         o = Object()
         t = gettype(o)
-        self.assertEqual(t, "obj.Object")
-        
+        self.assertEqual(t, "bot.obj.Object")
+
     def test_hook(self):
         o = Object()
         o.key = "value"
@@ -268,12 +315,22 @@ class Test_Object(unittest.TestCase):
     def test_keys(self):
         o = Object()
         o.key = "value"
-        self.assertEqual(list(keys(o)), ["key",])
+        self.assertEqual(
+            list(keys(o)),
+            [
+                "key",
+            ],
+        )
 
     def test_items(self):
         o = Object()
         o.key = "value"
-        self.assertEqual(list(items(o)), [("key", "value"),])
+        self.assertEqual(
+            list(items(o)),
+            [
+                ("key", "value"),
+            ],
+        )
 
     def test_last(self):
         o = Object()
@@ -298,7 +355,7 @@ class Test_Object(unittest.TestCase):
     def test_save(self):
         RunCfg.wd = ".test"
         o = Object()
-        p = save(o)        
+        p = save(o)
         self.assertTrue(os.path.exists(os.path.join(RunCfg.wd, "store", p)))
 
     def test_set(self):
@@ -317,5 +374,9 @@ class Test_Object(unittest.TestCase):
     def test_values(self):
         o = Object()
         o.key = "value"
-        self.assertEqual(list(values(o)), ["value",])
-   
+        self.assertEqual(
+            list(values(o)),
+            [
+                "value",
+            ],
+        )

@@ -2,11 +2,12 @@
 
 import unittest
 
-from run import RunCfg, Cfg, getmain
+from bot.obj import Cfg
+from bot.run import Runtime, getmain
+from bot.run import Cfg as RunCfg
 
-k = getmain("k")
 
 class Test_Kernel(unittest.TestCase):
-
     def test_cfg(self):
-        self.assertEqual(type(k.cfg), Cfg)
+        k = getmain("k")
+        self.assertEqual(type(k.cfg), RunCfg)

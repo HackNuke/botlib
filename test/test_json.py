@@ -2,10 +2,10 @@
 
 import unittest
 
-from obj import Object, json
+from bot.obj import Object
 
 class Test_JSON(unittest.TestCase):
     def test_jsondump(self):
         o = Object()
         o.test = "bla"
-        self.assertEqual(json(o), "{'test': 'bla'}")
+        self.assertEqual(o.__json__(), "{'test': 'bla'}")

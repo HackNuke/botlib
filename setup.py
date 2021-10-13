@@ -18,18 +18,6 @@ setup(
     license="Public Domain",
     packages=["bot"],
     zip_safe=True,
-    include_package_data=True,
-    data_files=[
-        (
-            "share/botlib/",
-            [
-                "files/bot.1.md",
-                "files/bots",
-                "files/bots.service",
-            ],
-        )
-    ],
-    scripts=["bin/bot"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

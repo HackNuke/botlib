@@ -3,8 +3,12 @@
 import random
 import unittest
 
-from obj import Object
-from run import Bus, getmain, launch
+from bot.bus import Bus
+from bot.obj import Object
+from bot.ofn import save
+from bot.run import Runtime, getmain
+from bot.tbl import Table
+from bot.thr import launch
 
 events = []
 
@@ -31,13 +35,12 @@ param.tdo = ["test4", ""]
 class Test_Threaded(unittest.TestCase):
     def test_thrs(self):
         thrs = []
-        k = getmain("k")
-        if k.cfg.index:
-            nr = k.cfg.index
+        if Runtime.cfg.index:
+            nr = Runtime.cfg.index
         else:
-            nr = 0
+            nr = 1
         for x in range(nr):
-            thr = launch(exec)
+            thr = launch(exec, name="task%s" % x)
             thrs.append(thr)
         for thr in thrs:
             thr.join()
@@ -60,9 +63,8 @@ def consume():
 
 def exec():
     k = getmain("k")
-    t = getmain("tbl")
     c = Bus.first()
-    l = list(t.modnames)
+    l = list(Table.modnames)
     random.shuffle(l)
     for cmd in l:
         for ex in getattr(param, cmd, [""]):
