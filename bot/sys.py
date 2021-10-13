@@ -5,12 +5,12 @@ import threading
 import time
 
 
-from .bus import Bus
-from .obj import Object, get, update
-from .ofn import getname, fmt
-from .run import Runtime, starttime
-from .tbl import Table
-from .tms import elapsed
+from bot.bus import Bus
+from bot.obj import Object, get, update
+from bot.ofn import getname, fmt
+from bot.run import Runtime, starttime
+from bot.tbl import Table
+from bot.tms import elapsed
 
 
 def __dir__():

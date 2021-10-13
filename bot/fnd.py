@@ -4,10 +4,11 @@
 import os
 import time
 
-from .dbs import find, fntime
-from .obj import Cfg, keys
-from .ofn import fmt
-from .tms import elapsed
+
+from bot.dbs import find, fntime
+from bot.obj import Cfg, keys
+from bot.ofn import fmt
+from bot.tms import elapsed
 
 
 def listfiles(workdir):

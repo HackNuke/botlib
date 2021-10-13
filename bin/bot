@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-__version__ = 69
+
+__version__ = 140
+
 
 import os, sys ; sys.path.insert(0, os.getcwd())
+
 
 import os
 import readline
@@ -11,6 +14,7 @@ import sys
 import termios
 import threading
 import time
+
 
 from bot.clt import Client
 from bot.obj import Cfg, Object, keys
@@ -20,6 +24,7 @@ from bot.tbl import Table
 from bot.tms import elapsed
 from bot.run import Cfg as RunCfg
 from bot.utl import spl
+
 
 Cfg.wd = os.path.expanduser("~/.bot")
 
@@ -52,6 +57,7 @@ class Kernel(Runtime):
         if RunCfg.verbose:
             print(txt.rstrip())
             sys.stdout.flush()
+
 
 def daemon():
     pid = os.fork()
@@ -90,11 +96,11 @@ def main():
     if k.root():
         print("don't run this bot as root")
         return
-    Runtime.cfg.name = "botd"
+    Runtime.cfg.name = "bot"
     Runtime.cfg.version = __version__
     k.parse_cli()
     if k.cfg.verbose:
-        k.log("BOTD %s starting at %s" % (__version__, time.ctime(time.time())))
+        k.log("BOTL %s starting at %s" % (__version__, time.ctime(time.time())))
         k.log("workdir is %s" % Cfg.wd)
         k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
         k.log(",".join(sorted(list(Table.modnames))))

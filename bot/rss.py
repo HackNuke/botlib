@@ -5,15 +5,15 @@ import re
 import threading
 import urllib
 
-from .bus import Bus
-from .dbs import Db, find, last
-from .rpt import Repeater
-from .run import Runtime
-from .tbl import Table
-from .thr import launch
-from .obj import Cfg, Object, get, update
-from .ofn import edit, save
-from .run import Cfg as RunCfg
+from bot.bus import Bus
+from bot.dbs import Db, find, last
+from bot.rpt import Repeater
+from bot.run import Runtime
+from bot.tbl import Table
+from bot.thr import launch
+from bot.obj import Cfg, Object, get, update
+from bot.ofn import edit, save
+from bot.run import Cfg as RunCfg
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

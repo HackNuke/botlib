@@ -1,8 +1,8 @@
 # This file is in the Public Domain.
 
 
-from .obj import Object
-from .ofn import save
+from bot.obj import Object
+from bot.ofn import save
 
 
 class Log(Object):
