@@ -181,7 +181,7 @@ def geturl(url):
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)
-    req.add_header("User-agent", useragent("OBOT"))
+    req.add_header("User-agent", useragent("BOTLIB"))
     response = urllib.request.urlopen(req)
     response.data = response.read()
     return response

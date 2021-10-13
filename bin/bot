@@ -100,7 +100,7 @@ def main():
     Runtime.cfg.version = __version__
     k.parse_cli()
     if k.cfg.verbose:
-        k.log("BOTL %s starting at %s" % (__version__, time.ctime(time.time())))
+        k.log("BOT %s starting at %s" % (__version__, time.ctime(time.time())))
         k.log("workdir is %s" % Cfg.wd)
         k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
         k.log(",".join(sorted(list(Table.modnames))))

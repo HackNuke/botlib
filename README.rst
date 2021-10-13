@@ -1,65 +1,63 @@
 README
 ######
 
+**BOTLIB** is an attempt to achieve OS level integration of bot technology
+directly into the operating system. A solid, non hackable bot, that stores
+it's data as JSON files on disk, every object is timestamped, readonly of 
+which the latest is served to the user layer.  File paths carry the type in
+the path name what makes reconstruction from filename easier then reading
+type from the object.  This bot is intended to be  programmable in a static, 
+only code, no popen, no imports and no reading  modules from a directory:
 
-NAME
-====
+ | > bart@new:~/botlib$ cat bin/check
+ | grep -R --exclude *check __import__ 
+ | grep -R --exclude *check popen 
+ | grep -R --exclude *check pkgutil 
+ | grep -R --exclude *check importlib 
+ | grep -R --exclude=*check --exclude-dir=.git --exclude-dir=bin print 
 
-**BOTLIB** - python3 bot library - https://pypi.org/project/botlib
+For programming the bot you have to have the code available as employing
+your own code requires that you install your own bot as the system bot, as
+to not have a directory to read modules from to add commands to the bot but
+include the own programmed modules directly into the python code. This way 
+only trusted code (your own written code) is included and runnable, reading
+random code from a directory is what gets avoided.
 
+Only run your own written code should be the path to "secure".
 
-INSTALL
-=======
-
-| sudo pip3 install botlib
-
-
-SYNOPSIS
+COMMANDS
 ========
 
-bot \<cmd\> \|options\] \[key=value\] \[key==value\]
+fetch the code from https://pypi.org/project/botlib/#files
 
+untar the tarball, cd into the bot directory and add your module to the bot
+packages:
 
-DESCRIPTION
-===========
+ > joe bot/hlo.py
 
-**BOTLIB** is a library to program bots and bot is it's demo program.
+add your command code to the file:
 
-**BOT** is a IRC bot that can run in a IRC channel. You can use it to
-display RSS feeds, act as a UDP to IRC gateway, program your own commands
-for it and have it log objects on disk to search them. 
+ >>> def hlo(event):
+ >>>     event.reply("hello!")
 
+then add bot/hlo.py to the bot/all.py module and let it scan the module.
 
-CONFIGURATION
-=============
+ >>> import bot.hlo as hlo
+ >>> Table.addmod(hlo)
 
-| bot cfg server=\<server\> channel=<channel> nick=\<nick\>
+bot.all is a module that is imported in the program, this makes
+programming the library accessing sys.path instead of reading modules from
+disk. So ..
 
-| bot cfg users=True
-| bot met \<userhost\>
-
-| bot pwd \<nickservnick\> \<nickservpass\>
-| bot cfg password=\<outputfrompwd\>
-
-| bot rss \<url\>
-
-| \* default channel/server is #bot on localhost
-
-
-FILES
-=====
-
-| bin/bot
-| man/man1/bot.1.gz
-
+1) add file to bot package
+2) add file to bot/all.py
 
 COPYRIGHT
 =========
 
 **BOTLIB** is placed in the Public Domain, no Copyright, no LICENSE.
 
-
 AUTHOR
 ======
 
-| Bart Thate <bthate67@gmail.com>
+Bart Thate
