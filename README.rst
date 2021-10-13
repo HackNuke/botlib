@@ -7,14 +7,7 @@ it's data as JSON files on disk, every object is timestamped, readonly of
 which the latest is served to the user layer.  File paths carry the type in
 the path name what makes reconstruction from filename easier then reading
 type from the object.  This bot is intended to be  programmable in a static, 
-only code, no popen, no imports and no reading  modules from a directory:
-
- | > bart@new:~/botlib$ cat bin/check
- | grep -R --exclude *check __import__ 
- | grep -R --exclude *check popen 
- | grep -R --exclude *check pkgutil 
- | grep -R --exclude *check importlib 
- | grep -R --exclude=*check --exclude-dir=.git --exclude-dir=bin print 
+only code, no popen, no imports and no reading  modules from a directory.
 
 For programming the bot you have to have the code available as employing
 your own code requires that you install your own bot as the system bot, as
