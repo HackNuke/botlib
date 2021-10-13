@@ -649,9 +649,9 @@ def nck(event):
 def ops(event):
     bot = event.bot()
     if isinstance(bot, IRC):
-       if bot.users.allowed(event.origin, "USER"):
-           return
-       bot.command("MODE", event.channel, "+o", event.nick)
+        if bot.users.allowed(event.origin, "USER"):
+            return
+        bot.command("MODE", event.channel, "+o", event.nick)
 
 
 def pwd(event):

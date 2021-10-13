@@ -2,7 +2,6 @@
 
 
 from .bus import Bus
-from .obj import Object
 from .hdl import Handler
 from .run import Cfg, Runtime
 

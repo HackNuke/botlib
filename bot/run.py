@@ -32,7 +32,7 @@ class Cfg(Object):
     debug = False
     index = None
     mod = ""
-    name = ""    
+    name = ""
     systemd = False
     verbose = False
     version = None
