@@ -63,7 +63,9 @@ class Object:
             return iter(o)
         if isinstance(o, (type(str), type(True), type(False), type(int), type(float))):
             return o
-        return o.__oqn__(o)
+        if "__oqn__" in dir(o):
+            return o.__oqn__(o)
+        return repr(o)
 
     def __oqn__(self):
         return "<%s.%s object at %s>" % (
