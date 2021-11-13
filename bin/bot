@@ -2,7 +2,10 @@
 # This file is placed in the Public Domain.
 
 
-__version__ = 141
+"24/7 channel daemon"
+
+
+__version__ = 70
 
 
 import os, sys ; sys.path.insert(0, os.getcwd())
@@ -19,18 +22,38 @@ import time
 from bot.clt import Client
 from bot.obj import Cfg, Object, keys
 from bot.ofn import fmt
-from bot.run import Runtime
+from bot.run import Runtime, starttime
 from bot.tbl import Table
 from bot.tms import elapsed
-from bot.run import Cfg as RunCfg
 from bot.utl import spl
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
 
 
+class Kernel(Runtime):
+
+    def error(self, txt):
+        print(txt)
+        sys.stdout.flush()
+
+    def log(self, txt):
+        if "PONG" in txt or "PING" in txt:
+            return
+        if self.cfg.verbose:
+            print(txt.rstrip())
+            sys.stdout.flush()
+
+
+k = Kernel()
+
+
 class Console(Client):
 
+    def __init__(self):
+        super().__init__()
+        k.add(self)
+        
     def handle(self, clt, e):
         k.put(e)
         e.wait()
@@ -43,20 +66,7 @@ class Console(Client):
         sys.stdout.flush()
 
 
-class Kernel(Runtime):
-
-    @staticmethod
-    def error(txt):
-        print(txt)
-        sys.stdout.flush()
-
-    @staticmethod
-    def log(txt):
-        if "PONG" in txt or "PING" in txt:
-            return
-        if RunCfg.verbose:
-            print(txt.rstrip())
-            sys.stdout.flush()
+clt = Console()
 
 
 def daemon():
@@ -74,13 +84,6 @@ def daemon():
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-clt = Console()
-k = Kernel()
-
-
-import bot.all
-
-
 def wrap(func):
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
@@ -91,27 +94,29 @@ def wrap(func):
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
+import bot.all
 
 def main():
     if k.root():
         print("don't run this bot as root")
         return
-    Runtime.cfg.name = "bot"
-    Runtime.cfg.version = __version__
+    k.cfg.name = "bot"
+    k.cfg.version = __version__
     k.parse_cli()
     if k.cfg.verbose:
-        k.log("BOT %s starting at %s" % (__version__, time.ctime(time.time())))
-        k.log("workdir is %s" % Cfg.wd)
+        msg = "BOT %s starting at %s" % (__version__, time.ctime(time.time()))
+        k.log(msg.replace("  ", " "))
         k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
-        k.log(",".join(sorted(list(Table.modnames))))
     if k.prs.txt:
         return k.cmd(clt, k.prs.otxt)
-    if RunCfg.daemon:
+    if k.cfg.daemon:
         daemon()
-    if RunCfg.console or "mod" in k.cfg:
+    if k.cfg.console or "mod" in k.cfg:
         k.start()
         for mn in spl(k.cfg.mod):
             k.init("bot.%s" % mn)
+        k.log(",".join(sorted(list(Table.modnames))))
+        k.log("booted (%s)" % elapsed(time.time() - starttime))
         clt.start()
         k.wait()
 
