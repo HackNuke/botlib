@@ -1,6 +1,6 @@
 bin/clean
-grep -R --exclude *check --exclude-dir=docs __import__ 
-grep -R --exclude *check --exclude-dir=docs popen 
-grep -R --exclude *check --exclude-dir=docs pkgutil 
-grep -R --exclude *check --exclude-dir=docs importlib 
-grep -R --exclude=*check --exclude-dir=.git --exclude-dir=bin print 
+grep -R --exclude *check --exclude=README.rst --exclude-dir=docs __import__ 
+grep -R --exclude *check --exclude=README.rst --exclude-dir=docs popen 
+grep -R --exclude *check --exclude=README.rst --exclude-dir=docs pkgutil 
+grep -R --exclude *check --exclude=README.rst --exclude-dir=docs importlib 
+grep -R --exclude=*check --exclude=README.rst --exclude-dir=docs --exclude-dir=.git --exclude-dir=bin print 

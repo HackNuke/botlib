@@ -1,56 +1,87 @@
-README
+BOTLIB
 ######
 
 **BOTLIB** is an attempt to achieve OS level integration of bot technology
-directly into the operating system. A solid, non hackable bot, that stores
-it's data as JSON files on disk, every object is timestamped, readonly of 
-which the latest is served to the user layer.  File paths carry the type in
-the path name what makes reconstruction from filename easier then reading
-type from the object.  This bot is intended to be  programmable in a static, 
-only code, no popen, no imports and no reading  modules from a directory.
+directly into the operating system. A solid, non hackable bot, that runs
+under systemd and rc.d as a 24/7 background service that starts the
+bot after reboot, stores it's data as JSON files on disk, every object is
+timestamped, readonly of which the latest is served to the user layer. This
+bot is intended to be programmable in a static, only code, no popen, no
+imports and no reading modules from a directory, way that **should** make
+it suitable for embedding.
 
-For programming the bot you have to have the code available as employing
-your own code requires that you install your own bot as the system bot, as
-to not have a directory to read modules from to add commands to the bot but
-include the own programmed modules directly into the python code. This way 
-only trusted code (your own written code) is included and runnable, reading
-random code from a directory is what gets avoided.
+configuration
+=============
 
-Only run your own written code should be the path to "secure".
+configuration is done by calling the bot as a cli, bot <cmd> allows you to
+run bot commands on a shell, configuration uses the cfg command to edit 
+configuration on disk. 
 
-COMMANDS
-========
+irc
+---
 
-fetch the code from https://pypi.org/project/botlib/#files
+IRC configuration is done with the use of the botctl program, the cfg
+command configures the IRC bot.
 
-untar the tarball, cd into the bot directory and add your module to the bot
-packages:
+::
 
- > joe bot/hlo.py
+ bot cfg server=<server> channel=<channel> nick=<nick> 
 
-add your command code to the file:
+default channel/server is #botd on localhost
 
- >>> def hlo(event):
- >>>     event.reply("hello!")
+sasl
+----
 
-then add bot/hlo.py to the bot/all.py module and let it scan the module.
+some irc channels require SASL authorisation (freenode,libera,etc.) and
+a nickserv user and password needs to be formed into a password. You can use
+the pwd command for this
 
- >>> import bot.hlo as hlo
- >>> Table.addmod(hlo)
+::
 
-bot.all is a module that is imported in the program, this makes
-programming the library accessing sys.path instead of reading modules from
-disk. So ..
+ bot pwd <nickservnick> <nickservpass>
 
-1) add file to bot package
-2) add file to bot/all.py
+after creating you sasl password add it to you configuration.
 
-COPYRIGHT
-=========
+::
 
-**BOTLIB** is placed in the Public Domain, no Copyright, no LICENSE.
+ bot cfg password=<outputfrompwd>
 
-AUTHOR
-======
+users
+-----
 
-Bart Thate
+if you want to restrict access to the bot (default is disabled), enable
+users in the configuration and add userhosts of users to the database.
+
+::
+
+ bot cfg users=True
+ bot met <userhost>
+
+rss
+---
+
+if you want rss feeds in your channel install feedparser.
+
+::
+
+ sudo apt install python3-feedparser
+
+add a url to the bot and the feed fetcher will poll it every 5 minutes.
+
+::
+
+ bot rss <url>
+
+24/7
+----
+
+if you want to bot to restart after reboot, enable the botd service:
+
+::
+
+ sudo cp /usr/local/share/botd/botd.service /etc/systemd/system
+ sudo systemctl enable botd --now
+
+the botd program uses botc as it's cli for configuration, botctl is
+a systemd wrapper around it. depending on rc.d or systemd choose one of
+those.
