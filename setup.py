@@ -1,5 +1,7 @@
 # This file is placed in the Public Domain.
 
+import os
+
 from setuptools import setup
 
 

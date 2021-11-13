@@ -1,5 +1,6 @@
-grep -R --exclude *check --exclude README.rst __import__ 
-grep -R --exclude *check --exclude README.rst popen 
-grep -R --exclude *check --exclude README.rst pkgutil 
-grep -R --exclude *check --exclude README.rst importlib 
-grep -R --exclude=*check --exclude README.rst --exclude-dir=.git --exclude-dir=bin print 
+bin/clean
+grep -R --exclude *check --exclude-dir=docs __import__ 
+grep -R --exclude *check --exclude-dir=docs popen 
+grep -R --exclude *check --exclude-dir=docs pkgutil 
+grep -R --exclude *check --exclude-dir=docs importlib 
+grep -R --exclude=*check --exclude-dir=.git --exclude-dir=bin print 

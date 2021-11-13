@@ -1,103 +1,91 @@
-name
-####
+BOTLIB
+######
 
-    **BOTD** - 24/7 channel daemon
-
-synopsis
-========
-
-    botctl \<cmd\> \[key=value\] \[key==value\] 
-    
-description
-===========
-
-    **BOTD** is to achieve OS level integration of bot technology, a solid,
-    non hackable bot, that runs under systemd as a 24/7 background service.
-
-install
-=======
-
-    installation is through pypi or run python3 from the tarball (run
-    install_data as well).
-
-    ::
-
-     sudo pip3 install botd
+**BOTLIB** is an attempt to achieve OS level integration of bot technology
+directly into the operating system. A solid, non hackable bot, that runs
+under systemd and rc.d as a 24/7 background service that starts the
+bot after reboot, stores it's data as JSON files on disk, every object is
+timestamped, readonly of which the latest is served to the user layer. This
+bot is intended to be programmable in a static, only code, no popen, no
+imports and no reading modules from a directory, way that **should** make
+it suitable for embedding - :ref:`source`, :ref:`programming`
 
 configuration
 =============
 
-    to enable restarting of **BOTD** after reboot you need to enable it.
-
-    ::
-
-     sudo cp /usr/local/share/botd/botd.service /etc/systemd/system
-     sudo systemctl enable botd --now
+configuration is done by calling the bot as a cli, bot <cmd> allows you to
+run bot commands on a shell, configuration uses the cfg command to edit 
+configuration on disk. 
 
 irc
 ---
 
-    IRC configuration is done with the use of the botctl program, the cfg
-    command configures the IRC bot.
+IRC configuration is done with the use of the botctl program, the cfg
+command configures the IRC bot.
 
-    ::
+::
 
-     sudo botctl cfg server=<server> channel=<channel> nick=<nick> 
+ bot cfg server=<server> channel=<channel> nick=<nick> 
 
-    default channel/server is #botd on localhost
+default channel/server is #botd on localhost
 
 sasl
 ----
 
-    some irc channels require SASL authorisation (freenode,libera,etc.) and
-    a nickserv user and password needs to be formed into a password. You can use
-    the pwd command for this
+some irc channels require SASL authorisation (freenode,libera,etc.) and
+a nickserv user and password needs to be formed into a password. You can use
+the pwd command for this
 
-    ::
+::
 
-     sudo botctl pwd <nickservnick> <nickservpass>
+ bot pwd <nickservnick> <nickservpass>
 
-    after creating you sasl password add it to you configuration.
+after creating you sasl password add it to you configuration.
 
-    ::
+::
 
-     sudo botctl cfg password=<outputfrompwd>
+ bot cfg password=<outputfrompwd>
 
 users
 -----
 
-    if you want to restrict access to the bot (default is disabled), enable
-    users in the configuration and add userhosts of users to the database.
+if you want to restrict access to the bot (default is disabled), enable
+users in the configuration and add userhosts of users to the database.
 
-    ::
+::
 
-     sudo botctl cfg users=True
-     sudo botctl met <userhost>
+ bot cfg users=True
+ bot met <userhost>
 
 rss
 ---
 
-    if you want rss feeds in your channel install feedparser.
+if you want rss feeds in your channel install feedparser.
 
-    ::
+::
 
-     sudo apt install python3-feedparser
+ sudo apt install python3-feedparser
 
-    add a url to the bot and the feed fetcher will poll it every 5 minutes.
+add a url to the bot and the feed fetcher will poll it every 5 minutes.
 
-    ::
+::
 
-     sudo botctl rss <url>
+ bot rss <url>
 
-copyright
-=========
+24/7
+----
 
-    **BOTD** is placed in the Public Domain, no Copyright, no LICENSE.
+if you want to bot to restart after reboot, enable the botd service:
 
-author
-======
+::
 
-    Bart Thate 
+ sudo cp /usr/local/share/botd/botd.service /etc/systemd/system
+ sudo systemctl enable botd --now
+
+the botd program uses botc as it's cli for configuration, botctl is
+a systemd wrapper around it. depending on rc.d or systemd choose one of
+those.
+
 
 .. toctree::
     :hidden:
