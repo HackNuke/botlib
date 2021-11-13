@@ -5,6 +5,9 @@
 "24/7 channel daemon"
 
 
+__version__ = 70
+
+
 import os
 import readline
 import sys
@@ -21,10 +24,20 @@ from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 from bot.tbl import Table
 from bot.utl import spl
-from bot.ver import __version__
 
 
 Cfg.wd = "/var/lib/botd/"
+
+
+class CLI(Client):
+
+    def handle(self, clt, e):
+        k.put(e)
+        e.wait()
+
+    def raw(self, txt):
+        print(txt)
+        sys.stdout.flush()
 
 
 class Kernel(Runtime):
@@ -42,20 +55,6 @@ class Kernel(Runtime):
 
 
 k = Kernel()
-
-
-class CLI(Client):
-
-    def handle(self, clt, e):
-        k.put(e)
-        e.wait()
-
-    def raw(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-
-c = CLI()
 
 
 import bot.all
@@ -77,6 +76,7 @@ def main():
     if not k.prs.txt:
         return
     k.privileges()
+    c = CLI()
     k.cmd(c, k.prs.otxt)
 
 
