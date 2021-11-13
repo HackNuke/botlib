@@ -5,16 +5,19 @@ import threading
 import time
 
 
-from bot.bus import Bus
-from bot.obj import Object, get, update
-from bot.ofn import getname, fmt
-from bot.run import Runtime, starttime
-from bot.tbl import Table
-from bot.tms import elapsed
+from .obj import Object, get, update
+from .ofn import getname, fmt
+from .run import starttime
+from .tbl import Table
+from .tms import elapsed
+from .utl import getmain
 
 
 def __dir__():
     return ("cmd", "flt", "thr", "upt", "ver")
+
+
+k = getmain("k")
 
 
 def cmd(event):
@@ -24,11 +27,11 @@ def cmd(event):
 def flt(event):
     try:
         index = int(event.prs.args[0])
-        event.reply(fmt(Bus.objs[index], skip=["queue", "ready", "iqueue"]))
+        event.reply(fmt(k.objs[index], skip=["queue", "ready", "iqueue"]))
         return
     except (TypeError, IndexError):
         pass
-    event.reply(" | ".join([getname(o) for o in Bus.objs]))
+    event.reply(" | ".join([getname(o) for o in k.objs]))
 
 
 def thr(event):
@@ -59,4 +62,4 @@ def upt(event):
 
 
 def ver(event):
-    event.reply("%s %s" % (Runtime.cfg.name.upper(), Runtime.cfg.version))
+    event.reply("%s %s" % (k.cfg.name.upper(), k.cfg.version))

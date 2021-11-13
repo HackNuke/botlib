@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from .obj import Object
+from .obj import Object, oqn
 
 
 class BusError(Exception):
@@ -11,60 +11,53 @@ class BusError(Exception):
 
 class Bus(Object):
 
-    objs = []
+    def __init__(self):
+        super().__init__()
+        self.objs = []
 
     def __iter__(self):
-        return iter(Bus.objs)
+        return iter(self.objs)
 
-    @staticmethod
-    def add(obj):
-        if obj not in Bus.objs:
-            Bus.objs.append(obj)
+    def add(self, obj):
+        self.objs.append(obj)
 
-    @staticmethod
-    def announce(txt):
-        for h in Bus.objs:
+    def announce(self, txt):
+        for h in self.objs:
             if "announce" in dir(h):
                 h.announce(txt)
 
-    @staticmethod
-    def byorig(orig):
-        for o in Bus.objs:
-            if o.__oqn__() == orig:
+    def byorig(self, orig):
+        for o in self:
+            if oqn(o) == orig:
                 return o
         raise BusError(orig)
 
-    @staticmethod
-    def byfd(fd):
-        for o in Bus.objs:
+    def byfd(self, fd):
+        for o in self:
             if o.fd and o.fd == fd:
                 return o
         return None
 
-    @staticmethod
-    def bytype(typ):
-        for o in Bus.objs:
+    def bytype(self, typ):
+        for o in self:
             if isinstance(o, typ):
                 return o
         return None
 
-    @staticmethod
-    def first(otype=None):
-        if Bus.objs:
+    def first(self, otype=None):
+        if self.objs:
             if not otype:
-                return Bus.objs[0]
-            for o in Bus.objs:
+                return self.objs[0]
+            for o in self:
                 if otype in str(type(o)):
                     return o
         return None
 
-    @staticmethod
-    def resume():
-        for o in Bus.objs:
+    def resume(self):
+        for o in self:
             o.resume()
 
-    @staticmethod
-    def say(orig, channel, txt):
-        for o in Bus.objs:
+    def say(self, orig, channel, txt):
+        for o in self:
             if o.__oqn__() == orig:
                 o.say(channel, txt)

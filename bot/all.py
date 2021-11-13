@@ -22,11 +22,11 @@ import bot.tbl as tbl
 import bot.thr as thr
 import bot.tmr as tmr
 import bot.tms as tms
+import bot.udp as udp
 import bot.utl as utl
-
+import bot.ver as ver
 
 from bot.tbl import Table
-
 
 Table.addmod(bus)
 Table.addmod(clt)
@@ -43,9 +43,12 @@ Table.addmod(opt)
 Table.addmod(prs)
 Table.addmod(rpt)
 Table.addmod(rss)
+Table.addmod(run)
 Table.addmod(sys)
 Table.addmod(tbl)
 Table.addmod(thr)
 Table.addmod(tmr)
 Table.addmod(tms)
+Table.addmod(udp)
 Table.addmod(utl)
+Table.addmod(ver)

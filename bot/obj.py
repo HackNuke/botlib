@@ -31,6 +31,7 @@ def cdir(path):
         path = os.path.dirname(path)
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
+
 class NoPickle(Exception):
 
     pass
@@ -61,7 +62,9 @@ class Object:
             return o.items()
         if isinstance(o, list):
             return iter(o)
-        if isinstance(o, (type(str), type(True), type(False), type(int), type(float))):
+        if isinstance(o,
+                      (type(str), type(True), type(False),
+                       type(int), type(float))):
             return o
         if "__oqn__" in dir(o):
             return o.__oqn__(o)
@@ -124,7 +127,7 @@ class Object:
     def __reduce__(self):
         raise NoPickle
 
-    def __reduce__ex(self):
+    def __reduce_ex__(self, k):
         raise NoPickle
 
     def __setitem__(self, k, v):
@@ -139,14 +142,11 @@ class Object:
 
 class Cfg(Object):
 
-    wd  = ""
+    wd = ""
+
 
 def get(self, key, default=None):
     return self.__dict__.get(key, default)
-
-
-def keys(self):
-    return self.__dict__.keys()
 
 
 def items(self):
@@ -154,6 +154,14 @@ def items(self):
         return self.__dict__.items()
     except AttributeError:
         return self.items()
+
+
+def keys(self):
+    return self.__dict__.keys()
+
+
+def oqn(self):
+    return Object.__oqn__(self)
 
 
 def register(self, k, v):
@@ -185,11 +193,3 @@ def update(self, data):
 
 def values(self):
     return self.__dict__.values()
-
-
-def oqn(self):
-    return Object.__oqn__(self)
-
-
-def register(self, k, v):
-    self[str(k)] = v

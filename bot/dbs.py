@@ -2,7 +2,6 @@
 
 
 import os
-import sys
 import time
 
 
@@ -73,7 +72,8 @@ class Db(Object):
 
     def lastmatch(self, otype, selector=None, index=None, timed=None):
         db = Db()
-        res = sorted(db.find(otype, selector, index, timed), key=lambda x: fntime(x[0]))
+        res = sorted(db.find(otype, selector, index, timed),
+                     key=lambda x: fntime(x[0]))
         if res:
             return res[-1]
         return (None, None)
@@ -159,7 +159,7 @@ def hook(hfn):
     cname = oname[0]
     fn = os.sep.join(oname)
     mn, cn = cname.rsplit(".", 1)
-    mod = sys.modules.get(mn, None)
+    mod = Table.get(mn)
     if not mod:
         raise ModuleNotFoundError(mn)
     t = getattr(mod, cn, None)
@@ -169,11 +169,12 @@ def hook(hfn):
         return o
     raise TypeError(cname)
 
+
 def last(o):
     db = Db()
-    path, l = db.lastfn(o.__otype__)
-    if l:
-        update(o, l)
+    path, obj = db.lastfn(o.__otype__)
+    if obj:
+        update(o, obj)
     if path:
         splitted = path.split(os.sep)
         stp = os.sep.join(splitted[-4:])

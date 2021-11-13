@@ -4,12 +4,13 @@
 import inspect
 
 
-from .obj import Object
+from .obj import Object, get
 
 
 class Table(Object):
 
     classes = Object()
+    modules = Object()
     modnames = Object()
     names = Object()
 
@@ -17,6 +18,10 @@ class Table(Object):
     def add(func):
         n = func.__name__
         Table.modnames[n] = func.__module__
+
+    @staticmethod
+    def get(mn):
+        return get(Table.modules, mn, None)
 
     @staticmethod
     def addcls(clz):
@@ -29,11 +34,12 @@ class Table(Object):
     @staticmethod
     def addmod(mod):
         Table.introspect(mod)
+        Table.modules[mod.__name__] = mod
 
     @staticmethod
     def introspect(mod):
         for _k, o in inspect.getmembers(mod, inspect.isfunction):
-            if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varnames:
+            if o.__code__.co_argcount == 1 and "event" in o.__code__.co_varname:
                 Table.add(o)
         for _k, o in inspect.getmembers(mod, inspect.isclass):
             if issubclass(o, Object):

@@ -5,15 +5,13 @@ import re
 import threading
 import urllib
 
-from bot.bus import Bus
-from bot.dbs import Db, find, last
-from bot.rpt import Repeater
-from bot.run import Runtime
-from bot.tbl import Table
-from bot.thr import launch
-from bot.obj import Cfg, Object, get, update
-from bot.ofn import edit, save
-from bot.run import Cfg as RunCfg
+from .dbs import Db, find, last
+from .rpt import Repeater
+from .tbl import Table
+from .thr import launch
+from .obj import Object, get, update
+from .ofn import edit, save
+from .utl import getmain
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -29,10 +27,19 @@ except ModuleNotFoundError:
 
 
 def __dir__():
-    return ("init", "Cfg", "Feed", "Rss", "Seen", "Fetcher", "dpl", "ftc", "rem", "rss")
+    return ("init",
+            "Cfg",
+            "Feed",
+            "Rss",
+            "Seen",
+            "Fetcher",
+            "dpl",
+            "ftc",
+            "rem",
+            "rss")
 
 
-def init(k):
+def init():
     f = Fetcher()
     last(f.cfg)
     launch(f.start)
@@ -125,9 +132,10 @@ class Fetcher(Object):
                 save(f)
         if objs:
             save(Fetcher.seen)
+        k = getmain("k")
         for o in objs:
             txt = self.display(o)
-            Bus.announce(txt)
+            k.announce(txt)
         return counter
 
     def run(self):
@@ -144,7 +152,8 @@ class Fetcher(Object):
 
 
 def getfeed(url):
-    if not gotparser or Runtime.cfg.debug:
+    k = getmain("k")
+    if not gotparser or k.cfg.debug:
         return [Object(), Object()]
     try:
         result = geturl(url)
@@ -159,14 +168,16 @@ def getfeed(url):
 
 
 def gettinyurl(url):
-    if Runtime.cfg.debug:
+    k = getmain("k")
+    if k.cfg.debug:
         return []
     postarray = [
         ("submit", "submit"),
         ("url", url),
     ]
     postdata = urlencode(postarray, quote_via=quote_plus)
-    req = Request("http://tinyurl.com/create.php", data=bytes(postdata, "UTF-8"))
+    req = Request("http://tinyurl.com/create.php",
+                  data=bytes(postdata, "UTF-8"))
     req.add_header("User-agent", useragent(url))
     for txt in urlopen(req).readlines():
         line = txt.decode("UTF-8").strip()
@@ -177,7 +188,8 @@ def gettinyurl(url):
 
 
 def geturl(url):
-    if RunCfg.debug:
+    k = getmain("k")
+    if k.cfg.debug:
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)

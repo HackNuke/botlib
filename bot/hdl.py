@@ -1,18 +1,17 @@
 # This file is placed in the Public Domain.
 
 
-from .bus import Bus
 from .dpt import Dispatcher
 from .evt import Event
-from .lop import Loop
+from .lop import Loop, Stop
 from .ofn import getname
 
 
 class Handler(Dispatcher, Loop):
 
     def __init__(self):
-        Dispatcher.__init__(self)
         Loop.__init__(self)
+        Dispatcher.__init__(self)
 
     def event(self, txt):
         c = Event()
@@ -28,7 +27,7 @@ class Handler(Dispatcher, Loop):
         while not self.stopped.isSet():
             try:
                 txt = self.poll()
-            except (ConnectionRefusedError, ConnectionResetError) as ex:
+            except (Stop, ConnectionRefusedError, ConnectionResetError) as ex:
                 self.error(str(ex))
                 break
             if txt is None:
@@ -42,7 +41,3 @@ class Handler(Dispatcher, Loop):
 
     def poll(self):
         return self.queue.get()
-
-    def start(self):
-        super().start()
-        Bus.add(self)

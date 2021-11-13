@@ -4,10 +4,10 @@
 import threading
 
 
-from .bus import Bus
 from .obj import Object
 from .opt import Output
 from .prs import parse as pparse
+from .utl import getmain
 
 
 class Event(Object):
@@ -16,19 +16,16 @@ class Event(Object):
         super().__init__()
         self.channel = None
         self.done = threading.Event()
-        self.error = ""
-        self.handler = None
-        self.exc = None
         self.orig = None
         self.origin = None
         self.prs = Object()
         self.result = []
-        self.thrs = []
         self.type = "event"
         self.txt = None
 
     def bot(self):
-        return Bus.byorig(self.orig)
+        k = getmain("k")
+        return k.byorig(self.orig)
 
     def parse(self):
         pparse(self.prs, self.txt)
@@ -40,7 +37,8 @@ class Event(Object):
         self.result.append(txt)
 
     def say(self, txt):
-        Bus.say(self.orig, self.channel, txt)
+        k = getmain("k")
+        k.say(self.orig, self.channel, txt)
 
     def show(self):
         bot = self.bot()
@@ -53,5 +51,3 @@ class Event(Object):
 
     def wait(self, timeout=1.0):
         self.done.wait(timeout)
-        for thr in self.thrs:
-            thr.join(timeout)

@@ -8,6 +8,7 @@ import sys
 import time
 
 
+from .bus import Bus
 from .dpt import Dispatcher
 from .lop import Loop
 from .obj import Object, cdir, get, update
@@ -19,10 +20,6 @@ from .utl import spl
 
 
 starttime = time.time()
-
-
-def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
 
 
 class Cfg(Object):
@@ -37,29 +34,30 @@ class Cfg(Object):
     verbose = False
     version = None
 
-class Runtime(Dispatcher, Loop):
 
-    cfg = Cfg()
-    classes = Object()
-    cmds = Object()
-    opts = Object()
-    prs = Object()
+class Runtime(Bus, Dispatcher, Loop):
 
     def __init__(self):
+        Bus.__init__(self)
         Dispatcher.__init__(self)
         Loop.__init__(self)
-        self.register("cmd", Runtime.handle)
+        self.cfg = Cfg()
+        self.classes = Object()
+        self.cmds = Object()
+        self.opts = Object()
+        self.prs = Object()
+        self.register("cmd", self.handle)
 
-    def add(self, cmd):
+    def addcmd(self, cmd):
         Table.add(cmd)
 
-    @staticmethod
-    def cmd(clt, txt):
+    def cmd(self, clt, txt):
         if not txt:
             return None
         e = clt.event(txt)
         e.origin = "root@shell"
-        Runtime.handle(clt, e)
+        e.parse()
+        self.do(e)
         e.wait()
         return None
 
@@ -69,17 +67,16 @@ class Runtime(Dispatcher, Loop):
     def error(self, txt):
         pass
 
-    @staticmethod
-    def handle(clt, obj):
+    def handle(self, clt, obj):
         obj.parse()
         f = None
         mn = get(Table.modnames, obj.prs.cmd, None)
         if mn:
-            mod = sys.modules.get(mn, None)
+            mod = Table.get(mn)
             if mod:
                 f = getattr(mod, obj.prs.cmd, None)
         if not f:
-            f = get(Runtime.cmds, obj.prs.cmd, None)
+            f = get(self.cmds, obj.prs.cmd, None)
         if f:
             f(obj)
             obj.show()
@@ -87,24 +84,23 @@ class Runtime(Dispatcher, Loop):
 
     def init(self, mns, threaded=False):
         for mn in spl(mns):
-            mod = sys.modules.get(mn, None)
+            mod = Table.get(mn)
             i = getattr(mod, "init", None)
             if i:
                 self.log("init %s" % mn)
                 if threaded:
-                    launch(i, self)
+                    launch(i)
                 else:
-                    i(self)
+                    i()
 
     def log(self, txt):
         pass
 
-    @staticmethod
-    def opt(ops):
-        if not Runtime.opts:
+    def opt(self, ops):
+        if not self.opts:
             return False
         for opt in ops:
-            if opt in Runtime.opts:
+            if opt in self.opts:
                 return True
         return False
 
@@ -112,11 +108,11 @@ class Runtime(Dispatcher, Loop):
         parse(self.prs, " ".join(sys.argv[1:]))
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
-        Cfg.console = Runtime.opt("c")
-        Cfg.daemon = Runtime.opt("d")
-        Cfg.debug = Runtime.opt("z")
-        Cfg.systemd = Runtime.opt("s")
-        Cfg.verbose = Runtime.opt("v")
+        Cfg.console = self.opt("c")
+        Cfg.daemon = self.opt("d")
+        Cfg.debug = self.opt("z")
+        Cfg.systemd = self.opt("s")
+        Cfg.verbose = self.opt("v")
 
     @staticmethod
     def privileges(name=None):

@@ -24,5 +24,19 @@ def get_exception(txt="", sep=" "):
     return res
 
 
+def getmain(name):
+    return getattr(sys.modules["__main__"], name, None)
+
+
+def kerror(txt):
+    k = getmain("k")
+    k.error(txt)
+
+
+def klog(txt):
+    k = getmain("k")
+    k.log(txt)
+
+
 def spl(txt):
     return [x for x in txt.split(",") if x]

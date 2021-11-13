@@ -62,7 +62,7 @@ def fmt(o, keyz=None, empty=True, skip=None):
 
 def getname(o):
     t = type(o)
-    if t == types.ModuleType:
+    if isinstance(t, types.ModuleType):
         return o.__name__
     if "__self__" in dir(o):
         return "%s.%s" % (o.__self__.__class__.__name__, o.__name__)
@@ -96,7 +96,8 @@ def oqn(o):
 def save(o, tab=False):
     assert Cfg.wd
     prv = os.sep.join(o.__stp__.split(os.sep)[:2])
-    o.__stp__ = os.path.join(prv, os.sep.join(str(datetime.datetime.now()).split()))
+    o.__stp__ = os.path.join(prv,
+                             os.sep.join(str(datetime.datetime.now()).split()))
     opath = os.path.join(Cfg.wd, "store", o.__stp__)
     cdir(opath)
     with open(opath, "w") as ofile:

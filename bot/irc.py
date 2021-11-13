@@ -12,16 +12,18 @@ import threading
 import _thread
 
 
-from .bus import Bus
+from .clt import Client
 from .dbs import find, last
 from .evt import Event
 from .hdl import Handler
+from .lop import Stop
 from .obj import Object, update
 from .ofn import edit, fmt, oqn, save
 from .opt import Output
-from .run import getmain
 from .run import Cfg as RunCfg
 from .thr import launch
+from .tms import elapsed
+from .utl import getmain, kerror, klog
 
 
 def __dir__():
@@ -44,22 +46,22 @@ def __dir__():
     )
 
 
-def init(k):
+def init():
     i = IRC()
     last(i.cfg)
     i.start()
     return i
 
 
-def locked(l):
+def locked(obj):
     def lockeddec(func, *args, **kwargs):
         def lockedfunc(*args, **kwargs):
-            l.acquire()
+            obj.acquire()
             res = None
             try:
                 res = func(*args, **kwargs)
             finally:
-                l.release()
+                obj.release()
             return res
 
         lockedfunc.__wrapped__ = func
@@ -79,14 +81,15 @@ class NoUser(Exception):
 class Cfg(Object):
 
     cc = "!"
-    channel = "#bot"
+    channel = "#botd"
     nick = "bot"
     password = ""
     port = 6667
+    realname = "24/7 channel daemon"
     server = "localhost"
     servermodes = ""
-    realname = "python3 irc bot"
-    username = "bot"
+    sleep = 30
+    username = "botd"
     users = False
 
     def __init__(self):
@@ -168,7 +171,10 @@ class IRC(Output, Handler):
             self.raw("%s %s :%s" % (cmd.upper(), args[0], " ".join(args[1:])))
         elif len(args) >= 3:
             self.raw(
-                "%s %s %s :%s" % (cmd.upper(), args[0], args[1], " ".join(args[2:]))
+                "%s %s %s :%s" % (cmd.upper(),
+                                  args[0],
+                                  args[1],
+                                  " ".join(args[2:]))
             )
         if (time.time() - self.state.last) < 4.0:
             time.sleep(4.0)
@@ -195,10 +201,13 @@ class IRC(Output, Handler):
         self.state.nrconnect = 0
         while not self.stopped.isSet():
             self.state.nrconnect += 1
-            if self.connect(server, port):
-                self.logon(server, nick)
-                break
-            time.sleep(10.0 * self.state.nrconnect)
+            try:
+                if self.connect(server, port):
+                    self.logon(server, nick)
+                    break
+            except (OSError, ConnectionResetError):
+                klog("reconnect in %s" % elapsed(self.cfg.sleep))
+            time.sleep(self.cfg.sleep)
 
     def dosay(self, channel, txt):
         wrapper = TextWrap()
@@ -255,15 +264,19 @@ class IRC(Output, Handler):
                 self.keeprunning = False
                 try:
                     self.restart()
-                except ConnectionResetError:
-                    continue
+                except (OSError, ConnectionResetError):
+                    klog("reconnect in %s" % elapsed(self.cfg.sleep))
+                    time.sleep(self.cfg.sleep)
                 break
 
     def logon(self, server, nick):
         self.raw("NICK %s" % nick)
         self.raw(
             "USER %s %s %s :%s"
-            % (self.cfg.username or "botd", server, server, self.cfg.realname or "botd")
+            % (self.cfg.username or "botd",
+               server,
+               server,
+               self.cfg.realname or "botd")
         )
 
     def parsing(self, txt):
@@ -271,8 +284,7 @@ class IRC(Output, Handler):
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
         if RunCfg.verbose:
-            k = getmain("k")
-            k.log(txt.rstrip())
+            klog(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
         o.orig = oqn(self)
@@ -337,10 +349,8 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
-        k = getmain("k")
         if RunCfg.verbose:
-            k = getmain("k")
-            k.log(txt.rstrip())
+            klog(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
         self.sock.send(txt)
@@ -375,9 +385,10 @@ class IRC(Output, Handler):
         self.sock = None
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         self.connected.wait()
+        k = getmain("k")
+        k.add(self)
         Handler.start(self)
         Output.start(self)
-        Bus.add(self)
         if not self.keeprunning:
             launch(self.keep)
         self.wait()
@@ -395,11 +406,12 @@ class IRC(Output, Handler):
         self.joined.wait()
 
 
-class DCC(Handler):
+class DCC(Client):
+
     def __init__(self):
         super().__init__()
+        self.connected = threading.Event()
         self.encoding = "utf-8"
-        self.fd = None
         self.origin = ""
         self.sock = None
         self.speed = "fast"
@@ -411,6 +423,7 @@ class DCC(Handler):
         pass
 
     def connect(self, dccevent):
+        self.connected.clear()
         dccevent.parse()
         arguments = dccevent.prs.otxt.split()
         addr = arguments[3]
@@ -425,15 +438,18 @@ class DCC(Handler):
             return
         self.sock.setblocking(1)
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
-        self.fd = self.sock.fileno()
+        k = getmain("k")
+        k.add(self)
         self.raw("Welcome %s" % dccevent.origin)
         self.origin = dccevent.origin
-        self.start()
+        Handler.start(self)
+        self.connected.set()
 
     def dosay(self, channel, txt):
         self.raw(txt)
 
     def event(self, txt):
+        self.connected.wait()
         e = Event()
         e.type = "cmd"
         e.channel = self.origin
@@ -444,11 +460,15 @@ class DCC(Handler):
         return e
 
     def handle(self, clt, e):
+        self.connected.wait()
         k = getmain("k")
-        k.dispatch(e)
+        k.put(e)
 
     def poll(self):
-        return str(self.sock.recv(512), "utf8")
+        txt = str(self.sock.recv(512), "utf8")
+        if txt == "":
+            raise Stop
+        return txt
 
     def say(self, channel, txt):
         self.raw(txt)
@@ -474,8 +494,7 @@ class Users(Object):
         if user:
             if perm in user.perms:
                 return True
-        k = getmain("k")
-        k.log("denied %s" % origin)
+        klog("denied %s" % origin)
         return False
 
     def delete(self, origin, perm):
@@ -527,9 +546,8 @@ def h904(clt, obj):
 
 def ERROR(clt, obj):
     clt.state.nrerror += 1
-    clt.state.error = obj.error
-    k = getmain("k")
-    k.error(obj.error)
+    clt.state.error = obj.txt
+    kerror(obj.txt)
 
 
 def KILL(clt, obj):
@@ -556,7 +574,7 @@ def PRIVMSG(clt, obj):
             return
         try:
             dcc = DCC()
-            launch(dcc.connect, obj)
+            dcc.connect(obj)
             return
         except ConnectionError:
             return
@@ -564,7 +582,7 @@ def PRIVMSG(clt, obj):
         if obj.txt[0] in [clt.cfg.cc, "!"]:
             obj.txt = obj.txt[1:]
         elif obj.txt.startswith("%s:" % clt.cfg.nick):
-            obj.txt = obj.txt[len(clt.cfg.nick) + 1 :]
+            obj.txt = obj.txt[len(clt.cfg.nick)+1:]
         else:
             return
         splitted = obj.txt.split()
@@ -597,8 +615,8 @@ def cfg(event):
 def delkeys(self, keyz=None):
     if keyz is None:
         keyz = []
-    for k in keyz:
-        del self[k]
+    for key in keyz:
+        del self[key]
 
 
 def dlt(event):

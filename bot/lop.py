@@ -10,9 +10,11 @@ from .obj import Object
 from .thr import launch
 from .utl import get_exception
 
+
 class Restart(Exception):
 
     pass
+
 
 class Stop(Exception):
 
@@ -20,6 +22,7 @@ class Stop(Exception):
 
 
 class Loop(Object):
+
     def __init__(self):
         super().__init__()
         self.queue = queue.Queue()

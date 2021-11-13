@@ -5,10 +5,10 @@ import os
 import time
 
 
-from bot.dbs import find, fntime
-from bot.obj import Cfg, keys
-from bot.ofn import fmt
-from bot.tms import elapsed
+from .dbs import find, fntime
+from .obj import Cfg, keys
+from .ofn import fmt
+from .tms import elapsed
 
 
 def listfiles(workdir):
@@ -22,7 +22,8 @@ def fnd(event):
     if not event.prs.args:
         fls = listfiles(Cfg.wd)
         if fls:
-            event.reply(",".join(sorted({x.split(".")[-1].lower() for x in fls})))
+            event.reply(",".join(sorted({x.split(".")[-1].lower()
+                        for x in fls})))
         return
     otype = event.prs.args[0]
     nr = -1
@@ -37,7 +38,8 @@ def fnd(event):
     got = False
     for fn, o in find(otype, event.prs.gets, event.prs.index, event.prs.timed):
         nr += 1
-        txt = "%s %s" % (str(nr), fmt(o, args or keys(o), skip=keys(event.prs.skip)))
+        txt = "%s %s" % (str(nr), fmt(o, args or keys(o),
+                                      skip=keys(event.prs.skip)))
         if "t" in event.prs.opts:
             txt = txt + " %s" % (elapsed(time.time() - fntime(fn)))
         got = True
