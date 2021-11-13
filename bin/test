@@ -11,21 +11,11 @@ from bot.clt import Client
 from bot.obj import Cfg
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
-
+from bot.utl import getmain
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 
-class CLI(Client):
-
-    def __init__(self):
-        super().__init__()
-        self.cfg = RunCfg()
-
-    def raw(self, txt):
-        if RunCfg.verbose:
-            print(txt)
-            sys.stdout.flush()
 
 
 class Kernel(Runtime):
@@ -40,15 +30,31 @@ class Kernel(Runtime):
             sys.stdout.flush()
 
 
-clt = CLI()
 k = Runtime()
+
+
+class CLI(Client):
+
+    def __init__(self):
+        super().__init__()
+        self.cfg = RunCfg()
+        k.add(self)
+
+    def raw(self, txt):
+        k = getmain("k")
+        if k.cfg.verbose:
+            print(txt)
+            sys.stdout.flush()
+
+
+clt = CLI()
 
 
 import bot.all
 
 
 def main():
-    Runtime.cfg.debug = True
+    k.cfg.debug = True
     Cfg.wd = ".test"
     k.cfg.mod = "bot.irc,bot.rss"
     k.parse_cli()
