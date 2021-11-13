@@ -4,10 +4,14 @@
 import os
 import unittest
 
-from bot.dbs import *
-from bot.obj import *
-from bot.ofn import *
+
+from bot.dbs import Db, fns, hook, last
+from bot.obj import NoPickle
+from bot.obj import Object, cdir, get, items, keys, register
+from bot.obj import set, update, values
+from bot.ofn import edit, fmt, gettype, load, save
 from bot.run import Cfg as RunCfg
+
 
 attrs = [
     "Object",
@@ -90,7 +94,6 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(
             dir(o),
             [
-                "_Object__reduce__ex",
                 "__class__",
                 "__contains__",
                 "__default__",
@@ -169,7 +172,7 @@ class Test_Object(unittest.TestCase):
     def test_Object__hash__(self):
         o = Object()
         h = hash(o)
-        self.assertTrue(True)
+        self.assertTrue(isinstance(h, int))
 
     def test_Object__init__(self):
         o = Object()
@@ -237,7 +240,8 @@ class Test_Object(unittest.TestCase):
             o.__reduce__()
 
     def test_Object__repr__(self):
-        self.assertTrue(update(Object(), {"key": "value"}).__repr__(), {"key": "value"})
+        self.assertTrue(update(Object(),
+                               {"key": "value"}).__repr__(), {"key": "value"})
 
     def test_Object__setattr__(self):
         o = Object()
@@ -253,7 +257,9 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(Object().__sizeof__(), 40)
 
     def test_Object__slots__(self):
-        self.assertEqual(Object().__slots__, ("__dict__", "__stp__", "__otype__"))
+        self.assertEqual(Object().__slots__, ("__dict__",
+                                              "__stp__",
+                                              "__otype__"))
 
     def test_Object__stp__(self):
         o = Object()

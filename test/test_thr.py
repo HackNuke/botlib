@@ -1,16 +1,21 @@
 # This file is placed in the Public Domain.
 
+
 import random
 import unittest
 
-from bot.bus import Bus
+
 from bot.obj import Object
-from bot.ofn import save
-from bot.run import Runtime, getmain
 from bot.tbl import Table
 from bot.thr import launch
+from bot.utl import getmain
+
 
 events = []
+
+
+k = getmain("k")
+
 
 param = Object()
 param.add = ["test@shell", "bart", ""]
@@ -35,10 +40,7 @@ param.tdo = ["test4", ""]
 class Test_Threaded(unittest.TestCase):
     def test_thrs(self):
         thrs = []
-        if Runtime.cfg.index:
-            nr = Runtime.cfg.index
-        else:
-            nr = 1
+        nr = k.cfg.index or 1
         for x in range(nr):
             thr = launch(exec, name="task%s" % x)
             thrs.append(thr)
@@ -63,10 +65,10 @@ def consume():
 
 def exec():
     k = getmain("k")
-    c = Bus.first()
-    l = list(Table.modnames)
-    random.shuffle(l)
-    for cmd in l:
+    c = k.first()
+    cmds = list(Table.modnames)
+    random.shuffle(cmds)
+    for cmd in cmds:
         for ex in getattr(param, cmd, [""]):
             e = c.event(cmd + " " + ex)
             k.dispatch(e)
