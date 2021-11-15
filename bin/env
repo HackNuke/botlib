@@ -1,6 +1,0 @@
-# This file is placed in the Public Domain.
-
-bin/clean
-python3 setup.py sdist
-python3 -mvirtualenv --system-site-packages env
-env/bin/pip3 install botlib -f dist --upgrade --force-reinstall --no-cache-dir --no-deps
