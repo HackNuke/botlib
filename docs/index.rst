@@ -3,10 +3,12 @@ BOTLIB
 
 **BOTLIB** is an attempt to achieve OS level integration of bot technology
 directly into the operating system. A solid, non hackable bot, that runs
-under systemd and rc.d as a 24/7 background service that starts the
-bot after reboot, stores it's data as JSON files on disk, every object is
-timestamped, readonly of which the latest is served to the user layer. This
-bot is intended to be programmable in a static, only code, no popen, no
+under rc.d as a 24/7 background service that starts the bot after reboot
+
+**BOTLIB** stores it's data as JSON files on disk, every object is
+timestamped, readonly of which the latest is served to the user layer. 
+
+**BOTLIB** is intended to be programmable in a static, only code, no popen, no
 imports and no reading modules from a directory, way that **should** make
 it suitable for embedding - :ref:`source`, :ref:`programming`
 
@@ -86,12 +88,8 @@ the botd program uses botc as it's cli for configuration:
 
 ::
 
-  $ doas botc cfg
-
-
-, botctl is
-a systemd wrapper around it. depending on rc.d or systemd choose one of
-those.
+ $ doas botc cfg
+ cc=! channel=#botd nick=botd port=6667 server=localhost sleep=30
 
 
 .. toctree::

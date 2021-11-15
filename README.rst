@@ -3,10 +3,12 @@ BOTLIB
 
 **BOTLIB** is an attempt to achieve OS level integration of bot technology
 directly into the operating system. A solid, non hackable bot, that runs
-under systemd and rc.d as a 24/7 background service that starts the
-bot after reboot, stores it's data as JSON files on disk, every object is
-timestamped, readonly of which the latest is served to the user layer. This
-bot is intended to be programmable in a static, only code, no popen, no
+under rc.d as a 24/7 background service that starts the bot after reboot
+
+**BOTLIB** stores it's data as JSON files on disk, every object is
+timestamped, readonly of which the latest is served to the user layer. 
+
+**BOTLIB** is intended to be programmable in a static, only code, no popen, no
 imports and no reading modules from a directory, way that **should** make
 it suitable for embedding.
 
@@ -75,13 +77,16 @@ add a url to the bot and the feed fetcher will poll it every 5 minutes.
 24/7
 ----
 
-if you want to bot to restart after reboot, enable the botd service:
+if you want to bot to restart after reboot, enable the botd rc.d script:
 
 ::
 
- sudo cp /usr/local/share/botd/botd.service /etc/systemd/system
- sudo systemctl enable botd --now
+ $ doas rcctl enable botd
+ $ doas rcctl start botd
 
-the botd program uses botc as it's cli for configuration, botctl is
-a systemd wrapper around it. depending on rc.d or systemd choose one of
-those.
+the botd program uses botc as it's cli for configuration:
+
+::
+
+ $ doas botc cfg
+ cc=! channel=#botd nick=botd port=6667 server=localhost sleep=30
