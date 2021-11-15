@@ -108,6 +108,7 @@ class Runtime(Bus, Dispatcher, Loop):
         parse(self.prs, " ".join(sys.argv[1:]))
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
+        self.cfg.index = self.prs.index
         Cfg.console = self.opt("c")
         Cfg.daemon = self.opt("d")
         Cfg.debug = self.opt("z")

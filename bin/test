@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
+
 import os, sys ; sys.path.insert(0, os.getcwd())
+
 
 import doctest
 import os
 import unittest
+
 
 from bot.clt import Client
 from bot.obj import Cfg
@@ -13,9 +16,8 @@ from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 from bot.utl import getmain
 
+
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
-
-
 
 
 class Kernel(Runtime):

@@ -39,11 +39,10 @@ setup(
     zip_safe=True,
     include_package_data=True,
     data_files=[
-                ('share/doc/botd', uploadlist("docs")),
                 ('share/botd', uploadlist("files")),
                 ("share/botd/", ["files/botd.service",],)
     ],
-    scripts=["bin/bot", "bin/botc", "bin/botctl", "bin/botd"],
+    scripts=["bin/bot", "bin/botc", "bin/botd"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",
