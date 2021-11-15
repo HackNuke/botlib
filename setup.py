@@ -28,7 +28,7 @@ def uploadlist(dir):
 
 setup(
     name="botlib",
-    version="142",
+    version="143",
     url="https://github.com/bthate/botlib",
     author="Bart Thate",
     author_email="bthate67@gmail.com",
@@ -38,10 +38,7 @@ setup(
     packages=["bot"],
     zip_safe=True,
     include_package_data=True,
-    data_files=[
-                ('share/botd', uploadlist("files")),
-                ("share/botd/", ["files/botd.service",],)
-    ],
+    data_files=[('etc/rc.d', ["files/botd",]),],
     scripts=["bin/bot", "bin/botc", "bin/botd"],
     classifiers=[
         "Development Status :: 4 - Beta",

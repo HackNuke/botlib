@@ -1,8 +1,6 @@
 # This file is placed in the Public Domain.
 # -*- coding: utf-8 -*-
 
-__version__ = 142
-
 import doctest
 import sys
 import os
@@ -11,6 +9,10 @@ curdir = os.getcwd()
 sys.path.insert(0, curdir + os.sep)
 sys.path.insert(0, curdir + os.sep + '..' + os.sep)
 sys.path.insert(0, curdir + os.sep + '..' + os.sep + ".." + os.sep)
+
+
+from bot.ver import __version__
+
 
 needs_sphinx = '1.1'
 nitpick_ignore = [

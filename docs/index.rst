@@ -75,14 +75,21 @@ add a url to the bot and the feed fetcher will poll it every 5 minutes.
 24/7
 ----
 
-if you want to bot to restart after reboot, enable the botd service:
+if you want to bot to restart after reboot, enable the botd rc.d script:
 
 ::
 
- sudo cp /usr/local/share/botd/botd.service /etc/systemd/system
- sudo systemctl enable botd --now
+ $ doas rcctl enable botd
+ $ doas rcctl start botd
 
-the botd program uses botc as it's cli for configuration, botctl is
+the botd program uses botc as it's cli for configuration:
+
+::
+
+  $ doas botc cfg
+
+
+, botctl is
 a systemd wrapper around it. depending on rc.d or systemd choose one of
 those.
 
