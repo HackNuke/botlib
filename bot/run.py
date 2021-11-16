@@ -29,8 +29,10 @@ class Cfg(Object):
     debug = False
     index = None
     mod = ""
+    mask = 0o22
     name = ""
     systemd = False
+    uuids = []
     verbose = False
     version = None
 
@@ -109,19 +111,21 @@ class Runtime(Bus, Dispatcher, Loop):
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
         self.cfg.index = self.prs.index
-        Cfg.console = self.opt("c")
-        Cfg.daemon = self.opt("d")
-        Cfg.debug = self.opt("z")
-        Cfg.systemd = self.opt("s")
-        Cfg.verbose = self.opt("v")
+        self.cfg.console = self.opt("c")
+        self.cfg.daemon = self.opt("d")
+        self.cfg.debug = self.opt("z")
+        self.cfg.mask = 0o22
+        self.cfg.systemd = self.opt("s")
+        self.cfg.verbose = self.opt("v")
 
-    @staticmethod
-    def privileges(name=None):
-        if os.getuid() != 0:
+    def privileges(self, name, group):
+        if not self.root():
+            self.log("you need root privileges to run botc")
             return None
         try:
             pwn = pwd.getpwnam(name)
         except (TypeError, KeyError):
+            k.log("you need to crea
             name = getpass.getuser()
             try:
                 pwn = pwd.getpwnam(name)
@@ -136,14 +140,17 @@ class Runtime(Bus, Dispatcher, Loop):
             pwn = pwd.getpwnam(name)
         except (TypeError, KeyError):
             return False
-        try:
-            os.chown(ObjCfg.wd, pwn.pw_uid, pwn.pw_gid)
-        except PermissionError:
-            pass
+        if not os.path.exists(ObjCfg.wd):
+            os.mkdir(ObjCfg.wd)
+        cdir(ObjCfg.wd + os.sep)
+        os.chown(ObjCfg.wd, pwn.pw_uid, pwn.pw_gid)
+        cdir(os.path.join(ObjCfg.wd, "store", ""))
+        os.chown(os.path.join(ObjCfg.wd, "store", ""), pwn.pw_uid, pwn.pw_gid)
         os.setgroups([])
         os.setgid(pwn.pw_gid)
         os.setuid(pwn.pw_uid)
-        os.umask(0o22)
+        os.umask(Cfg.mask)
+        self.cfg.uuids = os.getresuid()
         return True
 
     @staticmethod
@@ -151,12 +158,6 @@ class Runtime(Bus, Dispatcher, Loop):
         if os.geteuid() != 0:
             return False
         return True
-
-    @staticmethod
-    def skel():
-        assert ObjCfg.wd
-        cdir(ObjCfg.wd + os.sep)
-        cdir(os.path.join(ObjCfg.wd, "store", ""))
 
     @staticmethod
     def wait():

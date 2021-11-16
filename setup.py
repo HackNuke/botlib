@@ -21,9 +21,8 @@ setup(
     long_description=read(),
     license="Public Domain",
     packages=["bot"],
-    zip_safe=True,
     include_package_data=True,
-    data_files=[('etc/rc.d', ["rc.d/botd",]),],
+    data_files=[("etc/rc.d", ["rc.d/botd",],)],
     scripts=["bin/bot", "bin/botc", "bin/botd"],
     classifiers=[
         "Development Status :: 4 - Beta",
