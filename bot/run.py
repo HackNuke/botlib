@@ -121,21 +121,12 @@ class Runtime(Bus, Dispatcher, Loop):
     def privileges(self, name, group):
         if not self.root():
             self.log("you need root privileges to run botc")
-            return None
+            return False
         try:
             pwn = pwd.getpwnam(name)
         except (TypeError, KeyError):
-            k.log("you need to crea
-            name = getpass.getuser()
-            try:
-                pwn = pwd.getpwnam(name)
-            except (TypeError, KeyError):
-                return None
-        if name is None:
-            try:
-                name = getpass.getuser()
-            except (TypeError, KeyError):
-                pass
+            self.log('add group/user with 1) groupadd botd 2) useradd -b /var/lib -d /var/lib/botd -m -g botd botd')
+            return False
         try:
             pwn = pwd.getpwnam(name)
         except (TypeError, KeyError):

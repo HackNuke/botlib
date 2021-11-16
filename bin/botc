@@ -76,9 +76,9 @@ def main():
     k.parse_cli()
     if not k.prs.txt:
         return
-    k.privileges("botd", "botd")
-    k.add(c)
-    k.cmd(c, k.prs.otxt)
+    if k.privileges("botd", "botd"):
+       k.add(c)
+       k.cmd(c, k.prs.otxt)
 
 
 wrap(main)
