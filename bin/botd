@@ -56,7 +56,7 @@ def main():
     k.log(msg.replace("  ", " "))
     k.log("workdir is %s" % Cfg.wd)
     k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
-    k.privileges()
+    k.privileges("botd", "botd")
     k.start()
     k.cfg.mod += "irc,rss"
     for mn in spl(k.cfg.mod):
