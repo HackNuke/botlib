@@ -605,7 +605,7 @@ def cfg(event):
     last(c)
     delkeys(event.prs.sets, ["mod"])
     if not event.prs.sets:
-        event.reply(fmt(c, skip=["username", "realname"]))
+        event.reply(fmt(c, skip=["password", "stamp", "username", "realname"]))
         return
     edit(c, event.prs.sets)
     save(c)
