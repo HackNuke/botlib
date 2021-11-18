@@ -8,6 +8,13 @@ under rc.d as a 24/7 background service that starts the bot after reboot.
 imports and no reading modules from a directory, way that **should** make
 it suitable for embedding.
 
+**BOTLIB** stores it's data on disk where objects are time versioned and the
+last version saved on disk is served to the user layer. Files are JSON dumps
+that are read-only so thus should provide (disk) persistence more change. Files
+paths carry the type in the path name what makes reconstruction from filename
+easier then reading type from the object. Only include your own written code
+should be the path to "secure".
+
 CONFIGURATION
 =============
 
@@ -98,12 +105,6 @@ runnable. Reading random code from a directory is what gets avoided. As
 experience tells os.popen and __import__, importlib are avoided, the bot
 scans modules from sys.path.
 
-**BOTLIB** stores it's data on disk where objects are time versioned and the
-last version saved on disk is served to the user layer. Files are JSON dumps
-that are read-only so thus should provide (disk) persistence more change. Files
-paths carry the type in the path name what makes reconstruction from filename
-easier then reading type from the object. Only include your own written code
-should be the path to "secure".
 
 you can fetch the source code (or clone/fork) from git repository::
 
