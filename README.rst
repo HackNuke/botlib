@@ -3,11 +3,7 @@ BOTLIB
 
 **BOTLIB** is an attempt to achieve OS level integration of bot technology
 directly into the operating system. A solid, non hackable bot, that runs
-under rc.d as a 24/7 background service that starts the bot after reboot
-
-**BOTLIB** stores it's data as JSON files on disk, every object is
-timestamped, readonly of which the latest is served to the user layer. 
-
+under rc.d as a 24/7 background service that starts the bot after reboot.
 **BOTLIB** is intended to be programmable in a static, only code, no popen, no
 imports and no reading modules from a directory, way that **should** make
 it suitable for embedding.
@@ -97,15 +93,11 @@ programming
 
 For programming the bot you have to have the code available as employing
 your own code requires that you install your own bot as the system bot.
-
 This is to not have a directory to read modules from to add commands to the
 bot but include the own programmed modules directly into the python code, so
 only trusted code (your own written code) is included and runnable. Reading
-random code from a directory is what gets avoided.
-
-As experience tells os.popen and __import__, importlib are avoided, the bot
-scans modules from sys.path. Maybe sys.path security issues need to be
-adressed again. This also avoids running other then own written code.
+random code from a directory is what gets avoided. As experience tells os.popen
+and __import__, importlib are avoided, the bot scans modules from sys.path.
 
 Data is stored on disk where objects are time versioned and the last version
 saved on disk is served to the user layer. Files are JSON dumps that are
