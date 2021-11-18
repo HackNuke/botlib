@@ -90,10 +90,6 @@ def load(o, opath):
     o.__stp__ = stp
 
 
-def oqn(o):
-    return Object.__oqn__(o)
-
-
 def save(o, tab=False):
     assert Cfg.wd
     prv = os.sep.join(o.__stp__.split(os.sep)[:2])

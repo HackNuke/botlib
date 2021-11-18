@@ -18,7 +18,7 @@ from .evt import Event
 from .hdl import Handler
 from .lop import Stop
 from .obj import Object, update
-from .ofn import edit, fmt, oqn, save
+from .ofn import edit, fmt, save
 from .opt import Output
 from .run import Cfg as RunCfg
 from .thr import launch
@@ -287,7 +287,7 @@ class IRC(Output, Handler):
             klog(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
-        o.orig = oqn(self)
+        o.orig = repr(self)
         o.command = ""
         o.arguments = []
         arguments = rawstr.split()
@@ -454,7 +454,7 @@ class DCC(Client):
         e.type = "cmd"
         e.channel = self.origin
         e.origin = self.origin or "root@dcc"
-        e.orig = oqn(self)
+        e.orig = repr(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
         return e

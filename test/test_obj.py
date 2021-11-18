@@ -113,7 +113,6 @@ class Test_Object(unittest.TestCase):
                 "__module__",
                 "__ne__",
                 "__new__",
-                "__oqn__",
                 "__otype__",
                 "__reduce__",
                 "__reduce_ex__",
@@ -215,9 +214,6 @@ class Test_Object(unittest.TestCase):
         o = Object()
         oo = o.__new__(Object)
         self.assertEqual(o, oo)
-
-    def test_Object__oqn__(self):
-        self.assertTrue("Object" in Object().__oqn__())
 
     def test_Object__otype__(self):
         self.assertEqual(Object().__otype__, "bot.obj.Object")

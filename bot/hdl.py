@@ -17,7 +17,7 @@ class Handler(Dispatcher, Loop):
         c = Event()
         c.type = "cmd"
         c.txt = txt or ""
-        c.orig = self.__oqn__()
+        c.orig = repr(self)
         return c
 
     def handle(self, clt, e):

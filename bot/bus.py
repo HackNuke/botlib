@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from .obj import Object, oqn
+from .obj import Object
 
 
 class BusError(Exception):
@@ -28,7 +28,7 @@ class Bus(Object):
 
     def byorig(self, orig):
         for o in self:
-            if oqn(o) == orig:
+            if repr(o) == orig:
                 return o
         raise BusError(orig)
 
@@ -59,5 +59,5 @@ class Bus(Object):
 
     def say(self, orig, channel, txt):
         for o in self:
-            if o.__oqn__() == orig:
+            if repr(o) == orig:
                 o.say(channel, txt)

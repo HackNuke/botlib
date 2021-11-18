@@ -51,6 +51,7 @@ class ObjectEncoder(js.JSONEncoder):
                       (type(str), type(True), type(False),
                        type(int), type(float))):
             return o
+        print(type(o))
         return repr(o)
 
 
@@ -77,14 +78,6 @@ class Object:
             self.__otype__,
             str(uuid.uuid4()),
             os.sep.join(str(datetime.datetime.now()).split()),
-        )
-
-
-    def __oqn__(self):
-        return "<%s.%s object at %s>" % (
-            self.__class__.__module__,
-            self.__class__.__name__,
-            hex(id(self)),
         )
 
     def __contains__(self, k):
@@ -133,10 +126,14 @@ class Object:
         self.__dict__[k] = v
 
     def __repr__(self):
-        return self.__oqn__()
+        return "<%s.%s object at %s>" % (
+            self.__class__.__module__,
+            self.__class__.__name__,
+            hex(id(self)),
+        )
 
     def __str__(self):
-        return str(self.__dict__)
+        return dumps(self)
 
 
 class Cfg(Object):
@@ -165,9 +162,6 @@ def keys(self):
 
 def loads(s):
     return js.loads(s, cls=ObjectDecoder)
-
-def oqn(self):
-    return Object.__oqn__(self)
 
 
 def register(self, k, v):
