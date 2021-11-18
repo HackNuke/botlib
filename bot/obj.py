@@ -145,7 +145,7 @@ class Cfg(Object):
 
 
 def dumps(self):
-    return json.dumps(self, cls=JSONEncoder)
+    return js.dumps(self, cls=ObjectEncoder)
 
 
 def get(self, key, default=None):
@@ -164,7 +164,7 @@ def keys(self):
 
 
 def loads(s):
-    return json.loads(s, cls=ObjectDecoder)
+    return js.loads(s, cls=ObjectDecoder)
 
 def oqn(self):
     return Object.__oqn__(self)

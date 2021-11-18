@@ -4,11 +4,11 @@
 import unittest
 
 
-from bot.obj import Object
-from bot.ofn import 
+from bot.obj import Object, dumps
+
 
 class Test_JSON(unittest.TestCase):
     def test_jsondump(self):
         o = Object()
         o.test = "bla"
-        self.assertEqual(o.__json__(), "{'test': 'bla'}")
+        self.assertEqual(dumps(o), '{"test": "bla"}')
