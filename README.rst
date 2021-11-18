@@ -8,7 +8,7 @@ under rc.d as a 24/7 background service that starts the bot after reboot.
 imports and no reading modules from a directory, way that **should** make
 it suitable for embedding.
 
-configuration
+CONFIGURATION
 =============
 
 configuration is done by calling the bot as a cli, bot <cmd> allows you to
@@ -88,7 +88,7 @@ the botd program uses botc as it's cli for configuration:
  cc=! channel=#botd nick=botd port=6667 server=localhost sleep=30
 
 
-programming
+PROGRAMMING
 ===========
 
 For programming the bot you have to have the code available as employing
