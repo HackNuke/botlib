@@ -117,12 +117,12 @@ packages::
 
  > joe bot/hlo.py
 
-add your command code to the file:
+add your command code to the file::
 
  >>> def hlo(event):
  >>>     event.reply("hello!")
 
-then add bot/hlo.py to the bot/all.py module and let it scan the module.
+then add bot/hlo.py to the bot/all.py module and let it scan the module::
 
  >>> import bot.hlo as hlo
  >>> Table.addmod(hlo)
