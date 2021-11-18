@@ -7,11 +7,8 @@ import os
 import types
 
 
-from .obj import Object, Cfg, cdir, items, keys, update
-
-
-def gettype(o):
-    return str(type(o)).split()[-1][1:-2]
+from .obj import Cfg, Object, ObjectDecoder, ObjectEncoder
+from .obj import cdir, items, keys, update
 
 
 def edit(o, setter, skip=True, skiplist=None):
@@ -75,6 +72,10 @@ def getname(o):
     return None
 
 
+def gettype(o):
+    return str(type(o)).split()[-1][1:-2]
+
+
 def load(o, opath):
     if opath.count(os.sep) != 3:
         return
@@ -84,7 +85,7 @@ def load(o, opath):
     lpath = os.path.join(Cfg.wd, "store", stp)
     if os.path.exists(lpath):
         with open(lpath, "r") as ofile:
-            d = js.load(ofile, object_hook=o.__hooked__)
+            d = js.load(ofile, cls=ObjectDecoder)
             update(o, d)
     o.__stp__ = stp
 
@@ -102,7 +103,7 @@ def save(o, tab=False):
     cdir(opath)
     with open(opath, "w") as ofile:
         js.dump(
-            o.__dict__, ofile, default=o.__default__, indent=4, sort_keys=True
+            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
         )
     os.chmod(opath, 0o444)
     return o.__stp__

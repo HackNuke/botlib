@@ -69,10 +69,6 @@ class Test_Object(unittest.TestCase):
         o.key = "value"
         self.assertTrue("key" in o)
 
-    def test_Object__default__(self):
-        o = Object()
-        self.assertEqual(o.__default__(o), {})
-
     def test_Object__delattr__(self):
         o = Object()
         o.key = "value"
@@ -96,7 +92,6 @@ class Test_Object(unittest.TestCase):
             [
                 "__class__",
                 "__contains__",
-                "__default__",
                 "__delattr__",
                 "__delitem__",
                 "__dict__",
@@ -109,11 +104,9 @@ class Test_Object(unittest.TestCase):
                 "__getitem__",
                 "__gt__",
                 "__hash__",
-                "__hooked__",
                 "__init__",
                 "__init_subclass__",
                 "__iter__",
-                "__json__",
                 "__le__",
                 "__len__",
                 "__lt__",

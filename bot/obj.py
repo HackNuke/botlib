@@ -37,6 +37,31 @@ class NoPickle(Exception):
     pass
 
 
+class ObjectEncoder(js.JSONEncoder):
+
+    @staticmethod
+    def default(o):
+        if isinstance(o, Object):
+            return vars(o)
+        if isinstance(o, dict):
+            return o.items()
+        if isinstance(o, list):
+            return iter(o)
+        if isinstance(o,
+                      (type(str), type(True), type(False),
+                       type(int), type(float))):
+            return o
+        return repr(o)
+
+
+class ObjectDecoder(js.JSONDecoder):
+
+
+    @staticmethod
+    def decode(s):
+        return js.loads(s)
+
+
 class Object:
 
     __slots__ = (
@@ -54,21 +79,6 @@ class Object:
             os.sep.join(str(datetime.datetime.now()).split()),
         )
 
-    @staticmethod
-    def __default__(o):
-        if isinstance(o, Object):
-            return vars(o)
-        if isinstance(o, dict):
-            return o.items()
-        if isinstance(o, list):
-            return iter(o)
-        if isinstance(o,
-                      (type(str), type(True), type(False),
-                       type(int), type(float))):
-            return o
-        if "__oqn__" in dir(o):
-            return o.__oqn__(o)
-        return repr(o)
 
     def __oqn__(self):
         return "<%s.%s object at %s>" % (
@@ -113,17 +123,6 @@ class Object:
     def __hash__(self):
         return id(self)
 
-    def __hooked__(self, o):
-        obj = Object()
-        update(obj, o)
-        return obj
-
-    def __json__(self):
-        s = js.dumps(self.__dict__, default=self.__default__, sort_keys=True)
-        s = s.replace("'", '\\"')
-        s = s.replace('"', "'")
-        return s
-
     def __reduce__(self):
         raise NoPickle
 
@@ -134,7 +133,7 @@ class Object:
         self.__dict__[k] = v
 
     def __repr__(self):
-        return self.__json__()
+        return self.__oqn__()
 
     def __str__(self):
         return str(self.__dict__)
@@ -143,6 +142,10 @@ class Object:
 class Cfg(Object):
 
     wd = ""
+
+
+def dumps(self):
+    return json.dumps(self, cls=JSONEncoder)
 
 
 def get(self, key, default=None):
@@ -159,6 +162,9 @@ def items(self):
 def keys(self):
     return self.__dict__.keys()
 
+
+def loads(s):
+    return json.loads(s, cls=ObjectDecoder)
 
 def oqn(self):
     return Object.__oqn__(self)
