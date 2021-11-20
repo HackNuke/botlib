@@ -13,11 +13,9 @@ class Test_JSON(unittest.TestCase):
         o = Object()
         o.test = "bla"
         a = loads(dumps(o))
-        print(a)
         self.assertEqual(a.test, "bla")
 
     def test_jsondump(self):
         o = Object()
         o.test = "bla"
         self.assertEqual(dumps(o), '{"test": "bla"}')
-
