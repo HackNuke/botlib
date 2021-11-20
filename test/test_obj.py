@@ -113,6 +113,7 @@ class Test_Object(unittest.TestCase):
                 "__module__",
                 "__ne__",
                 "__new__",
+                "__oqn__",
                 "__otype__",
                 "__reduce__",
                 "__reduce_ex__",

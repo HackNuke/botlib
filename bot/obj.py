@@ -37,31 +37,6 @@ class NoPickle(Exception):
     pass
 
 
-class ObjectEncoder(js.JSONEncoder):
-
-    @staticmethod
-    def default(o):
-        if isinstance(o, Object):
-            return vars(o)
-        if isinstance(o, dict):
-            return o.items()
-        if isinstance(o, list):
-            return iter(o)
-        if isinstance(o,
-                      (type(str), type(True), type(False),
-                       type(int), type(float))):
-            return o
-        print(type(o))
-        return repr(o)
-
-
-class ObjectDecoder(js.JSONDecoder):
-
-
-    @staticmethod
-    def decode(s):
-        return js.loads(s)
-
 
 class Object:
 
@@ -125,7 +100,7 @@ class Object:
     def __setitem__(self, k, v):
         self.__dict__[k] = v
 
-    def __repr__(self):
+    def __oqn__(self):
         return "<%s.%s object at %s>" % (
             self.__class__.__module__,
             self.__class__.__name__,
@@ -133,7 +108,34 @@ class Object:
         )
 
     def __str__(self):
-        return dumps(self)
+        return str(self.__dict__)
+
+
+class ObjectEncoder(js.JSONEncoder):
+
+    def default(self, o):
+        if isinstance(o, dict):
+            return o.items()
+        if isinstance(o, Object):
+            return vars(o)
+        if isinstance(o, list):
+            return iter(o)
+        if isinstance(o,
+                      (type(str), type(True), type(False),
+                       type(int), type(float))):
+            return o
+        try:
+            return js.JSONEncoder.default(self, o)
+        except TypeError:
+            return repr(o)
+
+
+class ObjectDecoder(js.JSONDecoder):
+
+
+    @staticmethod
+    def decode(s):
+        return js.loads(s)
 
 
 class Cfg(Object):
@@ -143,7 +145,6 @@ class Cfg(Object):
 
 def dumps(self):
     return js.dumps(self, cls=ObjectEncoder)
-
 
 def get(self, key, default=None):
     return self.__dict__.get(key, default)
