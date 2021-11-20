@@ -4,6 +4,7 @@
 import unittest
 
 
+from bot.obj import dumps
 from bot.run import Cfg
 from bot.utl import getmain
 
@@ -14,6 +15,3 @@ class Test_Kernel(unittest.TestCase):
         k = getmain("k")
         self.assertEqual(type(k.cfg), Cfg)
 
-    def test_json(self):
-        k = getmain("k")
-        print(k)    

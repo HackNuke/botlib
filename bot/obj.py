@@ -135,8 +135,10 @@ class ObjectDecoder(js.JSONDecoder):
 
     @staticmethod
     def decode(s):
-        return js.loads(s)
-
+        o = Object()
+        v = js.loads(s)
+        update(o, v)
+        return o
 
 class Cfg(Object):
 

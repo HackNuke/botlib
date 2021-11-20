@@ -4,10 +4,17 @@
 import unittest
 
 
-from bot.obj import Object, dumps
+from bot.obj import Object, dumps, loads
 
 
 class Test_JSON(unittest.TestCase):
+
+    def test_json(self):
+        o = Object()
+        o.test = "bla"
+        a = loads(dumps(o))
+        print(a)
+        self.assertEqual(a.test, "bla")
 
     def test_jsondump(self):
         o = Object()
