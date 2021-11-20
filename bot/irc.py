@@ -283,8 +283,7 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        if RunCfg.verbose:
-            klog(txt.rstrip())
+        klog(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
         o.orig = repr(self)
@@ -349,8 +348,7 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
-        if RunCfg.verbose:
-            klog(txt.rstrip())
+        klog(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
         self.sock.send(txt)

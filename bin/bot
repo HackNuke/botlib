@@ -86,7 +86,7 @@ def wrap(func):
     old = termios.tcgetattr(fd)
     try:
         func()
-    except KeyboardInterrupt:
+    except (EOFError, KeyboardInterrupt):
         print("")
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
