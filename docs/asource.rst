@@ -1,7 +1,7 @@
 .. _source:
 
-source
-======
+S O U R C E
+###########
 
 the following modules are provided:
 

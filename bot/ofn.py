@@ -7,7 +7,7 @@ import os
 import types
 
 
-from .obj import Cfg, Object, ObjectDecoder, ObjectEncoder
+from .obj import Cfg, ObjectDecoder, ObjectEncoder
 from .obj import cdir, items, keys, update
 
 

@@ -134,7 +134,7 @@ class ObjectDecoder(js.JSONDecoder):
 
 
     @staticmethod
-    def decode(s):
+    def decode(s, _w=None):
         o = Object()
         v = js.loads(s)
         update(o, v)

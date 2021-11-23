@@ -20,7 +20,6 @@ from .lop import Stop
 from .obj import Object, update
 from .ofn import edit, fmt, save
 from .opt import Output
-from .run import Cfg as RunCfg
 from .thr import launch
 from .tms import elapsed
 from .utl import getmain, kerror, klog
