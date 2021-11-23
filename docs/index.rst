@@ -1,8 +1,8 @@
 B O T L I B
 ###########
 
-**BOTLIB** is an attempt to achieve OS level integration of bot technology
-directly into the operating system.
+ **BOTLIB** is an attempt to achieve OS level integration of bot technology
+ directly into the operating system.
 
 name
 ====
