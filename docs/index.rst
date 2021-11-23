@@ -25,14 +25,6 @@ install
 
  pip3 install botlib
 
-
-configuration
-=============
-
- configuration is done by calling the bot as a cli, bot <cmd> allows you to
- run bot commands on a shell. use the cfg command to edit configuration on
- disk, the botd background daemon uses the botctl program.
-
 irc
 ---
 
