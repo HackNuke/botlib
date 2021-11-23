@@ -9,8 +9,8 @@ name
 synopsis
 ========
 
- | `bot \<cmd\> \[key=value\] \[key==value\]`
- | `bot -cv mod=irc,rss`
+ | ``bot \<cmd\> \[key=value\] \[key==value\]``
+ | ``bot -cv mod=irc,rss``
 
 description
 ===========
