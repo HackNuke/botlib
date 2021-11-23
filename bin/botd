@@ -25,6 +25,9 @@ from bot.tbl import Table
 from bot.tms import elapsed
 from bot.utl import spl
 
+IRC.nick = "botd"
+IRC.channel = "#botd"
+
 
 Cfg.wd = "/var/lib/botd/"
 

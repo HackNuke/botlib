@@ -85,3 +85,5 @@ intersphinx_mapping = {
                        'sphinx': ('http://sphinx.pocoo.org/', None),
                       }
 intersphinx_cache_limit = 1
+
+rst_prolog = '''*24/7 channel daemon*'''
