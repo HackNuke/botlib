@@ -1,12 +1,9 @@
-BOTLIB
-######
+B O T L I B
+###########
 
 **BOTLIB** is an attempt to achieve OS level integration of bot technology
 directly into the operating system. A solid, non hackable bot, that runs
-under rc.d as a 24/7 background service that starts the bot after reboot.
-**BOTLIB** is intended to be programmable in a static, only code, no popen, no
-imports and no reading modules from a directory, way that **should** make
-it suitable for embedding.
+under systemd as a 24/7 background service that starts the bot after reboot.
 
 **BOTLIB** stores it's data on disk where objects are time versioned and the
 last version saved on disk is served to the user layer. Files are JSON dumps
@@ -15,16 +12,17 @@ paths carry the type in the path name what makes reconstruction from filename
 easier then reading type from the object. Only include your own written code
 **should** be the path to "secure".
 
-INSTALL
-=======
+**BOTLIB** is intended to be programmable in a static, only code, no popen, no
+imports and no reading modules from a directory, way that **should** make
+it suitable for embedding.
 
-installation is through pypi or run python3 from the tarball (run
-install_data as well).
+install
+=======
 
  pip3 install botlib
 
 
-CONFIGURATION
+configuration
 =============
 
 configuration is done by calling the bot as a cli, bot <cmd> allows you to
@@ -34,40 +32,24 @@ configuration on disk.
 irc
 ---
 
-IRC configuration is done with the use of the botctl program, the cfg
-command configures the IRC bot.
-
  bot cfg server=\<server\> channel=\<channel\> nick=\<nick\> 
 
-(*) default channel/server is #botd on localhost
+ (*) default channel/server is #bot on localhost
 
 sasl
 ----
 
-some irc channels require SASL authorisation (freenode,libera,etc.) and
-a nickserv user and password needs to be formed into a password. You can use
-the pwd command for this.
-
- bot pwd \<nickservnick\> \<nickservpass\>
-
-after creating you sasl password add it to you configuration.
-
- bot cfg password=\<outputfrompwd\>
+ | bot pwd \<nickservnick\> \<nickservpass\>
+ | bot cfg password=\<outputfrompwd\>
 
 users
 -----
-
-if you want to restrict access to the bot (default is disabled), enable
-users in the configuration and add userhosts of users to the database.
 
  | bot cfg users=True
  | bot met \<userhost\>
 
 rss
 ---
-
-if you want rss feeds in your channel install feedparser. to add an url to
-the bot and the feed fetcher will poll it every 5 minutes.
 
  bot rss \<url\>
 
@@ -79,13 +61,14 @@ if you want to bot restarted after reboot, enable the systemd service.
  | cp /usr/local/share/botd/botd.service /etc/systemd/system  
  | systemctl enable botd --now
 
-the botd program uses botc as it's cli for configuration.
+the botd program uses botctl as it's cli for configuration.
 
- | botc cfg
+ | botctl cfg
  | cc=! channel=#botd nick=botd port=6667 server=localhost sleep=30
 
+ (*) default channel/server is #botd on localhost
 
-PROGRAMMING
+programming
 ===========
 
 **BOTLIB** is programmable, to program the bot you have to have the code
