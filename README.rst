@@ -13,7 +13,7 @@ synopsis
 | ``bot cfg server=<server> channel=<channel> nick=<nick>`` 
 | ``bot -cv mod=irc,rss``
 
-| (*) default channel/server is #bot on localhost
+| ``(*) default channel/server is #bot on localhost``
 
 description
 ===========
@@ -38,24 +38,24 @@ disk, the botd background daemon uses the botctl program.
 sasl
 ----
 
-|``bot pwd <nickservnick> <nickservpass>``
-|``bot cfg password=<outputfrompwd>``
+| ``bot pwd <nickservnick> <nickservpass>``
+| ``bot cfg password=<outputfrompwd>``
 
 users
 -----
 
-|``bot cfg users=True``
-|``bot met <userhost>``
+| ``bot cfg users=True``
+| ``bot met <userhost>``
 
 rss
 ---
 
-|``bot rss <url>``
+| ``bot rss <url>``
 
 24/7
 ----
 
-|``cp /usr/local/share/botd/botd.service /etc/systemd/system``
-|``botctl cfg server=<server> channel=<channel> nick=<nick>`` 
-|``systemctl enable botd --now``
-|``(*) default channel/server is #bot on localhost``
+| ``cp /usr/local/share/botd/botd.service /etc/systemd/system``
+| ``botctl cfg server=<server> channel=<channel> nick=<nick>`` 
+| ``systemctl enable botd --now``
+| ``(*) default channel/server is #bot on localhost``
