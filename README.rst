@@ -4,74 +4,67 @@ B O T L I B
 name
 ====
 
- **BOTLIB** - OS level integration of bot technology.
+**BOTLIB** - OS level integration of bot technology.
 
 synopsis
 ========
 
- | bot \<cmd\> \[key=value\] \[key==value\] 
- | bot -cv mod=irc,rss
+| bot \<cmd\> \[key=value\] \[key==value\] 
+| bot -cv mod=irc,rss
 
 description
 ===========
 
- A solid, non hackable bot, that runs under systemd as a 24/7 background
- service and starts the bot after reboot, intended to be programmable in a
- static, only code, no popen, no imports and no reading modules from a
- directory, way that **should** make it suitable for embedding.
+A solid, non hackable bot, that runs under systemd as a 24/7 background
+service and starts the bot after reboot, intended to be programmable in a
+static, only code, no popen, no imports and no reading modules from a
+directory, way that **should** make it suitable for embedding.
 
 install
 =======
 
- pip3 install botlib
+pip3 install botlib
 
 
 configuration
 =============
 
- configuration is done by calling the bot as a cli, bot <cmd> allows you to
- run bot commands on a shell. use the cfg command to edit configuration on
- disk, the botd background daemon uses the botctl program.
+configuration is done by calling the bot as a cli, bot <cmd> allows you to
+run bot commands on a shell. use the cfg command to edit configuration on
+disk, the botd background daemon uses the botctl program.
 
- irc
- ---
+irc
+---
 
-  | bot cfg server=\<server\> channel=\<channel\> nick=\<nick\> 
-  | bot -cv mod=irc,rss
+ | bot cfg server=\<server\> channel=\<channel\> nick=\<nick\> 
+ | bot -cv mod=irc,rss
 
-  (*) default channel/server is #bot on localhost
+ (*) default channel/server is #bot on localhost
 
- sasl
- ----
+sasl
+----
 
-  | bot pwd \<nickservnick\> \<nickservpass\>
-  | bot cfg password=\<outputfrompwd\>
+ | bot pwd \<nickservnick\> \<nickservpass\>
+ | bot cfg password=\<outputfrompwd\>
 
- users
- -----
+users
+-----
 
-  | bot cfg users=True
-  | bot met \<userhost\>
+ | bot cfg users=True
+ | bot met \<userhost\>
 
- rss
- ---
+rss
+---
 
-  bot rss \<url\>
+ bot rss \<url\>
 
- 24/7
- ----
+24/7
+----
 
-  | cp /usr/local/share/botd/botd.service /etc/systemd/system  
-  | systemctl enable botd --now
+ | cp /usr/local/share/botd/botd.service /etc/systemd/system  
+ | systemctl enable botd --now
 
+ | botctl cfg
+ | cc=! channel=#botd nick=botd port=6667 server=localhost
 
-  | botctl cfg
-  | cc=! channel=#botd nick=botd port=6667 server=localhost
-
-  (*) default channel/server is #bot on localhost
-
-.. toctree::
-    :hidden:
-    :glob:
-
-    *
+ (*) default channel/server is #bot on localhost
