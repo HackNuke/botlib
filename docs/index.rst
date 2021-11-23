@@ -1,6 +1,8 @@
 B O T L I B
 ###########
 
+**BOTLIB** is an attempt to achieve OS level integration of bot technology
+directly into the operating system.
 
 name
 ====
@@ -16,14 +18,10 @@ synopsis
 description
 ===========
 
- **BOTLIB** is an attempt to achieve OS level integration of bot technology
- directly into the operating system. A solid, non hackable bot, that runs
- under systemd as a 24/7 background service and starts the bot after reboot.
-
- **BOTLIB** is intended to be programmable in a static, only code, no popen, no
- imports and no reading modules from a directory, way that **should** make
- it suitable for embedding.
-
+ A solid, non hackable bot, that runs under systemd as a 24/7 background
+ service and starts the bot after reboot, intended to be programmable in a
+ static, only code, no popen, no imports and no reading modules from a
+ directory, way that **should** make it suitable for embedding.
 
 install
 =======
@@ -71,7 +69,7 @@ rss
 
 
  | botctl cfg
- | cc=! channel=#botd nick=botd port=6667 server=localhost sleep=30
+ | cc=! channel=#botd nick=botd port=6667 server=localhost
 
  (*) default channel/server is #bot on localhost
 
@@ -102,7 +100,7 @@ code
 
   git clone https://github.com/bthate/botlib
 
- or download a tar from pypi, see https://pypi.org/project/botlib/#files
+ or download the tar - https://pypi.org/project/botlib/#files
 
 commands
 --------
