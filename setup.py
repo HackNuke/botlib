@@ -23,17 +23,16 @@ setup(
     packages=["bot"],
     include_package_data=True,
     data_files=[
-                ("share/botd", ["files/botd.service",],)
-                ('share/doc/botd', ['docs/aprogramming.rst',
+                ("share/botd", ["files/botd.service",],),
+                ('share/doc/botd', [
                                     'docs/asource.rst',
                                     'docs/conf.py',
                                     'docs/index.rst',
                                     'docs/_templates/base.rst',
                                     'docs/_templates/class.rst',
                                     'docs/_templates/layout.html',
-                                    'docs/_templates/module.rst'])],
-
-
+                                    'docs/_templates/module.rst'
+                                    ],)
     ],
     scripts=["bin/bot", "bin/botc", "bin/botctl", "bin/botd"],
     classifiers=[

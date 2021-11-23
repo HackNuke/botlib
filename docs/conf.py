@@ -1,8 +1,6 @@
 # This file is placed in the Public Domain.
 # -*- coding: utf-8 -*-
 
-__version__ = 70
-
 import doctest
 import sys
 import os
@@ -11,6 +9,8 @@ curdir = os.getcwd()
 sys.path.insert(0, curdir + os.sep)
 sys.path.insert(0, curdir + os.sep + '..' + os.sep)
 sys.path.insert(0, curdir + os.sep + '..' + os.sep + ".." + os.sep)
+
+from bot.ver import __version__
 
 needs_sphinx = '1.1'
 nitpick_ignore = [
@@ -41,7 +41,7 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 source_encoding = 'utf-8-sig'
 master_doc = 'index'
-project = "BOTD"
+project = "BOTLIB"
 version = '%s' % __version__
 release = '%s' % __version__
 language = ''
@@ -65,7 +65,7 @@ html_theme_options = {
     "rightsidebar": True
 }
 html_theme_path = []
-html_favicon = "botdgreensmile.png"
+#html_favicon = "botdgreensmile.png"
 html_static_path = []
 html_extra_path = []
 html_last_updated_fmt = '%Y-%b-%d'
@@ -79,12 +79,6 @@ html_show_copyright = False
 html_copy_source = False
 html_use_opensearch = 'http://botd.rtfd.io/'
 html_file_suffix = '.html'
-rst_prolog = """.. image:: botdgreenline2.png
-    :height: 2.0cm
-    :width: 100%
-
-.. title:: 24/7 channel daemon
-"""
 htmlhelp_basename = 'pydoc'
 intersphinx_mapping = {
                        'python': ('https://docs.python.org/3', 'objects.inv'),
