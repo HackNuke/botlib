@@ -62,10 +62,10 @@ html_theme = "scrolls"
 html_theme = "haiku"
 html_theme = "bizstyle"
 html_theme_options = {
-    "rightsidebar": True
+    "nosidebar": True
 }
 html_theme_path = []
-#html_favicon = "botdgreensmile.png"
+html_favicon = ""
 html_static_path = []
 html_extra_path = []
 html_last_updated_fmt = '%Y-%b-%d'
@@ -77,7 +77,7 @@ html_show_sourcelink = False
 html_show_sphinx = False
 html_show_copyright = False
 html_copy_source = False
-html_use_opensearch = 'http://botd.rtfd.io/'
+html_use_opensearch = 'http://botlib.rtfd.io/'
 html_file_suffix = '.html'
 htmlhelp_basename = 'pydoc'
 intersphinx_mapping = {
