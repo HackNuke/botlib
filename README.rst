@@ -4,34 +4,34 @@ B O T L I B
 name
 ====
 
-**BOTLIB** - OS level integration of bot technology.
+ **BOTLIB** - OS level integration of bot technology.
 
 synopsis
 ========
 
-| bot \<cmd\> \[key=value\] \[key==value\] 
-| bot -cv mod=irc,rss
+ | bot \<cmd\> \[key=value\] \[key==value\] 
+ | bot -cv mod=irc,rss
 
 description
 ===========
 
-A solid, non hackable bot, that runs under systemd as a 24/7 background
-service and starts the bot after reboot, intended to be programmable in a
-static, only code, no popen, no imports and no reading modules from a
-directory, way that **should** make it suitable for embedding.
+ A solid, non hackable bot, that runs under systemd as a 24/7 background
+ service and starts the bot after reboot, intended to be programmable in a
+ static, only code, no popen, no imports and no reading modules from a
+ directory, way that **should** make it suitable for embedding.
 
 install
 =======
 
-pip3 install botlib
+ pip3 install botlib
 
 
 configuration
 =============
 
-configuration is done by calling the bot as a cli, bot <cmd> allows you to
-run bot commands on a shell. use the cfg command to edit configuration on
-disk, the botd background daemon uses the botctl program.
+ configuration is done by calling the bot as a cli, bot <cmd> allows you to
+ run bot commands on a shell. use the cfg command to edit configuration on
+ disk, the botd background daemon uses the botctl program.
 
 irc
 ---
