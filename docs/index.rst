@@ -1,14 +1,11 @@
 B O T L I B
 ###########
 
-**BOTLIB** is an attempt to achieve OS level integration of bot technology
-directly into the operating system. A solid, non hackable bot, that runs
-under systemd as a 24/7 background service and starts the bot after reboot.
 
 name
 ====
 
- BOTLIB - project on one, pay for millions.
+ **BOTLIB** - 24/7 channel daemon
 
 synopsis
 ========
@@ -19,12 +16,14 @@ synopsis
 description
 ===========
 
- **BOTLIB** stores it's data on disk where objects are time versioned and the
- last version saved on disk is served to the user layer. Files are JSON dumps
- that are read-only so thus should provide (disk) persistence more change. Files
- paths carry the type in the path name what makes reconstruction from filename
- easier then reading type from the object. Only include your own written code
- **should** be the path to "secure".
+ **BOTLIB** is an attempt to achieve OS level integration of bot technology
+ directly into the operating system. A solid, non hackable bot, that runs
+ under systemd as a 24/7 background service and starts the bot after reboot.
+
+ **BOTLIB** is intended to be programmable in a static, only code, no popen, no
+ imports and no reading modules from a directory, way that **should** make
+ it suitable for embedding.
+
 
 install
 =======
@@ -86,11 +85,15 @@ programming
  python code, so only trusted code (your own written code) is included and
  runnable. Reading random code from a directory is what gets avoided. As
  experience tells os.popen and __import__, importlib are avoided, the bot
- scans modules from sys.path.
+ scans modules from sys.path (for now).
 
- **BOTLIB** is intended to be programmable in a static, only code, no popen, no
- imports and no reading modules from a directory, way that **should** make
- it suitable for embedding.
+ **BOTLIB** stores it's data on disk where objects are time versioned and the
+ last version saved on disk is served to the user layer. Files are JSON dumps
+ that are read-only so thus should provide (disk) persistence more change. Files
+ paths carry the type in the path name what makes reconstruction from filename
+ easier then reading type from the object. Only include your own written code
+ **should** be the path to "secure".
+
 
 code
 ----
