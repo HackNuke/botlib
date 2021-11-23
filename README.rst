@@ -1,3 +1,5 @@
+**24/7 channel daemon**
+
 B O T L I B
 ###########
 
@@ -58,4 +60,3 @@ rss
 | ``cp /usr/local/share/botd/botd.service /etc/systemd/system``
 | ``botctl cfg server=<server> channel=<channel> nick=<nick>`` 
 | ``systemctl enable botd --now``
-| ``(*) default channel/server is #bot on localhost``
