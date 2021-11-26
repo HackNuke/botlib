@@ -6,7 +6,7 @@ B O T L I B
 name
 ====
 
-**BOTLIB** - OS level integration of bot technology.
+**BOTLIB** - os level integration of bot technology.
 
 synopsis
 ========
