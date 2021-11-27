@@ -350,7 +350,10 @@ class IRC(Output, Handler):
         klog(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
-        self.sock.send(txt)
+        try:
+            self.sock.send(txt)
+        except (OSError, BrokenPipeError, ConnectionResetError):
+            pass
         self.state.last = time.time()
         self.state.nrsend += 1
 

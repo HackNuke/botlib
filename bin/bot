@@ -5,7 +5,7 @@
 "24/7 channel daemon"
 
 
-import os, sys ; sys.path.insert(0, os.getcwd())
+import os, sys
 
 
 import os
@@ -91,7 +91,9 @@ def wrap(func):
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
+
 import bot.all
+
 
 def main():
     if k.root():
