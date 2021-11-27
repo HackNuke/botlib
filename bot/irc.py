@@ -263,7 +263,7 @@ class IRC(Output, Handler):
                 self.keeprunning = False
                 try:
                     self.restart()
-                except (OSError, ConnectionResetError):
+                except (OSError, ConnectionResetError, BrokenPipeError):
                     klog("reconnect in %s" % elapsed(self.cfg.sleep))
                     time.sleep(self.cfg.sleep)
                 break
