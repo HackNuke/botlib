@@ -8,6 +8,9 @@
 import os, sys
 
 
+sys.path.insert(0, os.getcwd())
+
+
 import os
 import readline
 import sys

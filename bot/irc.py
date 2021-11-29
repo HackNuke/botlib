@@ -49,6 +49,8 @@ def init():
     i = IRC()
     last(i.cfg)
     i.start()
+    k = getmain("k")
+    k.add(i)
     return i
 
 
@@ -80,15 +82,15 @@ class NoUser(Exception):
 class Cfg(Object):
 
     cc = "!"
-    channel = "#botd"
-    nick = "bot"
+    channel = "#botlib"
+    nick = "botlib"
     password = ""
     port = 6667
     realname = "24/7 channel daemon"
     server = "localhost"
     servermodes = ""
     sleep = 30
-    username = "botd"
+    username = "botlib"
     users = False
 
     def __init__(self):
@@ -350,10 +352,7 @@ class IRC(Output, Handler):
         klog(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
-        try:
-            self.sock.send(txt)
-        except (OSError, BrokenPipeError, ConnectionResetError):
-            pass
+        self.sock.send(txt)
         self.state.last = time.time()
         self.state.nrsend += 1
 
@@ -385,8 +384,6 @@ class IRC(Output, Handler):
         self.sock = None
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         self.connected.wait()
-        k = getmain("k")
-        k.add(self)
         Handler.start(self)
         Output.start(self)
         if not self.keeprunning:
