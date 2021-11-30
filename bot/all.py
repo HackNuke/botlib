@@ -25,11 +25,9 @@ import bot.tms as tms
 import bot.udp as udp
 import bot.utl as utl
 import bot.ver as ver
-import bot.sui as sui
 
 from bot.tbl import Table
 
-Table.addmod(sui)
 Table.addmod(bus)
 Table.addmod(clt)
 Table.addmod(dbs)
