@@ -240,8 +240,7 @@ class IRC(Output, Handler):
             self.joined.set()
         elif cmd == "433":
             nick = self.cfg.nick + "_"
-            self.cfg.nick = nick
-            self.raw("NICK %s" % self.cfg.nick)
+            self.raw("NICK %s" % nick)
         return e
 
     def fileno(self):
@@ -352,7 +351,10 @@ class IRC(Output, Handler):
         klog(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
-        self.sock.send(txt)
+        try:
+            self.sock.send(txt)
+        except BrokenPipeError:
+            self.stop()
         self.state.last = time.time()
         self.state.nrsend += 1
 
