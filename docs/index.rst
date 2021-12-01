@@ -4,15 +4,11 @@
 
 .. image:: botlib.png
 
+
 B O T L I B
 ###########
 
- *24/7 channel daemon*
-
-name
-====
-
- **BOTLIB** - os level integration of bot technology.
+*os level integration of bot technology*
 
 synopsis
 ========
@@ -72,6 +68,14 @@ rss
  | cc=! channel=#botd nick=botd port=6667 server=localhost
 
  (*) default channel/server is #botlib on localhost
+
+LICENSE
+-------
+
+ No COPYRIGHT, No License. Pastable, Readable code.
+
+ **B O T L I B** is placed in the Public Domain.
+
 
 .. toctree::
     :hidden:
