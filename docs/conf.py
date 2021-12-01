@@ -65,7 +65,7 @@ html_theme_options = {
     "nosidebar": True
 }
 html_theme_path = []
-html_favicon = ""
+html_favicon = "botdgreensmile.png"
 html_static_path = []
 html_extra_path = []
 html_last_updated_fmt = '%Y-%b-%d'
@@ -86,4 +86,7 @@ intersphinx_mapping = {
                       }
 intersphinx_cache_limit = 1
 
-rst_prolog = '''*24/7 channel daemon*'''
+#rst_prolog = '''*24/7 channel daemon*'''
+rst_prolog = '''.. image:: botdgreenline.png
+    :width: 100%
+'''

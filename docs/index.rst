@@ -1,5 +1,6 @@
-B O T L I B
-###########
+
+.. image:: botlib.png
+    :width: 100%
 
 name
 ====
@@ -63,7 +64,7 @@ rss
  | botctl cfg
  | cc=! channel=#botd nick=botd port=6667 server=localhost
 
- (*) default channel/server is #bot on localhost
+ (*) default channel/server is #botlib on localhost
 
 .. toctree::
     :hidden:
