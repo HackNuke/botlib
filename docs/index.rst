@@ -10,7 +10,10 @@ synopsis
 ========
 
  | bot \<cmd\> \[key=value\] \[key==value\] 
+ | bot cfg server=<server> channel=<channel> nick=<nick> 
  | bot -cv mod=irc,rss
+
+ | (*) default channel is #botlib on localhost
 
 description
 ===========

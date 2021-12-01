@@ -28,7 +28,7 @@ def uploadlist(dir):
 
 setup(
     name="botlib",
-    version="143",
+    version="144",
     url="https://github.com/bthate/botlib",
     author="Bart Thate",
     author_email="bthate67@gmail.com",
