@@ -1,3 +1,9 @@
+B O T L I B
+###########
+
+.. raw:: html
+
+ <br>
 
 .. image:: botlib.png
     :width: 100%
