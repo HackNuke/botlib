@@ -9,8 +9,8 @@ apt-add-repository non-free
 apt update
 apt install -y irssi ircd-irc2 python3-setuptools python3-pip python3-virtualenv tilix twine pylint
 apt install -y audacious thunderbird
-#apt install -y firmware-linux-nonfree
-#apt install -y nvidia-driver
+apt install -y firmware-linux-nonfree
+apt install -y nvidia-driver
 apt clean -y
 apt autoremove
 apt-add-repository -r contrib
