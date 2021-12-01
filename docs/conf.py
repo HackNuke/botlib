@@ -89,4 +89,13 @@ intersphinx_cache_limit = 1
 #rst_prolog = '''*24/7 channel daemon*'''
 rst_prolog = '''.. image:: botdgreenline.png
     :width: 100%
+
+.. image:: botlib.png
+    :width: 100%
+
+'''
+
+rst_prolog = '''.. image:: botdgreenline2.png
+    :width: 100%
+    :height: 2.1cm
 '''

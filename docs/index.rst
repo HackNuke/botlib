@@ -6,7 +6,6 @@ B O T L I B
  <br>
 
 .. image:: botlib.png
-    :width: 100%
 
 name
 ====

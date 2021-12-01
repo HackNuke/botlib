@@ -1,12 +1,6 @@
 P R O G R A M M I N G
 #####################
 
-.. raw:: html
-
- <br>
-
-.. image:: botlib.png
-
 description
 ===========
 
@@ -54,7 +48,7 @@ commands
 
  install the bot on the system and restart bot.
  
- ``python3 setup.py install``
- ``systemctl restart botd``
+ | ``python3 setup.py install``
+ | ``systemctl restart botd``
 
 the hlo command is now available to users.
