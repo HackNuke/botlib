@@ -1,8 +1,3 @@
-*24/7 channel daemon*
-
-B O T L I B
-###########
-
 name
 ====
 
