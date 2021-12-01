@@ -1,11 +1,11 @@
-B O T L I B
-###########
-
 .. raw:: html
 
  <br>
 
 .. image:: botlib.png
+
+B O T L I B
+###########
 
 name
 ====

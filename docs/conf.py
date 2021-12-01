@@ -95,7 +95,7 @@ rst_prolog = '''.. image:: botdgreenline.png
 
 '''
 
-rst_prolog = '''.. image:: botdgreenline2.png
+rst_prolog = '''.. image:: botlib2.png
     :width: 100%
     :height: 2.1cm
 '''
