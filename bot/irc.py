@@ -17,11 +17,12 @@ from .dbs import find, last
 from .evt import Event
 from .hdl import Handler
 from .lop import Stop
-from .obj import Object, update
+from .obj import Object, cdir, update
+from .obj import Cfg as ObjCfg
 from .ofn import edit, fmt, save
 from .opt import Output
 from .thr import launch
-from .tms import elapsed
+from .tms import day, elapsed, parse_time
 from .utl import getmain, kerror, klog
 
 
@@ -44,9 +45,18 @@ def __dir__():
         "pwd",
     )
 
+def cblog(clt, obj):
+    txt = "%s %s" % (parse_time(day()), obj.txt)
+    logdir = os.path.join(ObjCfg.wd, "logs")
+    cdir(logdir)
+    fn = os.path.join(logdir, obj.channel)
+    f = open(fn, "a")
+    f.write(txt)
+    f.close()
 
 def init():
     i = IRC()
+    i.register("PRIVMSG", cblog)
     last(i.cfg)
     i.start()
     k = getmain("k")
@@ -597,6 +607,7 @@ def PRIVMSG(clt, obj):
 def QUIT(clt, obj):
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
+
 
 
 def cfg(event):

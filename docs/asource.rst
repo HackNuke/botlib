@@ -3,6 +3,9 @@
 S O U R C E
 ###########
 
+modules
+=======
+
 the following modules are provided:
 
 .. autosummary::

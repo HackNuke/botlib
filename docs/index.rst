@@ -1,16 +1,10 @@
-.. raw:: html
-
- <br>
-
-.. image:: botlib.png
-
-
 B O T L I B
 ###########
 
-*os level integration of bot technology*
+ .. image:: botlib.png
+     :width: 100%
 
-synopsis
+SYNOPSIS
 ========
 
  | bot \<cmd\> \[key=value\] \[key==value\] 
@@ -19,7 +13,7 @@ synopsis
 
  | (*) default channel is #botlib on localhost
 
-description
+DESCRIPTION
 ===========
 
  A solid, non hackable bot, that runs under systemd as a 24/7 background
@@ -27,7 +21,7 @@ description
  static, only code, no popen, no imports and no reading modules from a
  directory, way that **should** make it suitable for embedding.
 
-install
+INSTALL
 =======
 
  pip3 install botlib

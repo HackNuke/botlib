@@ -1,9 +1,6 @@
 P R O G R A M M I N G
 #####################
 
-description
-===========
-
  **BOTLIB** is programmable, to program the bot you have to have the code
  available as employing your own code requires that you install your own bot as
  the system bot. This is to not have a directory to read modules from to add
@@ -51,4 +48,11 @@ commands
  | ``python3 setup.py install``
  | ``systemctl restart botd``
 
-the hlo command is now available to users.
+ the hlo command is now available to users.
+
+LICENSE
+-------
+
+ No COPYRIGHT, No License. Pastable, Readable code.
+
+ **B O T L I B** is placed in the Public Domain.

@@ -102,11 +102,11 @@ def main():
     if k.root():
         print("don't run this bot as root")
         return
-    k.cfg.name = "bot"
+    k.cfg.name = "botlib"
     k.cfg.version = __version__
     k.parse_cli()
     if k.cfg.verbose:
-        msg = "BOT %s starting at %s" % (__version__, time.ctime(time.time()))
+        msg = "BOTLIB %s starting at %s" % (__version__, time.ctime(time.time()))
         k.log(msg.replace("  ", " "))
         k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
     if k.prs.txt:
