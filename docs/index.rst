@@ -7,6 +7,8 @@
 B O T L I B
 ###########
 
+ *24/7 channel daemon*
+
 name
 ====
 
