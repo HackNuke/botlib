@@ -1,7 +1,7 @@
-name
-====
+B O T L I B
+###########
 
-**BOTLIB** - os level integration of bot technology.
+os level integration of bot technology.
 
 synopsis
 ========
