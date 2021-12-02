@@ -1,9 +1,9 @@
 .. _botlib:
 
-B   O   T   L   I   B
-#####################
+BOTLIB
+######
 
- **B O T L I B** - 24/7 channel daemon
+ **BOTLIB** - 24/7 channel daemon
 
 SYNOPSIS
 ========
@@ -25,42 +25,45 @@ DESCRIPTION
 INSTALL
 =======
 
- pip3 install botlib
+ ``pip3 install botlib``
 
 irc
 ---
 
- | bot cfg server=\<server\> channel=\<channel\> nick=\<nick\> 
- | bot -cv mod=irc,rss
+ | ``bot cfg server=\<server\> channel=\<channel\> nick=\<nick\>``
+ | ``bot -cv mod=irc,rss``
 
  (*) default channel/server is #bot on localhost
 
 sasl
 ----
 
- | bot pwd \<nickservnick\> \<nickservpass\>
- | bot cfg password=\<outputfrompwd\>
+ | ``bot pwd \<nickservnick\> \<nickservpass\>``
+ | ``bot cfg password=\<outputfrompwd\>``
 
 users
 -----
 
- | bot cfg users=True
- | bot met \<userhost\>
+ | ``bot cfg users=True``
+ | ``bot met \<userhost\>``
 
 rss
 ---
 
- bot rss \<url\>
+ ``bot rss \<url\>``
 
 24/7
 ----
 
- | cp /usr/local/share/botd/botd.service /etc/systemd/system  
- | systemctl enable botd --now
+ | ``cp /usr/local/share/botd/botd.service /etc/systemd/system``
+ | ``systemctl enable botd --now``
 
 
- | botctl cfg
- | cc=! channel=#botd nick=botd port=6667 server=localhost
+ | ``botctl cfg``
+ | ``cc=! channel=#botd nick=botd port=6667 server=localhost``
+
+ | ``botctl cfg server=irc.efnet.nl channel=botlib``
+ | ``ok``
 
  (*) default channel/server is #botlib on localhost
 

@@ -90,6 +90,7 @@ intersphinx_cache_limit = 1
 rst_prolog = '''.. image:: botlib2.png
     :width: 100%
 
+
 *os level integration of bot technology*
 
 '''
