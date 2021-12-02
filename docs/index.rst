@@ -3,16 +3,6 @@
 B   O   T   L   I   B
 #####################
 
-.. raw:: html
-
- <br>
-
-.. image:: botlib.png
-    :width: 100%
-
-name
-====
-
  **B O T L I B** - 24/7 channel daemon
 
 SYNOPSIS
