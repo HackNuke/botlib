@@ -1,8 +1,19 @@
-B O T L I B
-###########
+.. _botlib:
 
- .. image:: botlib.png
-     :width: 100%
+B   O   T   L   I   B
+#####################
+
+.. raw:: html
+
+ <br>
+
+.. image:: botlib.png
+    :width: 100%
+
+name
+====
+
+ **B O T L I B** - 24/7 channel daemon
 
 SYNOPSIS
 ========
@@ -62,13 +73,6 @@ rss
  | cc=! channel=#botd nick=botd port=6667 server=localhost
 
  (*) default channel/server is #botlib on localhost
-
-LICENSE
--------
-
- No COPYRIGHT, No License. Pastable, Readable code.
-
- **B O T L I B** is placed in the Public Domain.
 
 
 .. toctree::

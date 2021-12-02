@@ -1,3 +1,5 @@
+.. _programming:
+
 P R O G R A M M I N G
 #####################
 
@@ -50,9 +52,3 @@ commands
 
  the hlo command is now available to users.
 
-LICENSE
--------
-
- No COPYRIGHT, No License. Pastable, Readable code.
-
- **B O T L I B** is placed in the Public Domain.

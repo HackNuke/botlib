@@ -3,34 +3,36 @@
 S O U R C E
 ###########
 
+ the following modules are provided:
+
 modules
 =======
 
-the following modules are provided:
 
-.. autosummary::
+ .. autosummary::
     :toctree: 
     :template: module.rst
 
-    bot.bus
-    bot.clt
-    bot.dbs
-    bot.dpt
-    bot.evt
-    bot.fnd
-    bot.hdl
-    bot.irc
-    bot.log
-    bot.obj
-    bot.ofn
-    bot.opt
-    bot.prs
-    bot.rpt
-    bot.rss
-    bot.run
-    bot.sys
-    bot.tbl
-    bot.thr
-    bot.tmr
-    bot.tms
-    bot.utl
+     bot.bus
+     bot.clt
+     bot.dbs
+     bot.dpt
+     bot.evt
+     bot.fnd
+     bot.hdl
+     bot.irc
+     bot.log
+     bot.obj
+     bot.ofn
+     bot.opt
+     bot.prs
+     bot.rpt
+     bot.rss
+     bot.run
+     bot.sys
+     bot.tbl
+     bot.thr
+     bot.tmr
+     bot.tms
+     bot.utl
+
