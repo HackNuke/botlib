@@ -1,5 +1,0 @@
-# This file is placed in the Public Domain.
-
-groupadd botd
-useradd -b /var/lib -d /var/lib/botd -m -g botd botd
-chown -R botd:botd /var/lib/botd/
