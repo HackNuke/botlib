@@ -55,7 +55,6 @@ rss
 | ``cp /usr/local/share/botd/botd.service /etc/systemd/system``
 | ``botctl cfg server=<server> channel=<channel> nick=<nick>`` 
 | ``systemctl enable botd --now``
-.. _programming:
 
 programming
 ===========
@@ -81,7 +80,7 @@ code
 
 you can fetch the source code (or clone/fork) from git repository.
 
- ``git clone https://github.com/bthate/botlib``
+| ``git clone https://github.com/bthate/botlib``
 
 or download the tar from https://pypi.org/project/botlib/#files
 
@@ -116,7 +115,7 @@ commands
 
 cd into the extracted directory and add your module to the bot package.
 
- ``joe bot/hlo.py``
+| ``joe bot/hlo.py``
 
 add your command code to the file::
 
@@ -130,7 +129,7 @@ then add bot/hlo.py to the bot/all.py module and let it scan the module::
 
 install the bot on the system and restart bot.
  
- | ``python3 setup.py install``
- | ``systemctl restart botd``
+| ``python3 setup.py install``
+| ``systemctl restart botd``
 
 the hlo command is now available to users.
