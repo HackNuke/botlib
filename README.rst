@@ -88,28 +88,28 @@ or download the tar from https://pypi.org/project/botlib/#files
 modules
 -------
 
- | bot.bus 	event bus
- | bot.clt	client
- | bot.dbs	database
- | bot.dpt	dispatcher
- | bot.evt	event
- | bot.fnd	find
- | bot.hdl	handler
- | bot.irc	irc bot
- | bot.log	log command
- | bot.obj	objects
- | bot.ofn	object functions
- | bot.opt	output cache
- | bot.prs	parsing
- | bot.rpt	repeater
- | bot.rss	rss poller
- | bot.run	runtime
- | bot.sys	system commands
- | bot.tbl	table
- | bot.thr	threads
- | bot.tmr	timer
- | bot.tms	times
- | bot.utl	utils
+| bot.bus 	event bus
+| bot.clt	client
+| bot.dbs	database
+| bot.dpt	dispatcher
+| bot.evt	event
+| bot.fnd	find
+| bot.hdl	handler
+| bot.irc	irc bot
+| bot.log	log command
+| bot.obj	objects
+| bot.ofn	object functions
+| bot.opt	output cache
+| bot.prs	parsing
+| bot.rpt	repeater
+| bot.rss	rss poller
+| bot.run	runtime
+| bot.sys	system commands
+| bot.tbl	table
+| bot.thr	threads
+| bot.tmr	timer
+| bot.tms	times
+| bot.utl	utils
 
 commands
 --------
