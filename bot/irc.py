@@ -45,18 +45,8 @@ def __dir__():
         "pwd",
     )
 
-def cblog(clt, obj):
-    txt = "%s %s" % (parse_time(day()), obj.txt)
-    logdir = os.path.join(ObjCfg.wd, "logs")
-    cdir(logdir)
-    fn = os.path.join(logdir, obj.channel)
-    f = open(fn, "a")
-    f.write(txt)
-    f.close()
-
 def init():
     i = IRC()
-    i.register("PRIVMSG", cblog)
     last(i.cfg)
     i.start()
     k = getmain("k")

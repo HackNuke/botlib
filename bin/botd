@@ -41,7 +41,7 @@ class Kernel(Runtime):
 
     @staticmethod
     def error(txt):
-        Kernel.log(txt)
+        Kernel.direct(txt)
 
     @staticmethod
     def log(txt):
