@@ -35,15 +35,17 @@ Cfg.wd = "/var/lib/botd/"
 class Kernel(Runtime):
 
     @staticmethod
+    def direct(txt):
+        print(txt)
+        sys.stdout.flush()
+
+    @staticmethod
     def error(txt):
         Kernel.log(txt)
 
     @staticmethod
     def log(txt):
-        if not txt:
-            return
-        print(txt)
-        sys.stdout.flush()
+        pass
 
 
 k = Kernel()
@@ -54,18 +56,19 @@ import bot.all
 
 def main(): 
     k.cfg.name = "botd"
+    k.cfg.verbose = False
     k.cfg.version = __version__
     msg = "BOTD %s starting at %s" % (__version__, time.ctime(time.time()))
-    k.log(msg.replace("  ", " "))
-    k.log("workdir is %s" % Cfg.wd)
-    k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
-    k.privileges("botd", "botd")
+    k.direct(msg.replace("  ", " "))
+    k.direct("workdir is %s" % Cfg.wd)
+    k.direct(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
+    #k.privileges("botd", "botd")
     k.start()
     k.cfg.mod += "irc,rss"
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)
-    k.log(",".join(sorted(list(Table.modnames))))
-    k.log("booted (%s)" % elapsed(time.time() - starttime))
+    k.direct(",".join(sorted(list(Table.modnames))))
+    k.direct("booted (%s)" % elapsed(time.time() - starttime))
     k.wait()
 
 

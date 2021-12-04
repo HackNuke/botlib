@@ -101,7 +101,7 @@ class Runtime(Bus, Dispatcher, Loop):
         if not self.opts:
             return False
         for opt in ops:
-            if opt in self.opts:
+            if opt in self.opts and self.opts.opt:
                 return True
         return False
 
