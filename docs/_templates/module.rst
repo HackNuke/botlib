@@ -35,6 +35,3 @@
     {%- endfor %}
     {% endif %}
     {% endblock %}
-
-    source
-    ======
