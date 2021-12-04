@@ -116,11 +116,12 @@ commands
 
 cd into the extracted directory and add your module to the bot package.
 
-open your module file, in this example it's the hlo (hello) module
+open your module file, in this example it's the hlo (hello) module and
+add your command code to the file.
 
 | ``joe bot/hlo.py``
 
-add your command code to the file::
+::
 
   def hlo(event):
      event.reply("hello!")
@@ -129,13 +130,16 @@ then add your module to the all module so it get imported on start.
 
 | ``joe bot/all.py``
 
+::
+
   import bot.hlo as hlo
   Table.addmod(hlo)
 
 updating
 ========
 
-install the bot on the system and restart the daemon
+install the bot on the system and restart the daemon.
  
 | ``python3 setup.py install``
+| ``python3 setup.py install_data``
 | ``systemctl restart botd``
