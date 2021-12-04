@@ -1,4 +1,4 @@
 # This file is placed in the Public Domain.
 
-rm -fR html .test  __pycache__ env bot/*~ bot/__pycache__ files/*~ botlib.egg-info build *~ dist MANIFEST bin/*~ test/*~ test/__pycache__ env.tar.gz
+rm -fR html .test  __pycache__ env bot/*~ bot/__pycache__ files/*~ botlib.egg-info build *~ dist MANIFEST bin/*~ tests/*~ tests/__pycache__ env.tar.gz
 rm -fR html docs/*~ docs/bot*.rst docs/__pycache__ docs/_templates/*~
