@@ -6,11 +6,11 @@ os level integration of bot technology.
 synopsis
 ========
 
- | ``bot <cmd> [key=value] [key==value]``
- | ``bot cfg server=<server> channel=<channel> nick=<nick>`` 
- | ``bot -cv mod=irc,rss``
+| ``bot <cmd> [key=value] [key==value]``
+| ``bot cfg server=<server> channel=<channel> nick=<nick>`` 
+| ``bot -cv mod=irc,rss``
 
- | ``(*) default channel/server is #botlib on localhost``
+| ``(*) default channel/server is #botlib on localhost``
 
 description
 ===========
@@ -23,7 +23,7 @@ directory, way that **should** make it suitable for embedding.
 install
 =======
 
-``pip3 install botlib``
+| ``pip3 install botlib``
 
 configuration
 =============
@@ -87,8 +87,8 @@ or download the tar from https://pypi.org/project/botlib/#files
 modules
 -------
 
-| bot.bus 	event bus
-| bot.clt	client
+| bot.bus       event bus
+| bot.clt       client
 | bot.dbs	database
 | bot.dpt	dispatcher
 | bot.evt	event
