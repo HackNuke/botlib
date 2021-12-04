@@ -82,6 +82,7 @@ you can fetch the source code (or clone/fork) from git repository.
 
 | ``git clone https://github.com/bthate/botlib``
 
+
 or download the tar from https://pypi.org/project/botlib/#files
 
 modules
@@ -117,6 +118,7 @@ cd into the extracted directory and add your module to the bot package.
 
 | ``joe bot/hlo.py``
 
+
 add your command code to the file::
 
   def hlo(event):
@@ -131,5 +133,6 @@ install the bot on the system and restart bot.
  
 | ``python3 setup.py install``
 | ``systemctl restart botd``
+
 
 the hlo command is now available to users.
