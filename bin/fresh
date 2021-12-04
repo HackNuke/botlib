@@ -11,8 +11,9 @@ apt install -y irssi ircd-irc2 python3-setuptools python3-pip python3-virtualenv
 apt install -y audacious thunderbird
 apt install -y firmware-linux-nonfree
 apt install -y nvidia-driver
+apt remove --purge libreoffice*
 apt clean -y
+apt autoremoveapt update
 apt autoremove
 apt-add-repository -r contrib
 apt-add-repository -r non-free
-apt update
