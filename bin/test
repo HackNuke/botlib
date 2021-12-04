@@ -61,7 +61,7 @@ def main():
     k.cfg.mod = "bot.irc,bot.rss"
     k.parse_cli()
     pat = "test_%s*" % "*"
-    suite = unittest.loader.TestLoader().discover("test", pattern=pat)
+    suite = unittest.loader.TestLoader().discover("tests", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
 
 
