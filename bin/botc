@@ -17,10 +17,9 @@ from bot.clt import Client
 from bot.irc import Cfg as IRC
 from bot.obj import Cfg
 from bot.ofn import fmt
-from bot.run import Runtime
+from bot.run import Runtime, spl
 from bot.run import Cfg as RunCfg
 from bot.tbl import Table
-from bot.utl import spl
 from bot.ver import __version__
 
 

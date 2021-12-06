@@ -19,11 +19,10 @@ import time
 from bot.irc import Cfg as IRC
 from bot.obj import Cfg
 from bot.ofn import fmt
-from bot.run import Runtime, starttime
+from bot.run import Runtime, spl, starttime
 from bot.run import Cfg as RunCfg
 from bot.tbl import Table
 from bot.tms import elapsed
-from bot.utl import spl
 
 IRC.nick = "botd"
 IRC.channel = "#botd"
