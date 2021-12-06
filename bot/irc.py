@@ -206,7 +206,7 @@ class IRC(Output, Handler):
                     self.logon(server, nick)
                     break
             except (OSError, ConnectionResetError):
-                klog("reconnect in %s" % elapsed(self.cfg.sleep))
+                kerror("reconnect to %s in %s seconds" % (self.cfg.server, elapsed(self.cfg.sleep)))
             time.sleep(self.cfg.sleep)
 
     def dosay(self, channel, txt):
@@ -247,6 +247,7 @@ class IRC(Output, Handler):
 
     def joinall(self):
         for channel in self.channels:
+            kerror("join %s on %s" % (self.cfg.channel, self.cfg.server))
             self.command("JOIN", channel)
 
     def handle(self, clt, e):
@@ -264,7 +265,7 @@ class IRC(Output, Handler):
                 try:
                     self.restart()
                 except (OSError, ConnectionResetError, BrokenPipeError):
-                    klog("reconnect in %s" % elapsed(self.cfg.sleep))
+                    kerror("reconnect to %s in %s seconds" % (str(self.cfg), elapsed(self.cfg.sleep)))
                     time.sleep(self.cfg.sleep)
                 break
 
@@ -492,7 +493,7 @@ class Users(Object):
         if user:
             if perm in user.perms:
                 return True
-        klog("denied %s" % origin)
+        kerror("denied %s" % origin)
         return False
 
     def delete(self, origin, perm):

@@ -27,7 +27,7 @@ class Handler(Dispatcher, Loop):
         while not self.stopped.isSet():
             try:
                 txt = self.poll()
-            except Poll:
+            except Stop:
                 break
             if txt is None:
                 self.error("%s stopped" % getname(self))
