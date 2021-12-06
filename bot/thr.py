@@ -5,6 +5,7 @@ import queue
 import threading
 
 
+from .krn import getmain
 from .ofn import getname
 from .trc import get_exception
 
@@ -39,6 +40,7 @@ class Thr(threading.Thread):
             self.result = func(*args)
         except Exception as ex:
             k = getmain("k")
+            k.log(str(ex))
             k.error(get_exception())
 
 def launch(func, *args, **kwargs):

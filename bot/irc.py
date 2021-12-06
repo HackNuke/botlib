@@ -18,12 +18,11 @@ from .evt import Event
 from .hdl import Handler
 from .krn import getmain, kerror, klog
 from .lop import Stop
-from .obj import Object, cdir, update
-from .obj import Cfg as ObjCfg
+from .obj import Object, update
 from .ofn import edit, fmt, save
 from .opt import Output
 from .thr import launch
-from .tms import day, elapsed, parse_time
+from .tms import elapsed
 
 
 def __dir__():

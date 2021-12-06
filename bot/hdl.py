@@ -3,7 +3,7 @@
 
 from .dpt import Dispatcher
 from .evt import Event
-from .lop import Loop, Stop
+from .lop import Loop
 from .ofn import getname
 
 
@@ -25,10 +25,7 @@ class Handler(Dispatcher, Loop):
 
     def loop(self):
         while not self.stopped.isSet():
-            try:
-                txt = self.poll()
-            except Stop as ex:
-                break
+            txt = self.poll()
             if txt is None:
                 self.error("%s stopped" % getname(self))
                 break
