@@ -8,7 +8,7 @@ import threading
 from .dpt import Dispatcher
 from .obj import Object
 from .thr import launch
-from .utl import get_exception
+from .trc import get_exception
 
 
 class Restart(Exception):

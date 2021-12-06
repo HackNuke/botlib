@@ -15,10 +15,13 @@ from .obj import Cfg as ObjCfg
 from .prs import parse
 from .tbl import Table
 from .thr import launch
-from .utl import spl
 
 
 starttime = time.time()
+
+
+def spl(txt):
+    return [x for x in txt.split(",") if x]
 
 
 class Cfg(Object):
@@ -101,8 +104,10 @@ class Runtime(Bus, Dispatcher, Loop):
         if not self.opts:
             return False
         for opt in ops:
-            if opt in self.opts and self.opts.opt:
-                return True
+            if opt in self.opts:
+                val = getattr(self.opts, opt, None)
+                if val:
+                    return True
         return False
 
     def parse_cli(self):

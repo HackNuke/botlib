@@ -8,6 +8,7 @@ import bot.dpt as dpt
 import bot.evt as evt
 import bot.fnd as fnd
 import bot.irc as irc
+import bot.krn as krn
 import bot.log as log
 import bot.lop as lop
 import bot.obj as obj
@@ -22,8 +23,8 @@ import bot.tbl as tbl
 import bot.thr as thr
 import bot.tmr as tmr
 import bot.tms as tms
+import bot.trc as trc
 import bot.udp as udp
-import bot.utl as utl
 import bot.ver as ver
 
 from bot.tbl import Table
@@ -35,6 +36,7 @@ Table.addmod(dpt)
 Table.addmod(evt)
 Table.addmod(fnd)
 Table.addmod(irc)
+Table.addmod(krn)
 Table.addmod(log)
 Table.addmod(lop)
 Table.addmod(obj)
@@ -49,6 +51,6 @@ Table.addmod(tbl)
 Table.addmod(thr)
 Table.addmod(tmr)
 Table.addmod(tms)
+Table.addmod(trc)
 Table.addmod(udp)
-Table.addmod(utl)
 Table.addmod(ver)

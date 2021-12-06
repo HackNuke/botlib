@@ -11,10 +11,10 @@ import unittest
 
 
 from bot.clt import Client
+from bot.krn import getmain
 from bot.obj import Cfg
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
-from bot.utl import getmain
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS

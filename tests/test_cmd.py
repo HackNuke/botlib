@@ -4,9 +4,9 @@
 import unittest
 
 
-from bot.tbl import Table
+from bot.krn import getmain
 from bot.obj import Object
-from bot.utl import getmain
+from bot.tbl import Table
 
 
 events = []

@@ -4,9 +4,9 @@
 import unittest
 
 
+from bot.krn import getmain
 from bot.obj import dumps
 from bot.run import Cfg
-from bot.utl import getmain
 
 
 class Test_Kernel(unittest.TestCase):

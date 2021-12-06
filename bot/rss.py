@@ -6,12 +6,12 @@ import threading
 import urllib
 
 from .dbs import Db, find, last
+from .krn import getmain
+from .obj import Object, get, update
+from .ofn import edit, save
 from .rpt import Repeater
 from .tbl import Table
 from .thr import launch
-from .obj import Object, get, update
-from .ofn import edit, save
-from .utl import getmain
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

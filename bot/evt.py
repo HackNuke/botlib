@@ -7,7 +7,7 @@ import threading
 from .obj import Object
 from .opt import Output
 from .prs import parse as pparse
-from .utl import getmain
+from .krn import getmain
 
 
 class Event(Object):

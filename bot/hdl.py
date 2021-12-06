@@ -27,8 +27,7 @@ class Handler(Dispatcher, Loop):
         while not self.stopped.isSet():
             try:
                 txt = self.poll()
-            except (Stop, ConnectionRefusedError, ConnectionResetError) as ex:
-                self.error(str(ex))
+            except Stop as ex:
                 break
             if txt is None:
                 self.error("%s stopped" % getname(self))

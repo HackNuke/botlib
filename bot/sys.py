@@ -5,12 +5,12 @@ import threading
 import time
 
 
+from .krn import getmain
 from .obj import Object, get, update
 from .ofn import getname, fmt
 from .run import starttime
 from .tbl import Table
 from .tms import elapsed
-from .utl import getmain
 
 
 def __dir__():

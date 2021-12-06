@@ -6,7 +6,7 @@ import threading
 
 
 from .ofn import getname
-
+from .trc import get_exception
 
 class Thr(threading.Thread):
     def __init__(self, func, *args, thrname="", daemon=True):
@@ -35,8 +35,11 @@ class Thr(threading.Thread):
             if target and "txt" in dir(target):
                 self.name = target.txt.split()[0]
         self.setName(self.name)
-        self.result = func(*args)
-
+        try:
+            self.result = func(*args)
+        except Exception as ex:
+            k = getmain("k")
+            k.error(get_exception())
 
 def launch(func, *args, **kwargs):
     name = kwargs.get("name", getname(func))

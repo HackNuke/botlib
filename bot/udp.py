@@ -6,9 +6,9 @@ import time
 
 
 from .dbs import last
+from .krn import getmain
 from .obj import Cfg, Object
 from .thr import launch
-from .utl import getmain
 
 
 def init():

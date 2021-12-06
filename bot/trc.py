@@ -22,21 +22,3 @@ def get_exception(txt="", sep=" "):
     res = "%s %s: %s %s" % (sep.join(result), exctype, excvalue, str(txt))
     del trace
     return res
-
-
-def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
-
-
-def kerror(txt):
-    k = getmain("k")
-    k.error(txt)
-
-
-def klog(txt):
-    k = getmain("k")
-    k.log(txt)
-
-
-def spl(txt):
-    return [x for x in txt.split(",") if x]
