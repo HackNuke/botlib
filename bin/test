@@ -17,6 +17,7 @@ from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
 
+Cfg.wd = ".test"
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 
@@ -27,23 +28,21 @@ class Kernel(Runtime):
         sys.stdout.flush()
 
     def log(self, txt):
-        if RunCfg.verbose:
+        k = getmain("k")
+        if k.cfg.verbose:
             print(txt)
             sys.stdout.flush()
 
 
 k = Runtime()
 
-
 class CLI(Client):
 
     def __init__(self):
         super().__init__()
-        self.cfg = RunCfg()
         k.add(self)
 
     def raw(self, txt):
-        k = getmain("k")
         if k.cfg.verbose:
             print(txt)
             sys.stdout.flush()
@@ -56,10 +55,9 @@ import bot.all
 
 
 def main():
-    k.cfg.debug = True
-    Cfg.wd = ".test"
-    k.cfg.mod = "bot.irc,bot.rss"
     k.parse_cli()
+    k.cfg.debug = True
+    k.cfg.mod = "irc,rss"
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("tests", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)

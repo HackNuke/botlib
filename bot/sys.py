@@ -29,7 +29,7 @@ def flt(event):
         index = int(event.prs.args[0])
         event.reply(fmt(k.objs[index], skip=["queue", "ready", "iqueue"]))
         return
-    except (TypeError, IndexError):
+    except (TypeError, IndexError, ValueError):
         pass
     event.reply(" | ".join([getname(o) for o in k.objs]))
 
