@@ -11,7 +11,7 @@ from .ofn import getname, fmt
 from .run import starttime
 from .tbl import Table
 from .tms import elapsed
-
+from .ver import __version__
 
 def __dir__():
     return ("cmd", "flt", "thr", "upt", "ver")
@@ -62,4 +62,4 @@ def upt(event):
 
 
 def ver(event):
-    event.reply("%s %s" % (k.cfg.name.upper(), k.cfg.version))
+    event.reply("%s %s" % (k.cfg.name.upper() or "BOTLIB", k.cfg.version or __version__))
