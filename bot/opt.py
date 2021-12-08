@@ -33,7 +33,7 @@ class Output(Object):
     def output(self):
         while not self.dostop.isSet():
             (channel, txt) = self.oqueue.get()
-            if self.dostop.isSet() or channel is None:
+            if self.dostop.isSet():
                 break
             self.dosay(channel, txt)
 
