@@ -145,6 +145,10 @@ class Cfg(Object):
     wd = ""
 
 
+def dump(self, f):
+    return js.dump(self, f, cls=ObjectEncoder)
+
+
 def dumps(self):
     return js.dumps(self, cls=ObjectEncoder)
 
