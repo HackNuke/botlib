@@ -98,6 +98,7 @@ def parse(o, ptxt=None):
         u = Url(t.txt)
         if u and "url" in u and u.url:
             args.append(u.url)
+            t.txt = t.txt.replace(u.url, "")
         s = Skip(t.txt)
         if s:
             update(o.skip, s)
