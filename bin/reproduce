@@ -9,19 +9,24 @@ import doctest
 import json
 import os
 import reproducible
+import time
 import unittest
 
 
 from bot.clt import Client
 from bot.krn import getmain
-from bot.obj import Cfg, Object, dump
+from bot.obj import Cfg, Object, diff, indexed
+from bot.ofn import dump, fmt, loadp, savep
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
 
-Cfg.wd = ".test"
+Cfg.wd = ".reproduce"
+
+
 context = reproducible.Context()
 context.add_repo(path='.', allow_dirty=True, diff=True)
+
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
@@ -41,6 +46,7 @@ class Kernel(Runtime):
 
 k = Runtime()
 
+
 class CLI(Client):
 
     def __init__(self):
@@ -48,6 +54,7 @@ class CLI(Client):
         k.add(self)
 
     def raw(self, txt):
+        indexed(results, txt)
         if k.cfg.verbose:
             print(txt)
             sys.stdout.flush()
@@ -55,6 +62,7 @@ class CLI(Client):
 
 clt = CLI()
 results = Object()
+
 
 import bot.all
 
@@ -64,11 +72,16 @@ def main():
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     pat = "test_%s*" % "*"
-    suite = unittest.loader.TestLoader().discover("tests", pattern=pat)
+    origs = Object()
+    os.popen("rm -fR .reproduce/store")
+    loadp(origs, ".reproduce/results")
+    suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    f = open("results", "w")
-    dump(results, f)
-    context.add_file('results.json', category='output')
-    context.export_yaml('results.yaml')
+    savep(results, ".reproduce/results")
+    context.add_file('.reproduce/results', category='output')
+    context.export_yaml('.reproduce/config.yaml')
+    if k.cfg.verbose:
+       print(fmt(results, newline=True))
+       print(diff(origs, results))
 
 main()

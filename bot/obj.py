@@ -1,5 +1,6 @@
 # This file is placed in the Public Domain.
 
+"Big O Object class"
 
 import datetime
 import json as js
@@ -12,19 +13,28 @@ def __dir__():
     return (
         "Object",
         "cdir",
+        "dump",
+        "dumps",
+        "get",
         "gettype",
         "hook",
-        "get",
+        "indexed",
         "keys",
+        "loads",
         "items",
         "register",
+        "search",
         "set",
         "update",
         "values",
     )
 
 
+counter = 0
+
+
 def cdir(path):
+    "create directory"
     if os.path.exists(path):
         return
     if path.split(os.sep)[-1].count(":") == 2:
@@ -34,11 +44,15 @@ def cdir(path):
 
 class NoPickle(Exception):
 
+    "we don't do pickle"
+
     pass
 
 
 
 class Object:
+
+    "Big O Object class"
 
     __slots__ = (
         "__dict__",
@@ -113,6 +127,8 @@ class Object:
 
 class ObjectEncoder(js.JSONEncoder):
 
+    "encode to a writable string"
+
     def default(self, o):
         if isinstance(o, dict):
             return o.items()
@@ -132,6 +148,7 @@ class ObjectEncoder(js.JSONEncoder):
 
 class ObjectDecoder(js.JSONDecoder):
 
+    "create object from string"
 
     @staticmethod
     def decode(s, _w=None):
@@ -140,23 +157,38 @@ class ObjectDecoder(js.JSONDecoder):
         update(o, v)
         return o
 
+
 class Cfg(Object):
 
+    "basic config"
+    
     wd = ""
 
 
-def dump(self, f):
-    return js.dump(self, f, cls=ObjectEncoder)
+def diff(o1, o2):
+    "difference between 2 objects"
+    d = Object()
+    for k in o1:
+        if k in o2:
+            if o1[k] != o2[k]:
+                d[k] = o2[k]
+    return d
 
-
-def dumps(self):
-    return js.dumps(self, cls=ObjectEncoder)
 
 def get(self, key, default=None):
+    "return value"
     return self.__dict__.get(key, default)
 
 
+def indexed(self, obj):
+    "push on countered index"
+    global counter
+    counter += 1
+    self[str(counter)] = obj
+
+
 def items(self):
+    "return dict like items"
     try:
         return self.__dict__.items()
     except AttributeError:
@@ -164,18 +196,18 @@ def items(self):
 
 
 def keys(self):
+    "return dict like keys"
     return self.__dict__.keys()
 
 
-def loads(s):
-    return js.loads(s, cls=ObjectDecoder)
-
 
 def register(self, k, v):
+    "register key/value"
     self[str(k)] = v
 
 
 def search(self, s):
+    "see if (stringed) values contains s"
     ok = False
     for k, v in items(s):
         vv = getattr(self, k, None)
@@ -187,10 +219,12 @@ def search(self, s):
 
 
 def set(self, key, value):
+    "set key/value"
     self.__dict__[key] = value
 
 
 def update(self, data):
+    "do dict like update" 
     try:
         self.__dict__.update(vars(data))
     except TypeError:

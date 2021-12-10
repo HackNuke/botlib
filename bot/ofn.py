@@ -1,5 +1,6 @@
 # This file is placed in the Public Domain.
 
+"object functions"
 
 import datetime
 import json as js
@@ -11,7 +12,16 @@ from .obj import Cfg, ObjectDecoder, ObjectEncoder
 from .obj import cdir, items, keys, update
 
 
+def dump(o, f):
+    return js.dump(o, f, cls=ObjectEncoder)
+
+
+def dumps(o):
+    return js.dumps(o, cls=ObjectEncoder)
+
+
 def edit(o, setter, skip=True, skiplist=None):
+    "change values"
     if skiplist is None:
         skiplist = []
     count = 0
@@ -30,7 +40,8 @@ def edit(o, setter, skip=True, skiplist=None):
     return count
 
 
-def fmt(o, keyz=None, empty=True, skip=None):
+def fmt(o, keyz=None, empty=True, skip=None, newline=False):
+    "return formatted string"
     if keyz is None:
         keyz = keys(o)
     if not keyz:
@@ -52,12 +63,19 @@ def fmt(o, keyz=None, empty=True, skip=None):
             res.append((key, val))
     result = []
     for k, v in res:
-        result.append("%s=%s%s" % (k, v, " "))
-    txt += " ".join([x.strip() for x in result])
-    return txt.strip()
+        if newline:
+            result.append("%s=%s%s" % (k, v, "\n"))
+        else:
+            result.append("%s=%s%s" % (k, v, " "))
+    if newline:
+        txt += "\n".join([x.strip() for x in result])
+    else:
+        txt += " ".join([x.strip() for x in result])
+    return txt
 
 
 def getname(o):
+    "return full qualified name"
     t = type(o)
     if isinstance(t, types.ModuleType):
         return o.__name__
@@ -73,10 +91,12 @@ def getname(o):
 
 
 def gettype(o):
+    "return module.class string"
     return str(type(o)).split()[-1][1:-2]
 
 
 def load(o, opath):
+    "load from data store"
     if opath.count(os.sep) != 3:
         return
     assert Cfg.wd
@@ -90,7 +110,27 @@ def load(o, opath):
     o.__stp__ = stp
 
 
+def loads(s):
+    "decode string to object"
+    return js.loads(s, cls=ObjectDecoder)
+
+
+def loadp(o, opath):
+    "load from filesystem"
+    if opath.count(os.sep) != 3:
+        return
+    assert Cfg.wd
+    splitted = opath.split(os.sep)
+    lpath = os.sep.join(splitted[-4:])
+    if os.path.exists(lpath):
+        with open(lpath, "r") as ofile:
+            d = js.load(ofile, cls=ObjectDecoder)
+            update(o, d)
+    o.__stp__ = stp
+
+
 def save(o, tab=False):
+    "save to data store"
     assert Cfg.wd
     prv = os.sep.join(o.__stp__.split(os.sep)[:2])
     o.__stp__ = os.path.join(prv,
@@ -102,4 +142,13 @@ def save(o, tab=False):
             o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
         )
     os.chmod(opath, 0o444)
+    return o.__stp__
+
+def savep(o, opath, tab=False):
+    "save to filesystem"
+    cdir(opath)
+    with open(opath, "w") as ofile:
+        js.dump(
+            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
+        )
     return o.__stp__

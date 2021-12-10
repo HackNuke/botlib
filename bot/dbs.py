@@ -122,6 +122,32 @@ def fns(name, timed=None):
                     res.append(p)
     return sorted(res, key=fntime)
 
+def all(timed=None):
+    assert Cfg.wd
+    p = os.path.join(Cfg.wd, "store")
+    for name in os.listdir(p):
+        res = []
+        d = ""
+        for rootdir, dirs, _files in os.walk(p, topdown=False):
+            if dirs:
+                d = sorted(dirs)[-1]
+                if d.count("-") == 2:
+                    dd = os.path.join(rootdir, d)
+                    fls = sorted(os.listdir(dd))
+                    if fls:
+                        p = os.path.join(dd, fls[-1])
+                        if (
+                            timed
+                            and "from" in timed
+                            and timed["from"]
+                            and fntime(p) < timed["from"]
+                        ):
+                            continue
+                        if timed and timed.to and fntime(p) > timed.to:
+                            continue
+                        res.append(p)
+        return sorted(res, key=fntime)
+
 
 def fntime(daystr):
     daystr = daystr.replace("_", ":")
@@ -180,3 +206,9 @@ def last(o):
         stp = os.sep.join(splitted[-4:])
         return stp
     return None
+
+def wipe():
+    for o in all():
+        o._deleted = True
+        save(o)
+    
