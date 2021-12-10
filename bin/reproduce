@@ -71,6 +71,7 @@ def main():
     k.parse_cli()
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
+    loadp(origs, res)
     if os.path.exists(rs):
         shutil.rmtree(rs)
         os.sync()
@@ -78,13 +79,13 @@ def main():
         os.mkdir(rs)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
-    loadp(origs, res)
+    print(res, origs)
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
+    global results
     savep(results, res)
-    klog(diff(origs, results))
     context.export_yaml('reproduced/config.yaml')
     context.add_file(res, category='output')
-    klog(fmt(results, newline=True))
+    klog(diff(origs, results))
     
 main()
