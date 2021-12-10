@@ -53,10 +53,13 @@ k = Kernel()
 import bot.all
 
 
+def ver(event):
+    event.reply("BOTD %s" % __version__)
+
+
 def main(): 
-    k.cfg.name = "botd"
     k.cfg.verbose = False
-    k.cfg.version = __version__
+    k.addcmd(ver)
     msg = "BOTD %s starting at %s" % (__version__, time.ctime(time.time()))
     k.direct(msg.replace("  ", " "))
     k.direct("workdir is %s" % Cfg.wd)

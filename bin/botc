@@ -71,10 +71,13 @@ def wrap(func):
         print("you need root privileges")
 
 
+def ver(event):
+    event.reply("BOTLIB %s" % __version__)
+
+
 def main(): 
-    k.cfg.name = "botc"
-    k.cfg.version = __version__
     k.parse_cli()
+    k.addcmd(ver)
     if not k.prs.txt:
         return
     #if k.privileges("botd", "botd"):
