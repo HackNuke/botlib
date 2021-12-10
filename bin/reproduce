@@ -15,9 +15,9 @@ import unittest
 
 
 from bot.clt import Client
-from bot.krn import getmain
-from bot.obj import Cfg, Object, cdir, diff, indexed
-from bot.ofn import dump, fmt, loadp, savep
+from bot.krn import getmain, klog
+from bot.obj import Cfg, Object, cdir, indexed
+from bot.ofn import diff, dump, fmt, loadp, savep
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
@@ -60,28 +60,31 @@ results = Object()
 
 import bot.all
 
+
+pat = "test_%s*" % "*"
 r = "reproduced"
-rs = "repoduced/store"
-res = "reproduced/results"
+rs = os.path.join(r, "store")
+res = os.path.join(r, "results")
+
 
 def main():
     k.parse_cli()
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
-    pat = "test_%s*" % "*"
     if os.path.exists(rs):
         shutil.rmtree(rs)
+        os.sync()
     else:
-        cdir(rs)
-    loadp(origs, res)
+        os.mkdir(rs)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
+    loadp(origs, res)
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
     savep(results, res)
-    context.add_file(res, category='output')
+    klog(diff(origs, results))
     context.export_yaml('reproduced/config.yaml')
-    k.log(fmt(results, newline=True))
-    k.log(diff(origs, results))
-
+    context.add_file(res, category='output')
+    klog(fmt(results, newline=True))
+    
 main()

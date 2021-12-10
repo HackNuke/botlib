@@ -8,9 +8,18 @@ import os
 import types
 
 
-from .obj import Cfg, ObjectDecoder, ObjectEncoder
+from .obj import Cfg, Object, ObjectDecoder, ObjectEncoder
 from .obj import cdir, items, keys, update
 
+
+def diff(o1, o2):
+    "difference between 2 objects"
+    d = Object()
+    print(o1)
+    for k in keys(o2):
+        if k in keys(o1) and o1[k] != o2[k]:
+            d[k] = o2[k]
+    return d
 
 def dump(o, f):
     return js.dump(o, f, cls=ObjectEncoder)
