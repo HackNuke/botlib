@@ -10,6 +10,16 @@ from .ofn import load
 from .tbl import Table
 
 
+class NoModule(Exception):
+
+     pass
+
+
+class NoType(Exception):
+
+     pass
+
+
 class Db(Object):
 
     def all(self, otype, selector=None, index=None, timed=None):
@@ -122,6 +132,7 @@ def fns(name, timed=None):
                     res.append(p)
     return sorted(res, key=fntime)
 
+
 def all(timed=None):
     assert Cfg.wd
     p = os.path.join(Cfg.wd, "store")
@@ -187,13 +198,15 @@ def hook(hfn):
     mn, cn = cname.rsplit(".", 1)
     mod = Table.get(mn)
     if not mod:
-        raise ModuleNotFoundError(mn)
+        mod = sys.modules.get(mn, None)
+        if not mod:
+             raise NoModule(mn)
     t = getattr(mod, cn, None)
     if t:
         o = t()
         load(o, fn)
         return o
-    raise TypeError(cname)
+    raise NoType(cname)
 
 
 def last(o):
@@ -206,9 +219,3 @@ def last(o):
         stp = os.sep.join(splitted[-4:])
         return stp
     return None
-
-def wipe():
-    for o in all():
-        o._deleted = True
-        save(o)
-    

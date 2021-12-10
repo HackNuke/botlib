@@ -13,7 +13,7 @@ from .tbl import Table
 from .tms import elapsed
 
 def __dir__():
-    return ("cmd", "flt", "thr", "upt", "ver")
+    return ("cmd", "flt", "thr", "upt")
 
 
 k = getmain("k")
@@ -59,6 +59,3 @@ def thr(event):
 def upt(event):
     event.reply("uptime is %s" % elapsed(time.time() - starttime))
 
-
-def ver(event):
-    event.reply("%s %s" % (k.cfg.name.upper() or "BOTLIB", k.cfg.version or "1"))

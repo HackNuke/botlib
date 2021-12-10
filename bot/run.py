@@ -54,6 +54,7 @@ class Runtime(Bus, Dispatcher, Loop):
 
     def addcmd(self, cmd):
         Table.add(cmd)
+        self.cmds[cmd.__name__] = cmd
 
     def cmd(self, clt, txt):
         if not txt:

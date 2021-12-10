@@ -5,12 +5,15 @@ import os
 import unittest
 
 
-from bot.dbs import Db, fns, hook, last
+from bot.dbs import NoModule, NoType, Db, fns, hook, last
 from bot.obj import NoPickle
-from bot.obj import Object, cdir, get, items, keys, register
+from bot.obj import Cfg, Object, cdir, get, items, keys, register
 from bot.obj import set, update, values
 from bot.ofn import edit, fmt, gettype, load, save
 from bot.run import Cfg as RunCfg
+
+
+Cfg.wd = "reproduced"
 
 
 attrs = [
@@ -32,16 +35,18 @@ attrs = [
     "values",
 ]
 
+import bot.all
+
 
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
+        import bot
         import bot.obj
-
         self.assertEqual(dir(bot.obj), attrs)
 
     def test_NoType(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(NoType):
             o = Object()
             o.key = "value"
             p = save(o)
@@ -51,7 +56,7 @@ class Test_Object(unittest.TestCase):
             hook(pp)
 
     def test_NoModule(self):
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(NoModule):
             o = Object()
             o.key = "value"
             p = save(o)
