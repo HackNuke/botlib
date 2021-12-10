@@ -15,7 +15,6 @@ from .obj import cdir, items, keys, update
 def diff(o1, o2):
     "difference between 2 objects"
     d = Object()
-    print(o1)
     for k in keys(o2):
         if k in keys(o1) and o1[k] != o2[k]:
             d[k] = o2[k]
@@ -126,16 +125,11 @@ def loads(s):
 
 def loadp(o, opath):
     "load from filesystem"
-    if opath.count(os.sep) != 3:
-        return
     assert Cfg.wd
-    splitted = opath.split(os.sep)
-    lpath = os.sep.join(splitted[-4:])
-    if os.path.exists(lpath):
-        with open(lpath, "r") as ofile:
+    if os.path.exists(opath):
+        with open(opath, "r") as ofile:
             d = js.load(ofile, cls=ObjectDecoder)
             update(o, d)
-    o.__stp__ = stp
 
 
 def save(o, tab=False):
