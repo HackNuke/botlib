@@ -25,7 +25,6 @@ import bot.tmr as tmr
 import bot.tms as tms
 import bot.trc as trc
 import bot.udp as udp
-import bot.ver as ver
 
 from bot.tbl import Table
 
@@ -53,4 +52,3 @@ Table.addmod(tmr)
 Table.addmod(tms)
 Table.addmod(trc)
 Table.addmod(udp)
-Table.addmod(ver)

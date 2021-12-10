@@ -5,6 +5,9 @@
 "24/7 channel daemon"
 
 
+__version__ = "146"
+
+
 import os, sys
 
 
@@ -25,7 +28,6 @@ from bot.ofn import fmt
 from bot.run import Runtime, spl, starttime
 from bot.tbl import Table
 from bot.tms import elapsed
-from bot.ver import __version__
 
 Cfg.wd = os.path.expanduser("~/.bot")
 
