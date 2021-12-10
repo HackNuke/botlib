@@ -54,26 +54,32 @@ class CLI(Client):
 
 
 clt = CLI()
+origs = Object()
 results = Object()
 
 
 import bot.all
 
+r = "reproduced"
+rs = "repoduced/store"
+res = "reproduced/results"
 
 def main():
     k.parse_cli()
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     pat = "test_%s*" % "*"
-    shutil.rmtree("reproduced/store")
-    origs = Object()
-    loadp(origs, "reproduced/results")
+    if os.path.exists(rs):
+        shutil.rmtree(rs)
+    else:
+        cdir(rs)
+    loadp(origs, res)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    savep(results, 'reproduced/results')
-    context.add_file('reproduced/results', category='output')
+    savep(results, res)
+    context.add_file(res, category='output')
     context.export_yaml('reproduced/config.yaml')
     k.log(fmt(results, newline=True))
     k.log(diff(origs, results))

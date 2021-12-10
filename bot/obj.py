@@ -168,8 +168,9 @@ class Cfg(Object):
 def diff(o1, o2):
     "difference between 2 objects"
     d = Object()
-    for k in o1:
-        if k in o2:
+    for k in keys(o2):
+        print(o1[k], o2[k])
+        if k in keys(o1):
             if o1[k] != o2[k]:
                 d[k] = o2[k]
     return d
