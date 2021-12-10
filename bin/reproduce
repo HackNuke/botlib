@@ -9,23 +9,20 @@ import doctest
 import json
 import os
 import reproducible
+import shutil
 import time
 import unittest
 
 
 from bot.clt import Client
 from bot.krn import getmain
-from bot.obj import Cfg, Object, diff, indexed
+from bot.obj import Cfg, Object, cdir, diff, indexed
 from bot.ofn import dump, fmt, loadp, savep
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
 
-Cfg.wd = ".reproduce"
-
-
-context = reproducible.Context()
-context.add_repo(path='.', allow_dirty=True, diff=True)
+Cfg.wd = "reproduced"
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -38,13 +35,12 @@ class Kernel(Runtime):
         sys.stdout.flush()
 
     def log(self, txt):
-        k = getmain("k")
         if k.cfg.verbose:
             print(txt)
             sys.stdout.flush()
 
 
-k = Runtime()
+k = Kernel()
 
 
 class CLI(Client):
@@ -55,9 +51,6 @@ class CLI(Client):
 
     def raw(self, txt):
         indexed(results, txt)
-        if k.cfg.verbose:
-            print(txt)
-            sys.stdout.flush()
 
 
 clt = CLI()
@@ -72,16 +65,17 @@ def main():
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     pat = "test_%s*" % "*"
+    shutil.rmtree("reproduced/store")
     origs = Object()
-    os.popen("rm -fR .reproduce/store")
-    loadp(origs, ".reproduce/results")
+    loadp(origs, "reproduced/results")
+    context = reproducible.Context()
+    context.add_repo(path='.', allow_dirty=True, diff=True)
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    savep(results, ".reproduce/results")
-    context.add_file('.reproduce/results', category='output')
-    context.export_yaml('.reproduce/config.yaml')
-    if k.cfg.verbose:
-       print(fmt(results, newline=True))
-       print(diff(origs, results))
+    savep(results, 'reproduced/results')
+    context.add_file('reproduced/results', category='output')
+    context.export_yaml('reproduced/config.yaml')
+    k.log(fmt(results, newline=True))
+    k.log(diff(origs, results))
 
 main()

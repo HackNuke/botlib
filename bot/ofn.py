@@ -146,7 +146,7 @@ def save(o, tab=False):
 
 def savep(o, opath, tab=False):
     "save to filesystem"
-    cdir(opath)
+    #cdir(opath)
     with open(opath, "w") as ofile:
         js.dump(
             o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
