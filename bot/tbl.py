@@ -7,6 +7,10 @@ import inspect
 from .obj import Object, get
 
 
+def __dir__():
+    return ("Table", )
+
+
 class Table(Object):
 
     classes = Object()

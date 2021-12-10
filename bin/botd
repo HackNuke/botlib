@@ -24,12 +24,15 @@ from bot.run import Cfg as RunCfg
 from bot.tbl import Table
 from bot.tms import elapsed
 
+
 IRC.nick = "botd"
 IRC.channel = "#botd"
 
 
 Cfg.wd = "/var/lib/botd/"
 
+
+starttime = time.time()
 
 class Kernel(Runtime):
 

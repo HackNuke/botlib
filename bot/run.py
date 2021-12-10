@@ -16,8 +16,12 @@ from .prs import parse
 from .tbl import Table
 from .thr import launch
 
-
-starttime = time.time()
+def __dir__():
+    return (
+        "Cfg",
+        "Runtime",
+        "spl"
+    )
 
 
 def spl(txt):

@@ -3,6 +3,19 @@
 
 from .obj import Object, update
 
+def __dir__():
+    return (
+        "TxtError",
+        "Token",
+        "Word",
+        "Option",
+        "Getter",
+        "Setter",
+        "Skip",
+        "Url",
+        "parse"
+    )
+
 
 class TxtError(Exception):
 

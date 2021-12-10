@@ -5,6 +5,10 @@ from .obj import Object
 from .ofn import save
 
 
+def __dir__():
+    return ("Log", "Todo", "log", "tdo")
+
+
 class Log(Object):
 
     def __init__(self):
@@ -27,6 +31,7 @@ def log(event):
     o.txt = event.prs.rest
     save(o)
     event.reply("ok")
+
 
 def tdo(event):
     if not event.prs.rest:

@@ -10,6 +10,10 @@ from .prs import parse as pparse
 from .krn import getmain
 
 
+def __dir__():
+     return ("Event",)
+
+
 class Event(Object):
 
     def __init__(self):

@@ -5,6 +5,22 @@ import os
 import random
 import time
 
+def __dir__():
+    return (
+        "dmonths",
+        "monthint",
+        "timestrings",
+        "yearformats",
+        "day",
+        "filetime",
+        "fntime",
+        "totime",
+        "elapsed",
+        "parse_time",
+        "parse_ymd",
+        "todate"
+    )
+
 dmonths = ['Bo', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
             'Sep', 'Oct', 'Nov', 'Dec']
 

@@ -1,7 +1,19 @@
+# This file is placed in the Public Domain.
+
 import sys
 
+
+def __dir__():
+    return ("getmain", "kerror", "klog")
+
+
 def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
+    #m = getattr(sys.modules["__main__"], name, None)
+    #if not m:
+    import bot.spc
+    m = getattr(bot.spc, name, None)
+    return m
+
 
 def kerror(txt):
     k = getmain("k")

@@ -9,6 +9,12 @@ from .krn import getmain
 from .ofn import getname
 from .trc import get_exception
 
+
+def __dir__():
+    return ("Thr", "launch")
+
+
+
 class Thr(threading.Thread):
     def __init__(self, func, *args, thrname="", daemon=True):
         super().__init__(None, self.run, thrname, (), {}, daemon=daemon)
@@ -42,6 +48,7 @@ class Thr(threading.Thread):
             k = getmain("k")
             k.log(str(ex))
             k.error(get_exception())
+
 
 def launch(func, *args, **kwargs):
     name = kwargs.get("name", getname(func))

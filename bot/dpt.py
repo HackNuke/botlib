@@ -3,6 +3,9 @@
 
 from .obj import Object
 
+def __dir__():
+    return ("Dispatcher",)
+
 
 class Dispatcher(Object):
 

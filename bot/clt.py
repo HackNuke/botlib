@@ -4,6 +4,9 @@
 from .hdl import Handler
 from .krn import getmain
 
+def __dir__():
+     return ("Client",)
+
 
 class Client(Handler):
 

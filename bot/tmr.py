@@ -10,6 +10,9 @@ from .ofn import getname
 from .thr import launch
 
 
+def __dir__():
+    return ("Timer", )
+
 class Timer(Object):
 
     def __init__(self, sleep, func, *args, name=None):

@@ -6,6 +6,9 @@ from .evt import Event
 from .lop import Loop, Stop
 from .ofn import getname
 
+def __dir__():
+    return ("Handler",)
+
 
 class Handler(Dispatcher, Loop):
 

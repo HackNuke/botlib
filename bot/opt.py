@@ -9,6 +9,9 @@ from .obj import Object
 from .thr import launch
 
 
+def __dir__():
+    return ("Output",)
+
 class Output(Object):
 
     cache = Object()

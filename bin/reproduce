@@ -51,6 +51,7 @@ class CLI(Client):
 
     def raw(self, txt):
         global results
+        print(txt)
         indexed(results, txt)
 
 
@@ -79,7 +80,7 @@ def main():
         shutil.rmtree(rs)
         os.sync()
     else:
-        os.mkdir(rs)
+        cdir(rs)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
@@ -87,7 +88,8 @@ def main():
     savep(results, res)
     context.export_yaml('reproduced/config.yaml')
     context.add_file(res, category='output')
-    #klog(fmt(results, newline=True))
+    print(results)
+    klog(fmt(results, newline=True))
     klog(diff(origs, results))
     
 main()

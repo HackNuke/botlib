@@ -11,6 +11,10 @@ from .ofn import fmt
 from .tms import elapsed
 
 
+def __dir__():
+    return ("listfiles", "fnd")
+
+
 def listfiles(workdir):
     path = os.path.join(Cfg.wd, "store")
     if not os.path.exists(path):

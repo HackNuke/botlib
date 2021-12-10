@@ -8,7 +8,6 @@ import time
 from .krn import getmain
 from .obj import Object, get, update
 from .ofn import getname, fmt
-from .run import starttime
 from .tbl import Table
 from .tms import elapsed
 
@@ -17,7 +16,7 @@ def __dir__():
 
 
 k = getmain("k")
-
+starttime = time.time()
 
 def cmd(event):
     event.reply(",".join(sorted(list(Table.modnames))))

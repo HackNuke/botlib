@@ -11,6 +11,22 @@ import types
 from .obj import Cfg, Object, ObjectDecoder, ObjectEncoder
 from .obj import cdir, items, keys, update
 
+def __dir__():
+    return (
+        "diff",
+        "dump",
+        "dumps",
+        "edit",
+        "fmt",
+        "getname",
+        "gettype",
+        "load",
+        "loads",
+        "loadp",
+        "save",
+        "savep"
+    )
+
 
 def diff(o1, o2):
     "difference between 2 objects"

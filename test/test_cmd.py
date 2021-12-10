@@ -33,38 +33,6 @@ param.rem = ["reddit", ""]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["things todo"]
 
-class Kernel(Runtime):
-
-    def error(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-    def log(self, txt):
-        if "PONG" in txt or "PING" in txt:
-            return
-        if self.cfg.verbose:
-            print(txt.rstrip())
-            sys.stdout.flush()
-
-k = getmain("k")
-if not k:
-    k = Kernel()
-results = Object()
-
-class CLI(Client):
-
-    def __init__(self):
-        super().__init__()
-        k.add(self)
-
-    def raw(self, txt):
-        global results
-        indexed(results, txt)
-
-
-c = CLI()
-    
-
 import bot.all
 
 
@@ -72,6 +40,12 @@ class Test_Commands(unittest.TestCase):
 
     def test_commands(self):
         cmds = list(Table.modnames)
+        k = getmain("k")
+        if not k:
+            k = Runtime()
+            c = Client()
+        else:
+            c = k.first()
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
                 e = c.event(cmd + " " + ex)

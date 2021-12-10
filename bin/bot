@@ -29,7 +29,11 @@ from bot.run import Runtime, spl, starttime
 from bot.tbl import Table
 from bot.tms import elapsed
 
+
 Cfg.wd = os.path.expanduser("~/.bot")
+
+
+starttime = time.time()
 
 
 class Kernel(Runtime):
