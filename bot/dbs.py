@@ -11,7 +11,7 @@ from .ofn import load
 from .tbl import Table
 
 def __dir__():
-     return ("NoModule", "NoType", "Db", "all", "fns", "fntime". "find", "hook", "last")
+     return ("NoModule", "NoType", "Db", "all", "fns", "fntime", "find", "hook", "last")
 
 
 class NoModule(Exception):

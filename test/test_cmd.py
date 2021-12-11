@@ -43,9 +43,10 @@ class Test_Commands(unittest.TestCase):
         k = getmain("k")
         if not k:
             k = Runtime()
+        c = k.first()
+        if not c:
             c = Client()
-        else:
-            c = k.first()
+            k.add(c)
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
                 e = c.event(cmd + " " + ex)
