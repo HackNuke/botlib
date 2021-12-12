@@ -8,10 +8,10 @@ def __dir__():
 
 
 def getmain(name):
-    #m = getattr(sys.modules["__main__"], name, None)
-    #if not m:
-    import bot.spc
-    m = getattr(bot.spc, name, None)
+    m = getattr(sys.modules["__main__"], name, None)
+    if not m:
+        import bot.spc
+        m = getattr(bot.spc, name, None)
     return m
 
 

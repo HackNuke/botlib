@@ -83,12 +83,11 @@ def main():
         cdir(rs)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
-    suite = unittest.loader.TestLoader().discover("test", pattern=pat)
+    suite = unittest.loader.TestLoader().discover("tests", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
     savep(results, res)
     context.export_yaml('reproduced/config.yaml')
     context.add_file(res, category='output')
-    print(results)
     klog(fmt(results, newline=True))
     klog(diff(origs, results))
     
