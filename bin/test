@@ -50,9 +50,10 @@ class CLI(Client):
 
     def raw(self, txt):
         global results
-        print(txt)
         indexed(results, txt)
-
+        if k.cfg.verbose:
+            print(txt)
+            sys.stdout.flush()
 
 clt = CLI()
 origs = Object()
