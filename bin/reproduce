@@ -22,7 +22,7 @@ from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
 
-Cfg.wd = "reproduced"
+Cfg.wd = ".reproduced"
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -64,7 +64,7 @@ import bot.all
 
 
 pat = "test_%s*" % "*"
-r = "reproduced"
+r = ".reproduced"
 rs = os.path.join(r, "store")
 res = os.path.join(r, "results")
 
@@ -83,7 +83,7 @@ def main():
         cdir(rs)
     context = reproducible.Context()
     context.add_repo(path='.', allow_dirty=True, diff=True)
-    suite = unittest.loader.TestLoader().discover("tests", pattern=pat)
+    suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
     savep(results, res)
     context.export_yaml('reproduced/config.yaml')
