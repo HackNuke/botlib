@@ -11,9 +11,6 @@ from bot.run import Runtime
 from bot.tbl import Table
 
 
-Cfg.wd = "reproduced"
-
-
 events = []
 
 
@@ -32,6 +29,7 @@ param.pwd = ["bart blabla"]
 param.rem = ["reddit", ""]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["things todo"]
+
 
 import bot.all
 

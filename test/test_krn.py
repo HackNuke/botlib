@@ -10,8 +10,6 @@ from bot.ofn import dumps
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
-Cfg.wd = "reproduced"
-
 
 class Test_Kernel(unittest.TestCase):
 

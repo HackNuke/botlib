@@ -13,9 +13,6 @@ from bot.ofn import edit, fmt, gettype, load, save
 from bot.run import Cfg as RunCfg
 
 
-Cfg.wd = "reproduced"
-
-
 attrs = [
     "Object",
     "cdir",
@@ -34,6 +31,7 @@ attrs = [
     "update",
     "values",
 ]
+
 
 import bot.all
 

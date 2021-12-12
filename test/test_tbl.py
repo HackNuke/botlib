@@ -7,7 +7,6 @@ import unittest
 from bot.obj import Cfg, Object, values
 from bot.ofn import dumps
 
-Cfg.wd = "reproduced"
 
 class Test_Table(unittest.TestCase):
 
