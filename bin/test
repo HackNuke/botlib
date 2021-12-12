@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+
+
+import os, sys ; sys.path.insert(0, os.getcwd())
+
+
+import doctest
+import json
+import os
+import shutil
+import time
+import unittest
+
+
+from bot.clt import Client
+from bot.krn import getmain, klog
+from bot.obj import Cfg, Object, cdir, indexed
+from bot.ofn import diff, dump, fmt, loadp, savep
+from bot.run import Runtime
+from bot.run import Cfg as RunCfg
+
+
+Cfg.wd = ".test"
+
+
+flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
+
+
+class Kernel(Runtime):
+
+    def error(self, txt):
+        print(txt)
+        sys.stdout.flush()
+
+    def log(self, txt):
+        if k.cfg.verbose:
+            print(txt)
+            sys.stdout.flush()
+
+
+k = Kernel()
+
+
+class CLI(Client):
+
+    def __init__(self):
+        super().__init__()
+        k.add(self)
+
+    def raw(self, txt):
+        global results
+        print(txt)
+        indexed(results, txt)
+
+
+clt = CLI()
+origs = Object()
+results = Object()
+
+
+import bot.all
+
+
+pat = "test_%s*" % "*"
+r = ".test"
+rs = os.path.join(r, "store")
+res = os.path.join(r, "results")
+
+
+def main():
+    global results
+    global origs
+    k.parse_cli()
+    k.cfg.debug = True
+    k.cfg.mod = "irc,rss"
+    loadp(origs, res)
+    if os.path.exists(rs):
+        shutil.rmtree(rs)
+        os.sync()
+    else:
+        cdir(rs)
+    suite = unittest.loader.TestLoader().discover("test", pattern=pat)
+    unittest.TextTestRunner(verbosity=3).run(suite)
+    savep(results, res)
+    klog(fmt(results, newline=True))
+    klog(diff(origs, results))
+    
+main()
