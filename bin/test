@@ -56,8 +56,8 @@ res = os.path.join(r, "results")
 def main():
     global results
     global origs
-    k.parse_cli()
     k.stdout = sys.stdout
+    k.parse_cli()
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     loadp(origs, res)
@@ -74,11 +74,13 @@ def main():
     savep(results, res)
     context.export_yaml(rcfg)
     context.add_file(res, category='output')
-    k.log(fmt(results, newline=True))
-    d = diff(origs, results)
-    k.stdout.write("\n")
-    k.log(str(d))
-    k.stdout.write("\n")
-    k.stdout.flush()
+    if k.cfg.verbose:
+        k.stdout.write("\n")
+        k.log(fmt(results, newline=True))
+        d = diff(origs, results)
+        k.stdout.write("\n")
+        k.log(str(d))
+        k.stdout.write("\n")
+        k.stdout.flush()
 
 main()
