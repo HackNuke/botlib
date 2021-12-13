@@ -57,12 +57,12 @@ class Cfg(Object):
 
 class Feed(Object):
 
-    def __getattr__(self, k):
+    def __getattr__(self, key):
         try:
-            return super().__getitem__(k)
+            return super().__getitem__(key)
         except KeyError:
-            self[k] = ""
-            return self[k]
+            self[key] = ""
+            return self[key]
 
 
 class Rss(Object):

@@ -6,7 +6,6 @@ import threading
 
 
 from .ofn import getname
-from .trc import get_exception
 
 
 def __dir__():
@@ -27,8 +26,8 @@ class Thr(threading.Thread):
         return self
 
     def __next__(self):
-        for k in dir(self):
-            yield k
+        for key in dir(self):
+            yield key
 
     def join(self, timeout=None):
         super().join(timeout)
@@ -41,13 +40,7 @@ class Thr(threading.Thread):
             if target and "txt" in dir(target):
                 self.name = target.txt.split()[0]
         self.setName(self.name)
-        try:
-            self.result = func(*args)
-        except Exception as ex:
-            from bot.krn import kernel
-            k = kernel()
-            k.log(str(ex))
-            k.error(get_exception())
+        self.result = func(*args)
 
 
 def launch(func, *args, **kwargs):

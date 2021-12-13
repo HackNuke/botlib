@@ -54,7 +54,8 @@ class Object:
     __slots__ = (
         "__dict__",
         "__stp__",
-        "__otype__"
+        "__otype__",
+        "__index__"
     )
 
     def __init__(self):
@@ -65,6 +66,7 @@ class Object:
             str(uuid.uuid4()),
             os.sep.join(str(datetime.datetime.now()).split()),
         )
+        self.__index__ = 0
 
     def __contains__(self, k):
         if k in keys(self):

@@ -147,6 +147,12 @@ def loadp(o, opath):
             d = js.load(ofile, cls=ObjectDecoder)
             update(o, d)
 
+def indexed(o, txt):
+    "push on countered index"
+    global counter
+    o.__index__ += 1
+    self[str(self.__index__)] = txt
+
 
 def save(o, tab=False):
     "save to data store"
