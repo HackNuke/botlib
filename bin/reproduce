@@ -15,7 +15,7 @@ import unittest
 
 
 from bot.clt import Client
-from bot.krn import klog
+from bot.krn import k
 from bot.obj import Cfg, Object, cdir, indexed
 from bot.ofn import diff, dump, fmt, loadp, savep
 from bot.run import Runtime
@@ -88,7 +88,7 @@ def main():
     savep(results, res)
     context.export_yaml('.reproduced/config.yaml')
     context.add_file(res, category='output')
-    klog(fmt(results, newline=True))
-    klog(diff(origs, results))
+    k.log(fmt(results, newline=True))
+    k.log(diff(origs, results))
     
 main()

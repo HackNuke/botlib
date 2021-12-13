@@ -17,6 +17,7 @@ from bot.tbl import Table
 from bot.thr import launch
 from bot.tms import elapsed
 
+
 Cfg.wd = ".test"
 
 
@@ -34,23 +35,6 @@ param.flt = ["0", ""]
 param.fnd = ["cfg", "log", "rss", "log txt==test", "cfg server==localhost", "rss rss==reddit"]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["test4", ""]
-
-
-class Kernel(Runtime):
-
-    def error(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-    def log(self, txt):
-        if "PONG" in txt or "PING" in txt:
-            return
-        if self.cfg.verbose:
-            print(txt.rstrip())
-            sys.stdout.flush()
-
-
-k = Kernel()
 
 
 class Console(Client):
@@ -123,6 +107,7 @@ def main():
     k.parse_cli()
     k.cfg.debug = True
     k.start()
+    clt.start()
     thrs = []
     nr = k.cfg.index or 1
     t = time.time()

@@ -8,6 +8,7 @@ import os, sys ; sys.path.insert(0, os.getcwd())
 import doctest
 import json
 import os
+import reproducible
 import shutil
 import time
 import unittest
@@ -15,7 +16,7 @@ import unittest
 
 from bot.clt import Client
 from bot.obj import Cfg, Object, cdir, indexed
-from bot.krn import klog
+from bot.krn import k
 from bot.ofn import diff, dump, fmt, loadp, savep
 from bot.run import Runtime
 from bot.run import Cfg as RunCfg
@@ -25,21 +26,6 @@ Cfg.wd = ".test"
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
-
-
-class Kernel(Runtime):
-
-    def error(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-    def log(self, txt):
-        if k.cfg.verbose:
-            print(txt)
-            sys.stdout.flush()
-
-
-k = Kernel()
 
 
 class CLI(Client):
@@ -65,6 +51,7 @@ import bot.all
 
 pat = "test_%s*" % "*"
 r = ".test"
+rcfg = os.path.join(r, "config.yaml")
 rs = os.path.join(r, "store")
 res = os.path.join(r, "results")
 
@@ -81,10 +68,16 @@ def main():
         os.sync()
     else:
         cdir(rs)
+    context = reproducible.Context()
+    context.add_repo(path='.', allow_dirty=True, diff=True)
+    clt.start()
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
     savep(results, res)
-    klog(fmt(results, newline=True))
-    klog(diff(origs, results))
-    
+    context.export_yaml(rcfg)
+    context.add_file(res, category='output')
+    k.log(fmt(results, newline=True))
+    k.log(diff(origs, results))
+
+
 main()

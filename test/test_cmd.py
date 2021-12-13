@@ -5,14 +5,13 @@ import unittest
 
 
 from bot.clt import Client
-from bot.krn import kernel
+from bot.krn import k
 from bot.obj import Cfg, Object, get, indexed
 from bot.run import Runtime
 from bot.tbl import Table
 
 
 events = []
-k = kernel()
 
 
 param = Object()

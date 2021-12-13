@@ -4,12 +4,11 @@
 import unittest
 
 
-from bot.krn import kernel
+from bot.krn import k
 from bot.run import Cfg as RunCfg
 
 
 class Test_Kernel(unittest.TestCase):
 
     def test_cfg(self):
-        k = kernel()
         self.assertEqual(type(k.cfg), RunCfg)
