@@ -16,6 +16,7 @@ from .prs import parse
 from .tbl import Table
 from .thr import launch
 
+
 def __dir__():
     return (
         "Cfg",

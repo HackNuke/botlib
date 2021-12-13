@@ -39,8 +39,6 @@ class Test_Commands(unittest.TestCase):
     def test_commands(self):
         cmds = list(Table.modnames)
         k = kernel()
-        if not k:
-            k = Runtime()
         c = k.first()
         if not c:
             c = Client()

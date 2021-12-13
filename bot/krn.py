@@ -1,14 +1,17 @@
 # This file is placed in the Public Domain.
 
+
 import sys
 
-from bot.run import Runtime
 
-k = None
+from bot.run import Runtime
 
 
 def __dir__():
     return ("getmain", "k", "kerror", "klog")
+
+
+k = None
 
 
 def getmain(name):
@@ -30,5 +33,4 @@ def kerror(txt):
 
 def klog(txt):
     k.log(txt)
-
    
