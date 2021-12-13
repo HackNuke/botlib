@@ -23,6 +23,7 @@ import time
 
 
 from bot.clt import Client
+from bot.krn import kernel
 from bot.obj import Cfg, Object, keys
 from bot.ofn import fmt
 from bot.run import Runtime, spl

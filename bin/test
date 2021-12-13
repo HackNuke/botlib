@@ -15,8 +15,9 @@ import unittest
 
 from bot.clt import Client
 from bot.obj import Cfg, Object, cdir, indexed
+from bot.krn import klog
 from bot.ofn import diff, dump, fmt, loadp, savep
-from bot.run import Runtime, klog
+from bot.run import Runtime
 from bot.run import Cfg as RunCfg
 
 

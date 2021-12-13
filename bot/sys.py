@@ -5,17 +5,19 @@ import threading
 import time
 
 
+from .krn import kernel
 from .obj import Object, get, update
 from .ofn import getname, fmt
-from .run import kernel
 from .tbl import Table
 from .tms import elapsed
+
 
 def __dir__():
     return ("cmd", "flt", "thr", "upt")
 
 
 starttime = time.time()
+
 
 def cmd(event):
     event.reply(",".join(sorted(list(Table.modnames))))

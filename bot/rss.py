@@ -6,9 +6,9 @@ import threading
 import urllib
 
 from .dbs import Db, find, last
+from .krn import kernel
 from .obj import Object, get, update
 from .ofn import edit, save
-from .run import k
 from .rpt import Repeater
 from .tbl import Table
 from .thr import launch
@@ -134,6 +134,7 @@ class Fetcher(Object):
             save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
+            k = kernel()
             k.announce(txt)
         return counter
 
@@ -151,6 +152,7 @@ class Fetcher(Object):
 
 
 def getfeed(url):
+    k = kernel()
     if not gotparser or k.cfg.debug:
         return [Object(), Object()]
     try:
@@ -166,6 +168,7 @@ def getfeed(url):
 
 
 def gettinyurl(url):
+    k = kernel()
     if k.cfg.debug:
         return []
     postarray = [
@@ -185,6 +188,7 @@ def gettinyurl(url):
 
 
 def geturl(url):
+    k = kernel()
     if k.cfg.debug:
         return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))

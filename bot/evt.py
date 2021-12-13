@@ -4,10 +4,10 @@
 import threading
 
 
+from .krn import kernel
 from .obj import Object
 from .opt import Output
 from .prs import parse as pparse
-from .run import kernel
 
 
 def __dir__():

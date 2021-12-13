@@ -16,11 +16,11 @@ from .clt import Client
 from .dbs import find, last
 from .evt import Event
 from .hdl import Handler
+from .krn import k, kerror, klog
 from .lop import Stop
 from .obj import Object, update
 from .ofn import edit, fmt, save
 from .opt import Output
-from .run import k, kerror, klog
 from .thr import launch
 from .tms import elapsed
 

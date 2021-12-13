@@ -171,21 +171,3 @@ class Runtime(Bus, Dispatcher, Loop):
         while 1:
             time.sleep(5.0)
 
-
-k = None
-
-
-def kernel():
-    global k
-    if k: 
-        return k
-    k = getobj("__main__", "k") or Runtime()
-    return k
-
-
-def kerror(txt):
-    k.error(txt)
-
-
-def klog(txt):
-    k.log(txt)

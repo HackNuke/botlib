@@ -2,7 +2,7 @@
 
 
 from .hdl import Handler
-from .run import k
+from .krn import kernel
 
 def __dir__():
     return ("Client",)
@@ -11,6 +11,7 @@ def __dir__():
 class Client(Handler):
 
     def handle(self, clt, e):
+        k = kernel()
         k.put(self, e)
 
     def raw(self, txt):
