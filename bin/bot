@@ -25,7 +25,7 @@ import time
 from bot.clt import Client
 from bot.obj import Cfg, Object, keys
 from bot.ofn import fmt
-from bot.run import Runtime, spl, starttime
+from bot.run import Runtime, spl
 from bot.tbl import Table
 from bot.tms import elapsed
 
