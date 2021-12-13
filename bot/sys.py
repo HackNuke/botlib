@@ -5,9 +5,9 @@ import threading
 import time
 
 
-from .krn import kernel
 from .obj import Object, get, update
 from .ofn import getname, fmt
+from .run import kernel
 from .tbl import Table
 from .tms import elapsed
 
@@ -15,7 +15,6 @@ def __dir__():
     return ("cmd", "flt", "thr", "upt")
 
 
-k = kernel()
 starttime = time.time()
 
 def cmd(event):
@@ -23,6 +22,7 @@ def cmd(event):
 
 
 def flt(event):
+    k = kernel()
     try:
         index = int(event.prs.args[0])
         event.reply(fmt(k.objs[index], skip=["queue", "ready", "iqueue"]))

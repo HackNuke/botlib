@@ -16,11 +16,11 @@ from .clt import Client
 from .dbs import find, last
 from .evt import Event
 from .hdl import Handler
-from .krn import kernel, kerror, klog
 from .lop import Stop
 from .obj import Object, update
 from .ofn import edit, fmt, save
 from .opt import Output
+from .run import k, kerror, klog
 from .thr import launch
 from .tms import elapsed
 
@@ -48,7 +48,6 @@ def init():
     i = IRC()
     last(i.cfg)
     i.start()
-    k = kernel()
     k.add(i)
     return i
 
@@ -437,7 +436,6 @@ class DCC(Client):
             return
         self.sock.setblocking(1)
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
-        k = kernel()
         k.add(self)
         self.raw("Welcome %s" % dccevent.origin)
         self.origin = dccevent.origin
@@ -460,7 +458,6 @@ class DCC(Client):
 
     def handle(self, clt, e):
         self.connected.wait()
-        k = kernel()
         k.put(e)
 
     def poll(self):
@@ -590,7 +587,6 @@ def PRIVMSG(clt, obj):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         obj.type = "cmd"
-        k = kernel()
         k.dispatch(obj)
 
 

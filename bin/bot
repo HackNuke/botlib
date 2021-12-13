@@ -102,6 +102,7 @@ def wrap(func):
 
 import bot.all
 
+
 def ver(event):
     event.reply("BOTLIB %s" % __version__)
     
@@ -110,8 +111,7 @@ def main():
     if k.root():
         print("don't run this bot as root")
         return
-    k.cfg.name = "botlib"
-    k.cfg.version = __version__
+    kernel()
     k.parse_cli()
     k.addcmd(ver)
     if k.cfg.verbose:

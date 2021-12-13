@@ -5,14 +5,13 @@ import unittest
 
 
 from bot.clt import Client
-from bot.krn import kernel
 from bot.obj import Cfg, Object, get, indexed
-from bot.run import Runtime
+from bot.run import Runtime, kernel
 from bot.tbl import Table
 
 
 events = []
-
+k = kernel()
 
 param = Object()
 param.add = ["test@shell", "bart", ""]
@@ -38,7 +37,6 @@ class Test_Commands(unittest.TestCase):
 
     def test_commands(self):
         cmds = list(Table.modnames)
-        k = kernel()
         c = k.first()
         if not c:
             c = Client()

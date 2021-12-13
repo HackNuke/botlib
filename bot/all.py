@@ -8,7 +8,6 @@ import bot.dpt as dpt
 import bot.evt as evt
 import bot.fnd as fnd
 import bot.irc as irc
-import bot.krn as krn
 import bot.log as log
 import bot.lop as lop
 import bot.obj as obj
@@ -35,7 +34,6 @@ Table.addmod(dpt)
 Table.addmod(evt)
 Table.addmod(fnd)
 Table.addmod(irc)
-Table.addmod(krn)
 Table.addmod(log)
 Table.addmod(lop)
 Table.addmod(obj)

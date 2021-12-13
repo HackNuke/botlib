@@ -25,6 +25,12 @@ def __dir__():
     )
 
 
+def getobj(mn, on):
+    mod = sys.modules.get(mn, None)
+    if mod:
+        return getattr(mod, on, None)
+
+
 def spl(txt):
     return [x for x in txt.split(",") if x]
 
@@ -164,3 +170,20 @@ class Runtime(Bus, Dispatcher, Loop):
     def wait():
         while 1:
             time.sleep(5.0)
+
+
+k = None
+
+def kernel():
+    global k
+    if k: 
+        return k
+    k = getobj("__main__", "k") or Runtime()
+    return k
+
+def kerror(txt):
+    k.error(txt)
+
+
+def klog(txt):
+    k.log(txt)
