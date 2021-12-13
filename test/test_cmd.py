@@ -5,7 +5,7 @@ import unittest
 
 
 from bot.clt import Client
-from bot.krn import getmain
+from bot.krn import kernel
 from bot.obj import Cfg, Object, get, indexed
 from bot.run import Runtime
 from bot.tbl import Table
@@ -38,7 +38,7 @@ class Test_Commands(unittest.TestCase):
 
     def test_commands(self):
         cmds = list(Table.modnames)
-        k = getmain("k")
+        k = kernel()
         if not k:
             k = Runtime()
         c = k.first()

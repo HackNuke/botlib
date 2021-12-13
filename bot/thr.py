@@ -5,7 +5,6 @@ import queue
 import threading
 
 
-from .krn import getmain
 from .ofn import getname
 from .trc import get_exception
 
@@ -45,7 +44,8 @@ class Thr(threading.Thread):
         try:
             self.result = func(*args)
         except Exception as ex:
-            k = getmain("k")
+            from bot.krn import kernel
+            k = kernel()
             k.log(str(ex))
             k.error(get_exception())
 

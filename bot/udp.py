@@ -6,7 +6,7 @@ import time
 
 
 from .dbs import last
-from .krn import getmain
+from .krn import kernel
 from .obj import Cfg, Object
 from .thr import launch
 
@@ -41,7 +41,7 @@ class UDP(Object):
         self.cfg = Cfg()
 
     def output(self, txt, addr):
-        k = getmain("k")
+        k = kernel()
         k.announce(txt.replace("\00", ""))
 
     def server(self):

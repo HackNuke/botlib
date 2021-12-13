@@ -11,17 +11,17 @@ from .ofn import load
 from .tbl import Table
 
 def __dir__():
-     return ("NoModule", "NoType", "Db", "all", "fns", "fntime", "find", "hook", "last")
+    return ("NoModule", "NoType", "Db", "all", "fns", "fntime", "find", "hook", "last")
 
 
 class NoModule(Exception):
 
-     pass
+    pass
 
 
 class NoType(Exception):
 
-     pass
+    pass
 
 
 class Db(Object):
@@ -141,27 +141,8 @@ def all(timed=None):
     assert Cfg.wd
     p = os.path.join(Cfg.wd, "store")
     for name in os.listdir(p):
-        res = []
-        d = ""
-        for rootdir, dirs, _files in os.walk(p, topdown=False):
-            if dirs:
-                d = sorted(dirs)[-1]
-                if d.count("-") == 2:
-                    dd = os.path.join(rootdir, d)
-                    fls = sorted(os.listdir(dd))
-                    if fls:
-                        p = os.path.join(dd, fls[-1])
-                        if (
-                            timed
-                            and "from" in timed
-                            and timed["from"]
-                            and fntime(p) < timed["from"]
-                        ):
-                            continue
-                        if timed and timed.to and fntime(p) > timed.to:
-                            continue
-                        res.append(p)
-        return sorted(res, key=fntime)
+        for fn in fns(name):
+            yield fn
 
 
 def fntime(daystr):
@@ -204,7 +185,7 @@ def hook(hfn):
     if not mod:
         mod = sys.modules.get(mn, None)
         if not mod:
-             raise NoModule(mn)
+            raise NoModule(mn)
     t = getattr(mod, cn, None)
     if t:
         o = t()

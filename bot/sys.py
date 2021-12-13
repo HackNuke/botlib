@@ -5,7 +5,7 @@ import threading
 import time
 
 
-from .krn import getmain
+from .krn import kernel
 from .obj import Object, get, update
 from .ofn import getname, fmt
 from .tbl import Table
@@ -15,7 +15,7 @@ def __dir__():
     return ("cmd", "flt", "thr", "upt")
 
 
-k = getmain("k")
+k = kernel()
 starttime = time.time()
 
 def cmd(event):
@@ -57,4 +57,3 @@ def thr(event):
 
 def upt(event):
     event.reply("uptime is %s" % elapsed(time.time() - starttime))
-

@@ -46,9 +46,6 @@ class NoPickle(Exception):
 
     "we don't do pickle"
 
-    pass
-
-
 
 class Object:
 
@@ -161,7 +158,7 @@ class ObjectDecoder(js.JSONDecoder):
 class Cfg(Object):
 
     "basic config"
-    
+
     wd = ".bot"
 
 
@@ -214,7 +211,7 @@ def set(self, key, value):
 
 
 def update(self, data):
-    "do dict like update" 
+    "do dict like update"
     try:
         self.__dict__.update(vars(data))
     except TypeError:

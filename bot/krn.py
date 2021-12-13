@@ -2,24 +2,33 @@
 
 import sys
 
+from bot.run import Runtime
+
+k = None
+
 
 def __dir__():
-    return ("getmain", "kerror", "klog")
+    return ("getmain", "k", "kerror", "klog")
 
 
 def getmain(name):
-    m = getattr(sys.modules["__main__"], name, None)
-    if not m:
-        import bot.spc
-        m = getattr(bot.spc, name, None)
-    return m
+    return getattr(sys.modules["__main__"], name, None)
+
+
+def kernel():
+    global k
+    if k:
+        return k
+    k = getmain("k")
+    if not k:
+        k = Runtime()
 
 
 def kerror(txt):
-    k = getmain("k")
     k.error(txt)
 
 
 def klog(txt):
-    k = getmain("k")
     k.log(txt)
+
+   
