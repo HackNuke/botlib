@@ -174,12 +174,14 @@ class Runtime(Bus, Dispatcher, Loop):
 
 k = None
 
+
 def kernel():
     global k
     if k: 
         return k
     k = getobj("__main__", "k") or Runtime()
     return k
+
 
 def kerror(txt):
     k.error(txt)
