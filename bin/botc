@@ -30,6 +30,7 @@ Cfg.wd = "/var/lib/botd/"
 
 starttime = time.time()
 
+
 class Kernel(Runtime):
 
     @staticmethod
