@@ -51,6 +51,9 @@ class Runtime(Bus, Dispatcher, Loop):
         self.opts = Object()
         self.prs = Object()
         self.register("cmd", self.handle)
+        self.stdin = None
+        self.stdout = None
+        self.stderr = None
 
     def addcmd(self, cmd):
         Table.add(cmd)
@@ -70,7 +73,9 @@ class Runtime(Bus, Dispatcher, Loop):
         self.dispatch(e)
 
     def error(self, txt):
-        pass
+        if self.stderr:
+            self.stderr.write(txt)
+            self.stderr.flush()
 
     def handle(self, clt, obj):
         obj.parse()
@@ -99,7 +104,10 @@ class Runtime(Bus, Dispatcher, Loop):
                     i()
 
     def log(self, txt):
-        pass
+        if self.stdout and self.cfg.verbose:
+            self.stdout.write(txt)
+            self.stdout.write("\n")
+            self.stdout.flush()
 
     def opt(self, ops):
         if not self.opts:

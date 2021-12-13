@@ -37,9 +37,6 @@ class CLI(Client):
     def raw(self, txt):
         global results
         indexed(results, txt)
-        if k.cfg.verbose:
-            print(txt)
-            sys.stdout.flush()
 
 clt = CLI()
 origs = Object()
@@ -60,6 +57,7 @@ def main():
     global results
     global origs
     k.parse_cli()
+    k.stdout = sys.stdout
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     loadp(origs, res)
@@ -77,7 +75,10 @@ def main():
     context.export_yaml(rcfg)
     context.add_file(res, category='output')
     k.log(fmt(results, newline=True))
-    k.log(diff(origs, results))
-
+    d = diff(origs, results)
+    k.stdout.write("\n")
+    k.log(str(d))
+    k.stdout.write("\n")
+    k.stdout.flush()
 
 main()
