@@ -4,7 +4,7 @@
 import threading
 
 
-from .krn import kernel
+from .krn import k
 from .obj import Object
 from .opt import Output
 from .prs import parse as pparse
@@ -28,7 +28,6 @@ class Event(Object):
         self.txt = None
 
     def bot(self):
-        k = kernel()
         return k.byorig(self.orig)
 
     def parse(self):
@@ -41,7 +40,6 @@ class Event(Object):
         self.result.append(txt)
 
     def say(self, txt):
-        k = kernel()
         k.say(self.orig, self.channel, txt)
 
     def show(self):

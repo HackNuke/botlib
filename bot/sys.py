@@ -5,7 +5,7 @@ import threading
 import time
 
 
-from .krn import kernel
+from .krn import k
 from .obj import Object, get, update
 from .ofn import getname, fmt
 from .tbl import Table
@@ -24,7 +24,6 @@ def cmd(event):
 
 
 def flt(event):
-    k = kernel()
     try:
         index = int(event.prs.args[0])
         event.reply(fmt(k.objs[index], skip=["queue", "ready", "iqueue"]))

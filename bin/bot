@@ -23,7 +23,7 @@ import time
 
 
 from bot.clt import Client
-from bot.krn import kernel
+from bot.krn import k
 from bot.obj import Cfg, Object, keys
 from bot.ofn import fmt
 from bot.run import Runtime, spl
@@ -35,23 +35,6 @@ Cfg.wd = os.path.expanduser("~/.bot")
 
 
 starttime = time.time()
-
-
-class Kernel(Runtime):
-
-    def error(self, txt):
-        print(txt)
-        sys.stdout.flush()
-
-    def log(self, txt):
-        if "PONG" in txt or "PING" in txt:
-            return
-        if self.cfg.verbose:
-            print(txt.rstrip())
-            sys.stdout.flush()
-
-
-k = Kernel()
 
 
 class Console(Client):
@@ -112,7 +95,6 @@ def main():
     if k.root():
         print("don't run this bot as root")
         return
-    kernel()
     k.parse_cli()
     k.addcmd(ver)
     if k.cfg.verbose:
@@ -124,7 +106,6 @@ def main():
     if k.cfg.daemon:
         daemon()
     if k.cfg.console or "mod" in k.cfg:
-        k.start()
         for mn in spl(k.cfg.mod):
             k.init("bot.%s" % mn)
         k.log(",".join(sorted(list(Table.modnames))))

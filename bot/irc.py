@@ -16,7 +16,7 @@ from .clt import Client
 from .dbs import find, last
 from .evt import Event
 from .hdl import Handler
-from .krn import k, kerror, klog
+from .krn import k
 from .lop import Stop
 from .obj import Object, update
 from .ofn import edit, fmt, save
@@ -205,7 +205,7 @@ class IRC(Output, Handler):
                     self.logon(server, nick)
                     break
             except (OSError, ConnectionResetError):
-                kerror("reconnect to %s in %s seconds" % (self.cfg.server, elapsed(self.cfg.sleep)))
+                k.error("reconnect to %s in %s seconds" % (self.cfg.server, elapsed(self.cfg.sleep)))
             time.sleep(self.cfg.sleep)
 
     def dosay(self, channel, txt):
@@ -246,7 +246,7 @@ class IRC(Output, Handler):
 
     def joinall(self):
         for channel in self.channels:
-            kerror("join %s on %s" % (self.cfg.channel, self.cfg.server))
+            k.error("join %s on %s" % (self.cfg.channel, self.cfg.server))
             self.command("JOIN", channel)
 
     def handle(self, clt, e):
@@ -264,7 +264,7 @@ class IRC(Output, Handler):
                 try:
                     self.restart()
                 except (OSError, ConnectionResetError, BrokenPipeError):
-                    kerror("reconnect to %s in %s seconds" % (str(self.cfg), elapsed(self.cfg.sleep)))
+                    k.error("reconnect to %s in %s seconds" % (str(self.cfg), elapsed(self.cfg.sleep)))
                     time.sleep(self.cfg.sleep)
                 break
 
@@ -282,7 +282,7 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        klog(txt.rstrip())
+        k.log(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
         o.orig = repr(self)
@@ -347,7 +347,7 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
-        klog(txt.rstrip())
+        k.log(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
         try:
@@ -490,7 +490,7 @@ class Users(Object):
         if user:
             if perm in user.perms:
                 return True
-        kerror("denied %s" % origin)
+        k.error("denied %s" % origin)
         return False
 
     def delete(self, origin, perm):
@@ -543,7 +543,7 @@ def h904(clt, obj):
 def ERROR(clt, obj):
     clt.state.nrerror += 1
     clt.state.error = obj.txt
-    kerror(obj.txt)
+    k.error(obj.txt)
 
 
 def KILL(clt, obj):
