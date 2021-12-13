@@ -162,7 +162,7 @@ class Cfg(Object):
 
     "basic config"
     
-    wd = ""
+    wd = ".bot"
 
 
 def get(self, key, default=None):

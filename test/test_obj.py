@@ -269,7 +269,9 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(str(o), "{}")
 
     def test_Object__subclasshook__(self):
-        self.assertTrue(Object().__subclasshook__(), None)
+        o = Object()
+        b = o.__subclasshook__()
+        self.assertEqual(b, NotImplemented)
 
     def test_Db(self):
         db = Db()
@@ -277,7 +279,6 @@ class Test_Object(unittest.TestCase):
 
     def test_cdir(self):
         from bot.obj import Cfg
-
         Cfg.wd = ".test"
         cdir(Cfg.wd)
         self.assertTrue(os.path.exists(Cfg.wd))
