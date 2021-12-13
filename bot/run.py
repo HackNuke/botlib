@@ -69,12 +69,19 @@ class Runtime(Bus, Dispatcher, Loop):
         e.wait()
         return None
 
+    def direct(self, txt):
+        if self.stdout:
+            self.stdout.write(txt)
+            self.stdout.write("\n")
+            self.stdout.flush()
+
     def do(self, e):
         self.dispatch(e)
 
     def error(self, txt):
         if self.stderr:
             self.stderr.write(txt)
+            self.stderr.write("\n")
             self.stderr.flush()
 
     def handle(self, clt, obj):
@@ -104,10 +111,8 @@ class Runtime(Bus, Dispatcher, Loop):
                     i()
 
     def log(self, txt):
-        if self.stdout and self.cfg.verbose:
-            self.stdout.write(txt)
-            self.stdout.write("\n")
-            self.stdout.flush()
+        if self.cfg.verbose:
+            self.direct(txt)
 
     def opt(self, ops):
         if not self.opts:

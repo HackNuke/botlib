@@ -17,6 +17,7 @@ import time
 
 
 from bot.irc import Cfg as IRC
+from bot.krn import k
 from bot.obj import Cfg
 from bot.ofn import fmt
 from bot.run import Runtime, spl
@@ -35,25 +36,6 @@ Cfg.wd = "/var/lib/botd/"
 starttime = time.time()
 
 
-class Kernel(Runtime):
-
-    @staticmethod
-    def direct(txt):
-        print(txt)
-        sys.stdout.flush()
-
-    @staticmethod
-    def error(txt):
-        Kernel.direct(txt)
-
-    @staticmethod
-    def log(txt):
-        pass
-
-
-k = Kernel()
-
-
 import bot.all
 
 
@@ -61,15 +43,15 @@ def ver(event):
     event.reply("BOTD %s" % __version__)
 
 
-def main(): 
+def main():
+    k.stdout = sys.stdout
+    k.stderr = sys.stderr
     k.cfg.verbose = False
     k.addcmd(ver)
     msg = "BOTD %s starting at %s" % (__version__, time.ctime(time.time()))
     k.direct(msg.replace("  ", " "))
     k.direct("workdir is %s" % Cfg.wd)
     k.direct(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
-    #k.privileges("botd", "botd")
-    k.start()
     k.cfg.mod += "irc,rss"
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)

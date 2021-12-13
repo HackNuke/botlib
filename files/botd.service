@@ -1,5 +1,5 @@
 [Unit]
-Description=24/7 channel daemon
+Description=BOTD - 24/7 channel daemon
 After=multi-user.target
 
 [Service]

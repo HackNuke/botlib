@@ -18,6 +18,7 @@ import time
 
 from bot.clt import Client
 from bot.irc import Cfg as IRC
+from bot.krn import k
 from bot.obj import Cfg
 from bot.ofn import fmt
 from bot.run import Runtime, spl
@@ -30,32 +31,15 @@ Cfg.wd = "/var/lib/botd/"
 
 starttime = time.time()
 
-
-class Kernel(Runtime):
-
-    @staticmethod
-    def error(txt):
-        Kernel.log(txt)
-
-    @staticmethod
-    def log(txt):
-        if not txt:
-            return
-        print(txt)
-        sys.stdout.flush()
-
-
-k = Kernel()
-
-
 class CLI(Client):
 
-    def handle(self, clt, e):
-        k.put(e)
-        e.wait()
+    def __init__(self):
+        super().__init__()
+        k.add(self)
 
     def raw(self, txt):
-        print(txt)
+        sys.stdout.write(txt)
+        sys.stdout.write("\n")
         sys.stdout.flush()
 
 
@@ -75,7 +59,7 @@ def wrap(func):
 
 
 def ver(event):
-    event.reply("BOTLIB %s" % __version__)
+    event.reply("BOTC %s" % __version__)
 
 
 def main(): 
@@ -83,8 +67,6 @@ def main():
     k.addcmd(ver)
     if not k.prs.txt:
         return
-    #if k.privileges("botd", "botd"):
-    k.add(c)
     k.cmd(c, k.prs.otxt)
 
 

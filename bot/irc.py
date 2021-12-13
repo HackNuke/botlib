@@ -23,7 +23,7 @@ from .ofn import edit, fmt, save
 from .opt import Output
 from .thr import launch
 from .tms import elapsed
-
+from .trc import get_exception
 
 def __dir__():
     return (
