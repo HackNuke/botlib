@@ -149,9 +149,8 @@ def loadp(o, opath):
 
 def indexed(o, txt):
     "push on countered index"
-    global counter
     o.__index__ += 1
-    self[str(self.__index__)] = txt
+    o[str(o.__index__)] = txt
 
 
 def save(o, tab=False):

@@ -113,6 +113,7 @@ class Test_Object(unittest.TestCase):
                 "__getitem__",
                 "__gt__",
                 "__hash__",
+                "__index__",
                 "__init__",
                 "__init_subclass__",
                 "__iter__",
@@ -253,12 +254,13 @@ class Test_Object(unittest.TestCase):
         self.assertTrue(o["key"], "value")
 
     def test_Object__sizeof__(self):
-        self.assertEqual(Object().__sizeof__(), 40)
+        self.assertEqual(Object().__sizeof__(), 48)
 
     def test_Object__slots__(self):
         self.assertEqual(Object().__slots__, ("__dict__",
                                               "__stp__",
-                                              "__otype__"))
+                                              "__otype__",
+                                              "__index__"))
 
     def test_Object__stp__(self):
         o = Object()
