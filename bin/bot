@@ -96,6 +96,7 @@ def main():
         print("don't run this bot as root")
         return
     k.parse_cli()
+    k.stdout = sys.stdout
     k.addcmd(ver)
     if k.cfg.verbose:
         msg = "BOTLIB %s starting at %s" % (__version__, time.ctime(time.time()))
