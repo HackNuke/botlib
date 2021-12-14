@@ -5,7 +5,7 @@
 "24/7 channel daemon"
 
 
-__version__ = "146"
+__version__ = "147"
 
 
 import os
