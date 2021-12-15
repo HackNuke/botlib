@@ -38,6 +38,7 @@ class CLI(Client):
         global results
         indexed(results, txt)
 
+
 clt = CLI()
 origs = Object()
 results = Object()
@@ -57,7 +58,7 @@ def main():
     global results
     global origs
     k.stdout = sys.stdout
-    k.parse_cli()
+    k.parse_cli(" ".join(sys.argv[1:]))
     k.cfg.debug = True
     k.cfg.mod = "irc,rss"
     loadp(origs, res)

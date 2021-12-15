@@ -7,7 +7,8 @@ import time
 from .bus import Bus
 from .dpt import Dispatcher
 from .lop import Loop
-from .obj import Object, get
+from .obj import Object, get, update
+from .prs import parse
 from .tbl import Table
 from .thr import launch
 from .utl import spl
@@ -118,6 +119,19 @@ class Runtime(Bus, Dispatcher, Loop):
                 if val:
                     return True
         return False
+
+
+    def parse_cli(self, txt):
+        parse(self.prs, txt)
+        update(self.opts, self.prs.opts)
+        update(self.cfg, self.prs.sets)
+        self.cfg.index = self.prs.index
+        self.cfg.console = self.opt("c")
+        self.cfg.daemon = self.opt("d")
+        self.cfg.debug = self.opt("z")
+        self.cfg.mask = 0o22
+        self.cfg.systemd = self.opt("s")
+        self.cfg.verbose = self.opt("v")
 
 
     @staticmethod
