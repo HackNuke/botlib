@@ -169,13 +169,6 @@ def get(self, key, default=None):
     return self.__dict__.get(key, default)
 
 
-def indexed(self, obj):
-    "push on countered index"
-    global counter
-    counter += 1
-    self[str(counter)] = obj
-
-
 def items(self):
     "return dict like items"
     try:

@@ -12,7 +12,7 @@ import time
 
 from bot.clt import Client
 from bot.krn import k
-from bot.obj import Cfg, Object, cdir, indexed
+from bot.obj import Cfg, Object, cdir, indexed, values
 from bot.ofn import fmt
 from bot.run import Runtime
 from bot.tbl import Table
@@ -45,8 +45,7 @@ class CLI(Client):
         k.add(self)
         
     def raw(self, txt):
-        if k.cfg.verbose:
-            print(txt)
+        indexed(results, txt)
 
 clt = CLI()
 
@@ -66,15 +65,15 @@ def consume():
 
 
 def exec():
-    c = k.first()
-    cmds = list(Table.modnames)
-    random.shuffle(cmds)
-    for cmd in cmds:
-        for ex in getattr(param, cmd, [""]):
-            e = c.event(cmd + " " + ex)
-            k.dispatch(e)
-            events.append(e)
-
+    for mod in values(Table.modules):
+        for on in dir(mod):
+            o = getattr(mod, on, None)
+            if o and "__code__" in dir(o):
+                print(o.__code__.co_filename)
+                #for nm in o.__code__.co_varnames:
+                #    print(nm)
+                for nm in o.__code__.co_names:
+                    print(nm)
 
 def wrap(func):
     fd = sys.stdin.fileno()
