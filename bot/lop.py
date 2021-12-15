@@ -35,22 +35,9 @@ class Loop(Object):
         pass
 
     def loop(self):
-        dorestart = False
         self.stopped.clear()
         while not self.stopped.isSet():
-            e = self.queue.get()
-            try:
-                self.do(e)
-            except Restart:
-                dorestart = True
-                break
-            except Stop:
-                break
-            except Exception as ex:
-                self.error(str(ex))
-                self.error(e)
-        if dorestart:
-            self.restart()
+            self.do(self.queue.get())
 
     def restart(self):
         self.stop()

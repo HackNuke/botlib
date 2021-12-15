@@ -65,11 +65,6 @@ class Runtime(Bus, Dispatcher, Loop):
     def do(self, e):
         self.dispatch(e)
 
-    def error(self, txt):
-        if self.stderr:
-            self.stderr.write(txt)
-            self.stderr.write("\n")
-            self.stderr.flush()
 
     def handle(self, clt, obj):
         obj.parse()
@@ -91,7 +86,6 @@ class Runtime(Bus, Dispatcher, Loop):
             mod = Table.get(mn)
             i = getattr(mod, "init", None)
             if i:
-                self.log("init %s" % mn)
                 if threaded:
                     launch(i)
                 else:

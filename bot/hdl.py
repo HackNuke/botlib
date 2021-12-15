@@ -3,8 +3,7 @@
 
 from .dpt import Dispatcher
 from .evt import Event
-from .lop import Loop, Stop
-from .ofn import getname
+from .lop import Loop
 
 def __dir__():
     return ("Handler",)
@@ -28,18 +27,7 @@ class Handler(Dispatcher, Loop):
 
     def loop(self):
         while not self.stopped.isSet():
-            try:
-                txt = self.poll()
-            except (Stop, ConnectionRefusedError, ConnectionResetError):
-                break
-            if txt is None:
-                self.error("%s stopped" % getname(self))
-                break
-            e = self.event(txt)
-            if not e:
-                self.error("%s stopped" % getname(self))
-                return
-            self.handle(self, e)
+            self.handle(self, self.event(self.poll()))
 
     def poll(self):
         return self.queue.get()

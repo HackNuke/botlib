@@ -201,12 +201,9 @@ class IRC(Output, Handler):
         self.state.nrconnect = 0
         while not self.stopped.isSet():
             self.state.nrconnect += 1
-            try:
-                if self.connect(server, port):
-                    self.logon(server, nick)
-                    break
-            except (OSError, ConnectionResetError):
-                k.error("reconnect to %s in %s seconds" % (self.cfg.server, elapsed(self.cfg.sleep)))
+            if self.connect(server, port):
+                self.logon(server, nick)
+                break
             time.sleep(self.cfg.sleep)
 
     def dosay(self, channel, txt):
@@ -247,7 +244,6 @@ class IRC(Output, Handler):
 
     def joinall(self):
         for channel in self.channels:
-            k.error("join %s on %s" % (self.cfg.channel, self.cfg.server))
             self.command("JOIN", channel)
 
     def handle(self, clt, e):
@@ -262,11 +258,7 @@ class IRC(Output, Handler):
             time.sleep(10.0)
             if self.state.pongcheck:
                 self.keeprunning = False
-                try:
-                    self.restart()
-                except (OSError, ConnectionResetError, BrokenPipeError):
-                    k.error("reconnect to %s in %s seconds" % (str(self.cfg), elapsed(self.cfg.sleep)))
-                    time.sleep(self.cfg.sleep)
+                self.restart()
                 break
 
     def logon(self, server, nick):
@@ -283,7 +275,6 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        k.log(txt.rstrip())
         o = Event()
         o.rawstr = rawstr
         o.orig = repr(self)
@@ -348,7 +339,6 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
-        k.log(txt.rstrip())
         txt += "\n"
         txt = bytes(txt, "utf-8")
         try:
@@ -491,7 +481,6 @@ class Users(Object):
         if user:
             if perm in user.perms:
                 return True
-        k.error("denied %s" % origin)
         return False
 
     def delete(self, origin, perm):
@@ -544,7 +533,6 @@ def h904(clt, obj):
 def ERROR(clt, obj):
     clt.state.nrerror += 1
     clt.state.error = obj.txt
-    k.error(obj.txt)
 
 
 def KILL(clt, obj):
