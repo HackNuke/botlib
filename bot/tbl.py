@@ -8,7 +8,7 @@ from .obj import Object, get
 
 
 def __dir__():
-    return ("Table", )
+    return ("Table", "getcls", "getmod", "getobj")
 
 
 class Table(Object):
@@ -53,3 +53,19 @@ class Table(Object):
         for k, o in inspect.getmembers(mod, inspect.isclass):
             if k not in Table.classes and issubclass(o, Object):
                 Table.addcls(o)
+
+
+def getcls(mn, on):
+    mod = Table.classes.get(mn, None)
+    if mod:
+        return getattr(mod, on, None)
+
+
+def getmod(mn, on):
+    return get(Table.modules, mn, None)
+
+
+def getobj(mn, on):
+    mod = Table.modules.get(mn, None)
+    if mod:
+        return getattr(mod, on, None)

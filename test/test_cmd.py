@@ -6,8 +6,8 @@ import unittest
 
 from bot.clt import Client
 from bot.krn import k
-from bot.obj import Cfg, Object, get, indexed
-from bot.run import Runtime
+from bot.obj import Cfg, Object, get
+from bot.ofn import indexed
 from bot.tbl import Table
 
 

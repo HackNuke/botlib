@@ -8,7 +8,6 @@ import threading
 from .dpt import Dispatcher
 from .obj import Object
 from .thr import launch
-from .trc import get_exception
 
 
 class Restart(Exception):
@@ -47,8 +46,9 @@ class Loop(Object):
                 break
             except Stop:
                 break
-            except Exception:
-                self.error(get_exception())
+            except Exception as ex:
+                self.error(str(ex))
+                self.error(e)
         if dorestart:
             self.restart()
 

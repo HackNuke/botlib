@@ -4,5 +4,9 @@
 from bot.run import Runtime
 
 
-k = Runtime()
+class Kernel(Runtime):
+
+    pass
+
+k = Kernel()
 k.start()

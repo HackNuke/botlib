@@ -1,18 +1,13 @@
 # This file is placed in the Public Domain.
 
 
-import os
-import pwd
-import sys
 import time
 
 
 from .bus import Bus
 from .dpt import Dispatcher
 from .lop import Loop
-from .obj import Object, cdir, get, update
-from .obj import Cfg as ObjCfg
-from .prs import parse
+from .obj import Object, get
 from .tbl import Table
 from .thr import launch
 from .utl import spl
@@ -124,49 +119,6 @@ class Runtime(Bus, Dispatcher, Loop):
                     return True
         return False
 
-    def parse_cli(self):
-        parse(self.prs, " ".join(sys.argv[1:]))
-        update(self.opts, self.prs.opts)
-        update(self.cfg, self.prs.sets)
-        self.cfg.index = self.prs.index
-        self.cfg.console = self.opt("c")
-        self.cfg.daemon = self.opt("d")
-        self.cfg.debug = self.opt("z")
-        self.cfg.mask = 0o22
-        self.cfg.systemd = self.opt("s")
-        self.cfg.verbose = self.opt("v")
-
-    def privileges(self, name, group):
-        if not self.root():
-            self.log("you need root privileges to run botc")
-            return False
-        try:
-            pwn = pwd.getpwnam(name)
-        except (TypeError, KeyError):
-            self.log('add group/user with 1) groupadd botd 2) useradd -b /var/lib -d /var/lib/botd -m -g botd botd')
-            return False
-        try:
-            pwn = pwd.getpwnam(name)
-        except (TypeError, KeyError):
-            return False
-        if not os.path.exists(ObjCfg.wd):
-            os.mkdir(ObjCfg.wd)
-        cdir(ObjCfg.wd + os.sep)
-        os.chown(ObjCfg.wd, pwn.pw_uid, pwn.pw_gid)
-        cdir(os.path.join(ObjCfg.wd, "store", ""))
-        os.chown(os.path.join(ObjCfg.wd, "store", ""), pwn.pw_uid, pwn.pw_gid)
-        os.setgroups([])
-        os.setgid(pwn.pw_gid)
-        os.setuid(pwn.pw_uid)
-        os.umask(Cfg.mask)
-        self.cfg.uuids = os.getresuid()
-        return True
-
-    @staticmethod
-    def root():
-        if os.geteuid() != 0:
-            return False
-        return True
 
     @staticmethod
     def wait():

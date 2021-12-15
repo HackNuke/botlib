@@ -3,3 +3,4 @@ grep -R --exclude-dir=docs popen bot
 grep -R --exclude-dir=docs pkgutil bot
 grep -R --exclude-dir=docs importlib bot
 grep -R --exclude-dir=docs print bot
+grep -R --exclude-dir=docs "import sys" bot

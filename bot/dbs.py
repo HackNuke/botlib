@@ -2,7 +2,6 @@
 
 
 import os
-import sys
 import time
 
 
@@ -184,9 +183,7 @@ def hook(hfn):
     mn, cn = cname.rsplit(".", 1)
     mod = Table.get(mn)
     if not mod:
-        mod = sys.modules.get(mn, None)
-        if not mod:
-            raise NoModule(mn)
+        raise NoModule(mn)
     t = getattr(mod, cn, None)
     if t:
         o = t()
