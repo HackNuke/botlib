@@ -21,7 +21,7 @@ from bot.irc import Cfg as IRC
 from bot.krn import k
 from bot.obj import Cfg
 from bot.ofn import fmt
-from bot.run import Runtime, spl
+from bot.run import spl
 from bot.run import Cfg as RunCfg
 from bot.tbl import Table
 
@@ -30,6 +30,7 @@ Cfg.wd = "/var/lib/botd/"
 
 
 starttime = time.time()
+
 
 class CLI(Client):
 
@@ -63,7 +64,7 @@ def ver(event):
 
 
 def main(): 
-    k.parse_cli()
+    k.parse_cli(" ".join(sys.argv[1:]))
     k.addcmd(ver)
     if not k.prs.txt:
         return

@@ -44,19 +44,11 @@ def ver(event):
 
 
 def main():
-    k.stdout = sys.stdout
-    k.stderr = sys.stderr
     k.cfg.verbose = False
     k.addcmd(ver)
-    msg = "BOTD %s starting at %s" % (__version__, time.ctime(time.time()))
-    k.direct(msg.replace("  ", " "))
-    k.direct("workdir is %s" % Cfg.wd)
-    k.direct(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
     k.cfg.mod += "irc,rss"
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)
-    k.direct(",".join(sorted(list(Table.modnames))))
-    k.direct("booted (%s)" % elapsed(time.time() - starttime))
     k.wait()
 
 

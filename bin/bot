@@ -73,19 +73,6 @@ def daemon():
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-def parse_cli(self):
-    parse(self.prs, " ".join(sys.argv[1:]))
-    update(self.opts, self.prs.opts)
-    update(self.cfg, self.prs.sets)
-    self.cfg.index = self.prs.index
-    self.cfg.console = self.opt("c")
-    self.cfg.daemon = self.opt("d")
-    self.cfg.debug = self.opt("z")
-    self.cfg.mask = 0o22
-    self.cfg.systemd = self.opt("s")
-    self.cfg.verbose = self.opt("v")
-
-
 def wrap(func):
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
@@ -101,20 +88,13 @@ import bot.all
 
 
 def ver(event):
-    event.reply("BOTLIB %s" % __version__)
+    event.reply("BOT %s" % __version__)
     
 
 def main():
-    if k.root():
-        print("don't run this bot as root")
-        return
-    parse_cli(k)
+    k.parse_cli(" ".join(sys.argv[1:]))
     k.stdout = sys.stdout
     k.addcmd(ver)
-    if k.cfg.verbose:
-        msg = "BOTLIB %s starting at %s" % (__version__, time.ctime(time.time()))
-        k.log(msg.replace("  ", " "))
-        k.log(fmt(k.cfg, ["console", "daemon", "debug", "systemd", "verbose"]))
     if k.prs.txt:
         return k.cmd(clt, k.prs.otxt)
     if k.cfg.daemon:
@@ -122,8 +102,6 @@ def main():
     if k.cfg.console or "mod" in k.cfg:
         for mn in spl(k.cfg.mod):
             k.init("bot.%s" % mn)
-        k.log(",".join(sorted(list(Table.modnames))))
-        k.log("booted (%s)" % elapsed(time.time() - starttime))
         clt.start()
         k.wait()
 
