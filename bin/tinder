@@ -12,8 +12,8 @@ import time
 
 from bot.clt import Client
 from bot.krn import k
-from bot.obj import Cfg, Object, cdir, indexed
-from bot.ofn import fmt
+from bot.obj import Cfg, Object, cdir
+from bot.ofn import fmt, indexed
 from bot.run import Runtime
 from bot.tbl import Table
 from bot.thr import launch
@@ -96,7 +96,7 @@ def main():
         os.sync()
     else:
         cdir(Cfg.wd)
-    k.parse_cli()
+    k.parse_cli(" ".join(sys.argv[1:]))
     k.stdout = sys.stdout
     k.cfg.debug = True
     k.start()

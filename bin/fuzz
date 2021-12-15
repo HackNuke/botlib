@@ -12,9 +12,9 @@ import time
 
 from bot.clt import Client
 from bot.krn import k
-from bot.obj import Cfg, Object, cdir, indexed, values
+from bot.obj import Cfg, Object, cdir, values
+from bot.ofn import indexed
 from bot.ofn import fmt
-from bot.run import Runtime
 from bot.tbl import Table
 from bot.thr import launch
 from bot.tms import elapsed
@@ -46,6 +46,7 @@ class CLI(Client):
         
     def raw(self, txt):
         indexed(results, txt)
+
 
 clt = CLI()
 
@@ -95,7 +96,7 @@ def main():
         os.sync()
     else:
         cdir(Cfg.wd)
-    k.parse_cli()
+    k.parse_cli(" ".join(sys.argv[1:]))
     k.stdout = sys.stdout
     k.cfg.debug = True
     k.start()
