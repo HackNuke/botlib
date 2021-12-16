@@ -5,6 +5,7 @@ import inspect
 
 
 from .obj import Object, get
+from .utl import spl
 
 
 def __dir__():
@@ -53,6 +54,19 @@ class Table(Object):
             if k not in Table.classes and issubclass(o, Object):
                 Table.addcls(o)
 
+    @staticmethod
+    def scan(pn, ml, init=True, threaded=False):
+        for mn in spl(ml):
+            mn = "%s.%s" % (pn, mn)
+            mod = Table.get(mn)
+            Table.introspect(mod)
+            if init:
+                i = getattr(mod, "init", None)
+                if i:
+                    if threaded:
+                        launch(i)
+                    else:
+                        i()
 
 def getcls(mn, on):
     mod = Table.classes.get(mn, None)

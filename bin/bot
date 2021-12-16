@@ -12,6 +12,7 @@ import termios
 
 from bot.clt import Client
 from bot.krn import k
+from bot.tbl import Table
 from bot.utl import spl
 
 
@@ -26,6 +27,12 @@ class CLI(Client):
 
 class Console(Client):
 
+    def cmd(self, txt):
+        e = self.event(txt)
+        k.do(e)
+        e.wait()
+        return e
+ 
     def handle(self, e):
         super().handle(e)
         e.wait()
@@ -36,8 +43,6 @@ class Console(Client):
     def raw(self, txt):
         print(txt)
 
-
-clt = Console()
 
 def daemon():
     pid = os.fork()
@@ -66,18 +71,18 @@ def wrap(func):
 
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    for mn in spl(k.cfg.mod):
-        k.init("bot.%s" % mn)
+    k.scan("bot", k.cfg.mod or "sys,log,fnd")
+    console = k.opt("c") or k.cfg.mod
     if k.prs.txt:
         c = CLI()
-        e = c.event(k.prs.otxt)
-        k.do(e)
-        e.wait()
-    elif k.opt("d"):
+        return c.cmd(k.prs.otxt)
+    if k.opt("d"):
         daemon()
-    elif k.opt("c") or k.cfg.mod:
-        clt.start()
-    if k.opt("cd"):
+        console = False
+    if console:
+        csl = Console()
+        csl.start()
+    if console or k.opt("d"):
         k.wait()
 
 

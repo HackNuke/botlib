@@ -2,9 +2,9 @@
 
 
 from bot.run import Runtime
+from bot.tbl import Table
 
-
-class Kernel(Runtime):
+class Kernel(Runtime, Table):
 
     pass
 

@@ -57,10 +57,9 @@ res = os.path.join(r, "results")
 def main():
     global results
     global origs
-    k.stdout = sys.stdout
     k.parse_cli(" ".join(sys.argv[1:]))
     k.cfg.debug = True
-    k.cfg.mod = "irc,rss"
+    k.cfg.mod = "irc,rss,sys,log,fnd"
     loadp(origs, res)
     if os.path.exists(rs):
         shutil.rmtree(rs)
@@ -75,13 +74,9 @@ def main():
     savep(results, res)
     context.export_yaml(rcfg)
     context.add_file(res, category='output')
-    if k.cfg.verbose:
-        k.stdout.write("\n")
-        k.log(fmt(results, newline=True))
+    if k.opt("v"):
+        print(fmt(results, newline=True))
         d = diff(origs, results)
-        k.stdout.write("\n")
-        k.log(str(d))
-        k.stdout.write("\n")
-        k.stdout.flush()
+        print(str(d))
 
 main()
