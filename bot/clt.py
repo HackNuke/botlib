@@ -11,6 +11,10 @@ def __dir__():
 
 class Client(Handler):
 
+    def __init__(self):
+        super().__init__()
+        k.add(self)
+
     def handle(self, e):
         k.put(e)
 

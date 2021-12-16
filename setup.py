@@ -20,10 +20,10 @@ setup(
     packages=["bot"],
     include_package_data=True,
     data_files=[
-                ("share/botd", ["files/botd.service",],),
-                ("share/doc/botd", ["README.rst",]),
+                ("share/botd", ["files/botd.service",]),
+                ("share/doc/botd", ["README.rst",])
                 ],
-    scripts=["bin/bot", "bin/botc", "bin/botctl", "bin/botd". "bin/bots"],
+    scripts=["bin/bot", "bin/botc", "bin/botctl", "bin/botd", "bin/bots"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

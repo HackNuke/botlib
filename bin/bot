@@ -14,6 +14,7 @@ from bot.clt import Client
 from bot.krn import k
 from bot.utl import spl
 
+
 import bot.all
 
 
@@ -25,8 +26,8 @@ class CLI(Client):
 
 class Console(Client):
 
-    def handle(self, clt, e):
-        super().handle(self, e)
+    def handle(self, e):
+        super().handle(e)
         e.wait()
 
     def poll(self):
@@ -35,6 +36,8 @@ class Console(Client):
     def raw(self, txt):
         print(txt)
 
+
+clt = Console()
 
 def daemon():
     pid = os.fork()
@@ -67,18 +70,12 @@ def main():
         k.init("bot.%s" % mn)
     if k.prs.txt:
         c = CLI()
-        k.add(c)
         e = c.event(k.prs.otxt)
-        e.origin = "root@shell"
-        e.parse()
         k.do(e)
         e.wait()
-        return
-    if k.opt("d"):
+    elif k.opt("d"):
         daemon()
-    if k.opt("c") and not k.opt("d"):
-        clt = Console()
-        k.add(clt)
+    elif k.opt("c") or k.cfg.mod:
         clt.start()
     if k.opt("cd"):
         k.wait()

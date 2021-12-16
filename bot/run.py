@@ -83,15 +83,12 @@ class Runtime(Bus, Dispatcher, Loop):
                     return True
         return False
 
-
     def parse_cli(self, txt):
         parse(self.prs, txt)
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
         self.cfg.mask = 0o22
 
-
-    @staticmethod
-    def wait():
+    def wait(self):
         while 1:
             time.sleep(5.0)

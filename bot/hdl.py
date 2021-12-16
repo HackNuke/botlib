@@ -15,15 +15,17 @@ class Handler(Dispatcher, Loop):
         Loop.__init__(self)
         Dispatcher.__init__(self)
 
-    def event(self, txt):
+    def event(self, txt, origin="root@shell"):
         c = Event()
         c.type = "cmd"
         c.txt = txt or ""
         c.orig = repr(self)
+        c.origin = origin
+        c.parse()
         return c
 
     def handle(self, e):
-        Loop.put(self, e)
+        Loop.put(e)
 
     def loop(self):
         while not self.stopped.isSet():
