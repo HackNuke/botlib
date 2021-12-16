@@ -14,7 +14,7 @@ from bot.clt import Client
 from bot.krn import k
 from bot.utl import spl
 
-
+import bot.all
 
 
 class CLI(Client):
@@ -34,6 +34,7 @@ class Console(Client):
         
     def raw(self, txt):
         print(txt)
+
 
 def daemon():
     pid = os.fork()
@@ -60,28 +61,21 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
-def cmd(txt):
-    if not txt:
-        return None
-    c = CLI()
-    k.add(c)
-    e = c.event(txt)
-    e.origin = "root@shell"
-    e.parse()
-    k.do(e)
-    e.wait()
-
-import bot.all
-
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    if k.prs.txt:
-        return cmd(k.prs.otxt)
-    if k.opt("d"):
-        daemon()
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)
-        k.wait()
+    if k.prs.txt:
+        c = CLI()
+        k.add(c)
+        e = c.event(k.prs.otxt)
+        e.origin = "root@shell"
+        e.parse()
+        k.do(e)
+        e.wait()
+        return
+    if k.opt("d"):
+        daemon()
     if k.opt("c") and not k.opt("d"):
         clt = Console()
         k.add(clt)
