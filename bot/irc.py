@@ -1,7 +1,6 @@
 # This file is placed in the Public Domain.
 
 
-import base64
 import os
 import queue
 import socket
@@ -213,7 +212,7 @@ class IRC(Output, Handler):
                 continue
             self.command("PRIVMSG", channel, t)
 
-    def event(self, txt):
+    def event(self, txt, origin=None):
         if not txt:
             return
         e = self.parsing(txt)
@@ -515,12 +514,12 @@ class DCC(Client):
     def dosay(self, channel, txt):
         self.raw(txt)
 
-    def event(self, txt):
+    def event(self, txt, origin=None):
         self.connected.wait()
         e = Event()
         e.type = "cmd"
-        e.channel = self.origin
-        e.origin = self.origin or "root@dcc"
+        e.channel = origin or self.origin
+        e.origin = origin or self.origin or "root@dcc"
         e.orig = repr(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
@@ -660,4 +659,3 @@ def ops(event):
         if not bot.users.allowed(event.origin, "USER"):
             return
         bot.command("MODE", event.channel, "+o", event.nick)
-

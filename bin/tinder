@@ -9,6 +9,7 @@ import sys
 import termios
 import time
 
+sys.path.insert(0, os.getcwd())
 
 from bot.clt import Client
 from bot.krn import k
@@ -40,13 +41,8 @@ param.tdo = ["test4", ""]
 
 class CLI(Client):
 
-    def __init__(self):
-        super().__init__()
-        k.add(self)
-        
     def raw(self, txt):
-        if k.cfg.verbose:
-            print(txt)
+        print(txt)
 
 clt = CLI()
 
@@ -99,6 +95,7 @@ def main():
     k.parse_cli(" ".join(sys.argv[1:]))
     k.scan("bot", init=False)
     k.cfg.debug = True
+    print(k.cfg.index)
     k.start()
     clt.start()
     thrs = []

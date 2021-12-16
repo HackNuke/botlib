@@ -25,14 +25,11 @@ class Handler(Dispatcher, Loop):
         return c
 
     def handle(self, e):
-        Loop.put(e)
+        self.put(e)
 
     def loop(self):
         while not self.stopped.isSet():
-            try:
-                self.handle(self.event(self.poll()))
-            except Exception as ex:
-                pass
+            self.handle(self.event(self.poll()))
 
     def poll(self):
         return self.queue.get()

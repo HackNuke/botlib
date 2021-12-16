@@ -10,8 +10,6 @@ from .lop import Loop
 from .obj import Object, get, update
 from .prs import parse
 from .tbl import Table
-from .thr import launch
-from .utl import spl
 
 def __dir__():
     return (
@@ -63,17 +61,6 @@ class Runtime(Bus, Dispatcher, Loop):
             obj.show()
         obj.ready()
 
-    def init(self, mns, threaded=False):
-        for mn in spl(mns):
-            mod = Table.get(mn)
-            Table.introspect(mod)
-            i = getattr(mod, "init", None)
-            if i:
-                if threaded:
-                    launch(i)
-                else:
-                    i()
-
     def opt(self, ops):
         if not self.opts:
             return False
@@ -88,6 +75,7 @@ class Runtime(Bus, Dispatcher, Loop):
         parse(self.prs, txt)
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
+        self.cfg.index = self.prs.index
         self.cfg.mask = 0o22
 
     def wait(self):

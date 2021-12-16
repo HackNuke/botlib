@@ -2,7 +2,6 @@
 # This file is placed in the Public Domain.
 
 
-import os
 import sys
 
 
@@ -10,7 +9,6 @@ from bot.clt import Client
 from bot.irc import Cfg as IRC
 from bot.krn import k
 from bot.obj import Cfg
-from bot.run import spl
 
 
 Cfg.wd = "/var/lib/botd/"
@@ -33,12 +31,11 @@ class CLI(Client):
         print(txt)
 
 
-def main(): 
+def main():
     k.parse_cli(" ".join(sys.argv[1:]))
     if not k.prs.txt:
         return
     c = CLI()
     k.cmd(c, k.prs.otxt)
-
 
 main()

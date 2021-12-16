@@ -29,15 +29,12 @@ class Loop(Object):
         self.stopped = threading.Event()
 
     def do(self, e):
-        Dispatcher.dispatch(e)
+        Dispatcher.dispatch(self, e)
 
     def loop(self):
         self.stopped.clear()
         while not self.stopped.isSet():
-            try:
-                self.do(self.queue.get())
-            except Exception as ex:
-                pass
+            self.do(self.queue.get())
 
     def restart(self):
         self.stop()

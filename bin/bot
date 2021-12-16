@@ -2,21 +2,16 @@
 # This file is placed in the Public Domain.
 
 
-import os, sys ; sys.path.insert(0, os.getcwd())
-
-
-import readline
+import os
 import sys
+sys.path.insert(0, os.getcwd())
+
 import termios
 
+import bot.all
 
 from bot.clt import Client
 from bot.krn import k
-from bot.tbl import Table
-from bot.utl import spl
-
-
-import bot.all
 
 
 class CLI(Client):
@@ -32,14 +27,14 @@ class Console(Client):
         k.do(e)
         e.wait()
         return e
- 
+
     def handle(self, e):
         super().handle(e)
         e.wait()
 
     def poll(self):
         return input("> ")
-        
+
     def raw(self, txt):
         print(txt)
 
