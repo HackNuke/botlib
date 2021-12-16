@@ -2,7 +2,8 @@
 # This file is placed in the Public Domain.
 
 
-import os, sys
+import os
+import sys
 
 
 from bot.irc import Cfg as IRC

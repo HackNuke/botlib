@@ -9,4 +9,3 @@ class Kernel(Runtime, Table):
     pass
 
 k = Kernel()
-k.start()

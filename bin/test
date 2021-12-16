@@ -36,6 +36,7 @@ class CLI(Client):
 
 
 clt = CLI()
+k.add(clt)
 origs = Object()
 results = Object()
 

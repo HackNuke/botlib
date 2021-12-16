@@ -97,7 +97,7 @@ def main():
     else:
         cdir(Cfg.wd)
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.stdout = sys.stdout
+    k.scan("bot", init=False)
     k.cfg.debug = True
     k.start()
     clt.start()
@@ -110,6 +110,6 @@ def main():
     for thr in thrs:
         thr.join()
     consume()
-    k.log(elapsed(time.time()-t))
+    print(elapsed(time.time()-t))
 
 wrap(main)

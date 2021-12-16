@@ -22,6 +22,7 @@ def __dir__():
 
 class Cfg(Object):
 
+    index = None
     mod = ""
     mask = 0o22
     uuids = []
