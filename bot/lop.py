@@ -31,13 +31,14 @@ class Loop(Object):
     def do(self, e):
         Dispatcher.dispatch(self, e)
 
-    def error(self, txt):
-        pass
-
     def loop(self):
         self.stopped.clear()
         while not self.stopped.isSet():
-            self.do(self.queue.get())
+            try:
+                self.do(self.queue.get())
+            except Exception as ex:
+                print(ex)
+                print(dir(ex))
 
     def restart(self):
         self.stop()

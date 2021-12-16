@@ -27,7 +27,11 @@ class Handler(Dispatcher, Loop):
 
     def loop(self):
         while not self.stopped.isSet():
-            self.handle(self, self.event(self.poll()))
+            try:
+                self.handle(self, self.event(self.poll()))
+            except Exception as ex:
+                print(ex)
+                print(dir(ex))
 
     def poll(self):
         return self.queue.get()

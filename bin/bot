@@ -93,7 +93,6 @@ def ver(event):
 
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.stdout = sys.stdout
     k.addcmd(ver)
     if k.prs.txt:
         return k.cmd(clt, k.prs.otxt)

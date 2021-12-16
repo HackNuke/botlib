@@ -28,11 +28,8 @@ class Cfg(Object):
     index = None
     mod = ""
     mask = 0o22
-    name = ""
-    systemd = False
     uuids = []
     verbose = False
-    version = None
 
 
 class Runtime(Bus, Dispatcher, Loop):
@@ -111,7 +108,6 @@ class Runtime(Bus, Dispatcher, Loop):
         self.cfg.daemon = self.opt("d")
         self.cfg.debug = self.opt("z")
         self.cfg.mask = 0o22
-        self.cfg.systemd = self.opt("s")
         self.cfg.verbose = self.opt("v")
 
 
