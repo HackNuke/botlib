@@ -14,6 +14,7 @@ import bot.obj as obj
 import bot.ofn as ofn
 import bot.opt as opt
 import bot.prs as prs
+import bot.pwd as pwd
 import bot.rpt as rpt
 import bot.run as run
 import bot.rss as rss
@@ -41,6 +42,7 @@ Table.addmod(obj)
 Table.addmod(ofn)
 Table.addmod(opt)
 Table.addmod(prs)
+Table.addmod(pwd)
 Table.addmod(rpt)
 Table.addmod(rss)
 Table.addmod(run)
