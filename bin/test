@@ -30,10 +30,6 @@ flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 class CLI(Client):
 
-    def __init__(self):
-        super().__init__()
-        k.add(self)
-
     def raw(self, txt):
         global results
         indexed(results, txt)
@@ -59,7 +55,7 @@ def main():
     global origs
     k.parse_cli(" ".join(sys.argv[1:]))
     k.cfg.debug = True
-    k.cfg.mod = "irc,rss,sys,log,fnd"
+    k.scan("bot", skip="bot.irc")
     loadp(origs, res)
     if os.path.exists(rs):
         shutil.rmtree(rs)

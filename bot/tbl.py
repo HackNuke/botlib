@@ -4,7 +4,7 @@
 import inspect
 
 
-from .obj import Object, get
+from .obj import Object, get, keys
 from .utl import spl
 
 
@@ -55,9 +55,11 @@ class Table(Object):
                 Table.addcls(o)
 
     @staticmethod
-    def scan(pn, ml, init=True, threaded=False):
+    def scan(pn, init=True, threaded=False, skip=[]):
+        ml = ",".join(keys(Table.modules))
         for mn in spl(ml):
-            mn = "%s.%s" % (pn, mn)
+            if mn in spl(skip):
+                continue
             mod = Table.get(mn)
             Table.introspect(mod)
             if init:

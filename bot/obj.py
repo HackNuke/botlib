@@ -182,7 +182,6 @@ def keys(self):
     return self.__dict__.keys()
 
 
-
 def register(self, k, v):
     "register key/value"
     self[str(k)] = v

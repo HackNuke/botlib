@@ -23,7 +23,6 @@ import bot.tbl as tbl
 import bot.thr as thr
 import bot.tmr as tmr
 import bot.tms as tms
-import bot.tst as tst
 import bot.udp as udp
 import bot.utl as utl
 
@@ -51,6 +50,5 @@ Table.addmod(tbl)
 Table.addmod(thr)
 Table.addmod(tmr)
 Table.addmod(tms)
-Table.addmod(tst)
 Table.addmod(udp)
 Table.addmod(utl)
