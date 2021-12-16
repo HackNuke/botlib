@@ -40,7 +40,6 @@ class Table(Object):
     @staticmethod
     def addmod(mod):
         if mod not in Table.modules:
-            Table.introspect(mod)
             Table.modules[mod.__name__.lower()] = mod
 
     @staticmethod

@@ -510,39 +510,45 @@ class Users(Object):
         return user
 
 
-def AUTH(clt, obj):
+def AUTH(obj):
+    clt = k.byorig(obj.orig)
     clt.raw("AUTHENTICATE %s" % clt.cfg.password)
 
 
-def CAP(clt, obj):
+def CAP(obj):
+    clt = k.byorig(obj.orig)
     if clt.cfg.password and "ACK" in obj.arguments:
         clt.raw("AUTHENTICATE PLAIN")
     else:
         clt.raw("CAP REQ :sasl")
 
 
-def h903(clt, obj):
+def h903(obj):
+    clt = k.byorig(obj.orig)
     clt.raw("CAP END")
 
 
-def h904(clt, obj):
+def h904(obj):
+    clt = k.byorig(obj.orig)
     clt.raw("CAP END")
 
 
-def ERROR(clt, obj):
+def ERROR(obj):
+    clt = k.byorig(obj.orig)
     clt.state.nrerror += 1
     clt.state.error = obj.txt
 
 
-def KILL(clt, obj):
+def KILL(obj):
     pass
 
 
-def LOG(clt, obj):
+def LOG(obj):
     pass
 
 
-def NOTICE(clt, obj):
+def NOTICE(obj):
+    clt = k.byorig(obj.orig)
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
             clt.cfg.name.upper(),
@@ -552,7 +558,8 @@ def NOTICE(clt, obj):
         clt.command("NOTICE", obj.channel, txt)
 
 
-def PRIVMSG(clt, obj):
+def PRIVMSG(obj):
+    clt = k.byorig(obj.orig)
     if obj.txt.startswith("DCC CHAT"):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
@@ -578,7 +585,8 @@ def PRIVMSG(clt, obj):
         k.dispatch(obj)
 
 
-def QUIT(clt, obj):
+def QUIT(obj):
+    clt = k.byorig(obj.orig)
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
 

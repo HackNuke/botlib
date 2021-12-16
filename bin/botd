@@ -37,6 +37,7 @@ def daemon():
 
 
 def main():
+    daemon()
     k.cfg.mod += ",irc"
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)

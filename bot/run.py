@@ -44,21 +44,10 @@ class Runtime(Bus, Dispatcher, Loop):
         Table.add(cmd)
         self.cmds[cmd.__name__] = cmd
 
-    def cmd(self, clt, txt):
-        if not txt:
-            return None
-        e = clt.event(txt)
-        e.origin = "root@shell"
-        e.parse()
-        self.do(e)
-        e.wait()
-        return None
-
     def do(self, e):
         self.dispatch(e)
 
-
-    def handle(self, clt, obj):
+    def handle(self, obj):
         obj.parse()
         f = None
         mn = get(Table.modnames, obj.prs.cmd, None)
@@ -76,6 +65,7 @@ class Runtime(Bus, Dispatcher, Loop):
     def init(self, mns, threaded=False):
         for mn in spl(mns):
             mod = Table.get(mn)
+            Table.introspect(mod)
             i = getattr(mod, "init", None)
             if i:
                 if threaded:
@@ -96,6 +86,7 @@ class Runtime(Bus, Dispatcher, Loop):
 
     def parse_cli(self, txt):
         parse(self.prs, txt)
+        update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
         self.cfg.mask = 0o22
 

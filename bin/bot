@@ -2,17 +2,62 @@
 # This file is placed in the Public Domain.
 
 
-from bot.bus import Bus
+import os, sys ; sys.path.insert(0, os.getcwd())
+
+
+import readline
+import sys
+import termios
+
+
 from bot.clt import Client
 from bot.krn import k
+from bot.utl import spl
 
 
-import bot.all, sys
+
 
 class CLI(Client):
 
     def raw(self, txt):
         print(txt)
+
+
+class Console(Client):
+
+    def handle(self, clt, e):
+        super().handle(self, e)
+        e.wait()
+
+    def poll(self):
+        return input("> ")
+        
+    def raw(self, txt):
+        print(txt)
+
+def daemon():
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    os.umask(0)
+    si = open("/dev/null", 'r')
+    so = open("/dev/null", 'a+')
+    se = open("/dev/null", 'a+')
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
 def cmd(txt):
@@ -26,11 +71,23 @@ def cmd(txt):
     k.do(e)
     e.wait()
 
-
+import bot.all
 
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    return cmd(k.prs.otxt)
+    if k.prs.txt:
+        return cmd(k.prs.otxt)
+    if k.opt("d"):
+        daemon()
+    for mn in spl(k.cfg.mod):
+        k.init("bot.%s" % mn)
+        k.wait()
+    if k.opt("c") and not k.opt("d"):
+        clt = Console()
+        k.add(clt)
+        clt.start()
+    if k.opt("cd"):
+        k.wait()
 
 
-main()
+wrap(main)
