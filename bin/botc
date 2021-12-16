@@ -2,34 +2,25 @@
 # This file is placed in the Public Domain.
 
 
-"24/7 channel daemon"
-
-
-__version__ = "147"
-
-
 import os
-import readline
 import sys
-import termios
-import threading
-import time
 
 
 from bot.clt import Client
 from bot.irc import Cfg as IRC
 from bot.krn import k
 from bot.obj import Cfg
-from bot.ofn import fmt
 from bot.run import spl
-from bot.run import Cfg as RunCfg
-from bot.tbl import Table
 
 
 Cfg.wd = "/var/lib/botd/"
 
 
-starttime = time.time()
+IRC.nick = "botd"
+IRC.channel = "#botd"
+
+
+import bot.all
 
 
 class CLI(Client):
@@ -39,36 +30,15 @@ class CLI(Client):
         k.add(self)
 
     def raw(self, txt):
-        sys.stdout.write(txt)
-        sys.stdout.write("\n")
-        sys.stdout.flush()
-
-
-c = CLI()
-
-
-import bot.all
-
-
-def wrap(func):
-    try:
-        func()
-    except KeyboardInterrupt:
-        print("")
-    except PermissionError as ex:
-        print("you need root privileges")
-
-
-def ver(event):
-    event.reply("BOTC %s" % __version__)
+        print(txt)
 
 
 def main(): 
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.addcmd(ver)
     if not k.prs.txt:
         return
+    c = CLI()
     k.cmd(c, k.prs.otxt)
 
 
-wrap(main)
+main()

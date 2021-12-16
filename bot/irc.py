@@ -22,7 +22,6 @@ from .obj import Object, update
 from .ofn import edit, fmt, save
 from .opt import Output
 from .thr import launch
-from .tms import elapsed
 
 
 def __dir__():

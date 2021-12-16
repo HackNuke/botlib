@@ -22,14 +22,9 @@ def __dir__():
 
 class Cfg(Object):
 
-    console = False
-    daemon = False
-    debug = False
-    index = None
     mod = ""
     mask = 0o22
     uuids = []
-    verbose = False
 
 
 class Runtime(Bus, Dispatcher, Loop):
@@ -101,14 +96,8 @@ class Runtime(Bus, Dispatcher, Loop):
 
     def parse_cli(self, txt):
         parse(self.prs, txt)
-        update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
-        self.cfg.index = self.prs.index
-        self.cfg.console = self.opt("c")
-        self.cfg.daemon = self.opt("d")
-        self.cfg.debug = self.opt("z")
         self.cfg.mask = 0o22
-        self.cfg.verbose = self.opt("v")
 
 
     @staticmethod

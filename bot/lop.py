@@ -37,8 +37,7 @@ class Loop(Object):
             try:
                 self.do(self.queue.get())
             except Exception as ex:
-                print(ex)
-                print(dir(ex))
+                pass
 
     def restart(self):
         self.stop()

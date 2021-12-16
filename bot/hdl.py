@@ -30,8 +30,7 @@ class Handler(Dispatcher, Loop):
             try:
                 self.handle(self, self.event(self.poll()))
             except Exception as ex:
-                print(ex)
-                print(dir(ex))
+                pass
 
     def poll(self):
         return self.queue.get()

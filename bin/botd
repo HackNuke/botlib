@@ -2,51 +2,42 @@
 # This file is placed in the Public Domain.
 
 
-"24/7 channel daemon"
-
-
-__version__ = "147"
-
-
-import os
-import readline
-import sys
-import termios
-import threading
-import time
+import os, sys
 
 
 from bot.irc import Cfg as IRC
 from bot.krn import k
 from bot.obj import Cfg
-from bot.ofn import fmt
-from bot.run import Runtime, spl
-from bot.run import Cfg as RunCfg
-from bot.tbl import Table
-from bot.tms import elapsed
+from bot.run import spl
+
+
+Cfg.wd = "/var/lib/botd/"
 
 
 IRC.nick = "botd"
 IRC.channel = "#botd"
 
 
-Cfg.wd = "/var/lib/botd/"
-
-
-starttime = time.time()
-
-
 import bot.all
 
 
-def ver(event):
-    event.reply("BOTD %s" % __version__)
+def daemon():
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    os.umask(0)
+    si = open("/dev/null", 'r')
+    so = open("/dev/null", 'a+')
+    se = open("/dev/null", 'a+')
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
+
 
 
 def main():
-    k.cfg.verbose = False
-    k.addcmd(ver)
-    k.cfg.mod += "irc,rss"
+    k.cfg.mod += ",irc"
     for mn in spl(k.cfg.mod):
         k.init("bot.%s" % mn)
     k.wait()

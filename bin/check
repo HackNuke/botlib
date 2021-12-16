@@ -1,4 +1,5 @@
 grep -R --exclude-dir=docs __import__ bot 
+grep -R --exclude-dir=docs __main__ bot 
 grep -R --exclude-dir=docs popen bot
 grep -R --exclude-dir=docs pkgutil bot
 grep -R --exclude-dir=docs importlib bot
