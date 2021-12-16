@@ -22,13 +22,13 @@ class Handler(Dispatcher, Loop):
         c.orig = repr(self)
         return c
 
-    def handle(self, clt, e):
+    def handle(self, e):
         Loop.put(self, e)
 
     def loop(self):
         while not self.stopped.isSet():
             try:
-                self.handle(self, self.event(self.poll()))
+                self.handle(self.event(self.poll()))
             except Exception as ex:
                 pass
 

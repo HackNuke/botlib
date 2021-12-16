@@ -29,7 +29,7 @@ class Loop(Object):
         self.stopped = threading.Event()
 
     def do(self, e):
-        Dispatcher.dispatch(self, e)
+        Dispatcher.dispatch(e)
 
     def loop(self):
         self.stopped.clear()

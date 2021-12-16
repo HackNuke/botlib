@@ -3,6 +3,7 @@
 
 from .obj import Object
 
+
 def __dir__():
     return ("Dispatcher",)
 
@@ -15,7 +16,7 @@ class Dispatcher(Object):
 
     def dispatch(self, event):
         if event and event.type in self.cbs:
-            self.cbs[event.type](self, event)
+            self.cbs[event.type](event)
         else:
             event.ready()
 

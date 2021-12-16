@@ -11,7 +11,7 @@ def __dir__():
 
 class Client(Handler):
 
-    def handle(self, clt, e):
+    def handle(self, e):
         k.put(e)
 
     def raw(self, txt):

@@ -7,6 +7,7 @@ from .obj import Object
 def __dir__():
     return ("BusError", "Bus")
 
+
 class BusError(Exception):
 
     pass

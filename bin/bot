@@ -2,47 +2,35 @@
 # This file is placed in the Public Domain.
 
 
-import os
-import readline
-import sys
-import termios
-import threading
-import time
-
-
+from bot.bus import Bus
+from bot.clt import Client
 from bot.krn import k
-from bot.obj import Cfg, Object, keys
-from bot.ofn import fmt
-from bot.run import spl
-from bot.tbl import Table
-from bot.tms import elapsed
 
 
-import bot.all
+import bot.all, sys
+
+class CLI(Client):
+
+    def raw(self, txt):
+        print(txt)
 
 
-def daemon():
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", 'r')
-    so = open("/dev/null", 'a+')
-    se = open("/dev/null", 'a+')
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
+def cmd(txt):
+    if not txt:
+        return None
+    c = CLI()
+    k.add(c)
+    e = c.event(txt)
+    e.origin = "root@shell"
+    e.parse()
+    k.do(e)
+    e.wait()
+
 
 
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    if k.prs.txt:
-        return k.cmd(clt, k.prs.otxt)
-    daemon()
-    for mn in spl(k.cfg.mod):
-        k.init("bot.%s" % mn)
-    k.wait()
+    return cmd(k.prs.otxt)
 
 
 main()
