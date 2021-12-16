@@ -47,7 +47,6 @@ def init():
     i = IRC()
     last(i.cfg)
     i.start()
-    k.add(i)
     return i
 
 
@@ -376,6 +375,7 @@ class IRC(Output, Handler):
         self.connected.wait()
         Handler.start(self)
         Output.start(self)
+        k.add(self)
         if not self.keeprunning:
             launch(self.keep)
         self.wait()
@@ -523,6 +523,7 @@ class DCC(Client):
         e.orig = repr(self)
         e.txt = txt.rstrip()
         e.sock = self.sock
+        e.parse()
         return e
 
     def handle(self, e):

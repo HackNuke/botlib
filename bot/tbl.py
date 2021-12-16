@@ -45,6 +45,19 @@ class Table(Object):
             Table.modules[mod.__name__.lower()] = mod
 
     @staticmethod
+    def init(mns, pn=None, threaded=False):
+        for mn in spl(mns):
+            if pn:
+                mn = "%s.%s" % (pn, mn)
+            mod = Table.get(mn)
+            i = getattr(mod, "init", None)
+            if i:
+                if threaded:
+                    launch(i)
+                else:
+                    i()
+
+    @staticmethod
     def introspect(mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if k not in Table.modnames:
@@ -56,20 +69,14 @@ class Table(Object):
                 Table.addcls(o)
 
     @staticmethod
-    def scan(pn, init=True, threaded=False, skip=None):
+    def scan(skip=None):
         ml = ",".join(keys(Table.modules))
         for mn in spl(ml):
             if skip and mn in spl(skip):
                 continue
             mod = Table.get(mn)
             Table.introspect(mod)
-            if init:
-                i = getattr(mod, "init", None)
-                if i:
-                    if threaded:
-                        launch(i)
-                    else:
-                        i()
+
 
 def getcls(mn, on):
     mod = Table.classes.get(mn, None)
