@@ -12,7 +12,7 @@ from .prs import parse as pparse
 
 
 def __dir__():
-    return ("Event", "Handler", "event")
+    return ("Event", "Handler", "event", "cmd")
 
 
 class Event(Object):

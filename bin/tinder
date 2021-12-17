@@ -16,6 +16,7 @@ from bot.dpt import Dispatcher
 from bot.krn import k
 from bot.hdl import event
 from bot.obj import Cfg, Object
+from bot.ofn import indexed, fmt
 from bot.tbl import Table
 from bot.thr import multi
 from bot.tms import elapsed
@@ -43,15 +44,15 @@ param.tdo = ["test4", ""]
 class CLI(Client):
 
     def raw(self, txt):
-        print(txt)
+        indexed(results, txt)
 
 
 clt = CLI()
 events = []
+results = Object()
 
 
 def payload():
-    c = k.first()
     cmds = list(Table.modnames)
     random.shuffle(cmds)
     for cmd in cmds:
@@ -76,6 +77,9 @@ def main():
     for thr in multi(nr, payload):
         thr.join()
     consume(events)
-    print(elapsed(time.time()-t))
+    if k.opt("v"):
+        print(fmt(results, newline=True))
+        print(elapsed(time.time()-t))
+
 
 wrap(main)

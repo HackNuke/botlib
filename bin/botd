@@ -9,7 +9,6 @@ import sys
 from bot.irc import Cfg as IRC
 from bot.krn import k
 from bot.obj import Cfg
-from bot.run import spl
 
 
 Cfg.wd = "/var/lib/botd/"
@@ -38,10 +37,9 @@ def daemon():
 
 
 def main():
-    daemon()
     k.cfg.mod += ",irc"
-    for mn in spl(k.cfg.mod):
-        k.init("bot.%s" % mn)
+    k.scan()
+    k.init("bot", k.cfg.mod)
     k.wait()
 
 
