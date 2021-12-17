@@ -12,7 +12,7 @@ sys.path.insert(0, os.getcwd())
 
 from bot.clt import Client
 from bot.krn import k
-
+from bot.hdl import cmd
 
 from run import daemon, wrap
 
@@ -39,8 +39,9 @@ def main():
     k.start()
     console = k.opt("c") or k.cfg.mod
     if k.prs.txt:
+        import readline
         c = Console()
-        return c.cmd(k.prs.otxt)
+        return cmd(c, k.prs.otxt)
     if k.opt("d"):
         daemon()
         console = False

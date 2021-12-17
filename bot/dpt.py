@@ -10,15 +10,15 @@ def __dir__():
 
 class Dispatcher(Object):
 
-    def __init__(self):
-        super().__init__()
-        self.cbs = Object()
+    cbs = Object()
 
-    def dispatch(self, event):
-        if event and event.type in self.cbs:
-            self.cbs[event.type](event)
+    @staticmethod
+    def dispatch(event):
+        if event and event.type in Dispatcher.cbs:
+            Dispatcher.cbs[event.type](event)
         else:
             event.ready()
 
-    def register(self, k, v):
-        self.cbs[str(k)] = v
+    @staticmethod
+    def register(k, v):
+        Dispatcher.cbs[str(k)] = v

@@ -4,7 +4,6 @@
 import queue
 import threading
 
-
 from .dpt import Dispatcher
 from .obj import Object
 from .thr import launch
@@ -20,7 +19,7 @@ class Stop(Exception):
     pass
 
 
-class Loop(Dispatcher):
+class Loop(Object):
 
     def __init__(self):
         super().__init__()
@@ -29,7 +28,7 @@ class Loop(Dispatcher):
         self.stopped = threading.Event()
 
     def do(self, e):
-        self.dispatch(e)
+        Dispatcher.dispatch(e)
 
     def loop(self):
         self.stopped.clear()

@@ -12,7 +12,7 @@ def __dir__():
 class Client(Handler):
 
     def __init__(self):
-        super().__init__()
+        Handler.__init__(self)
         k.add(self)
 
     def handle(self, e):

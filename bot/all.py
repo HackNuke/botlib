@@ -5,7 +5,6 @@ import bot.bus as bus
 import bot.clt as clt
 import bot.dbs as dbs
 import bot.dpt as dpt
-import bot.evt as evt
 import bot.fnd as fnd
 import bot.irc as irc
 import bot.log as log
@@ -31,7 +30,6 @@ Table.addmod(bus)
 Table.addmod(clt)
 Table.addmod(dbs)
 Table.addmod(dpt)
-Table.addmod(evt)
 Table.addmod(fnd)
 Table.addmod(irc)
 Table.addmod(log)
