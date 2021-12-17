@@ -9,22 +9,25 @@ import sys
 import termios
 import time
 
+
 sys.path.insert(0, os.getcwd())
+
 
 from bot.clt import Client
 from bot.krn import k
 from bot.obj import Cfg, Object, cdir
 from bot.ofn import fmt, indexed
-from bot.run import Runtime
 from bot.tbl import Table
-from bot.thr import launch
+from bot.thr import launch, multi
 from bot.tms import elapsed
+from bot.utl import consume
+
+
+from run import skel, wrap
 
 
 Cfg.wd = ".test"
 
-
-events = []
 
 param = Object()
 param.add = ["test@shell", "bart", ""]
@@ -44,24 +47,12 @@ class CLI(Client):
     def raw(self, txt):
         print(txt)
 
+
 clt = CLI()
+events = []
 
 
-def consume():
-    fixed = []
-    res = []
-    for e in events:
-        e.wait()
-        fixed.append(e)
-    for f in fixed:
-        try:
-            events.remove(f)
-        except ValueError:
-            continue
-    return res
-
-
-def exec():
+def payload():
     c = k.first()
     cmds = list(Table.modnames)
     random.shuffle(cmds)
@@ -72,41 +63,21 @@ def exec():
             events.append(e)
 
 
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
-
 import bot.all
 
 
 def main():
-    if os.path.exists(Cfg.wd):
-        shutil.rmtree(Cfg.wd)
-        os.sync()
-    else:
-        cdir(Cfg.wd)
+    skel(Cfg.wd)
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.scan("bot", init=False)
+    k.scan("bot")
     k.cfg.debug = True
-    print(k.cfg.index)
     k.start()
     clt.start()
-    thrs = []
     nr = k.cfg.index or 1
     t = time.time()
-    for x in range(nr):
-        thr = launch(exec, name="task%s" % x)
-        thrs.append(thr)
-    for thr in thrs:
+    for thr in multi(nr, payload):
         thr.join()
-    consume()
+    consume(events)
     print(elapsed(time.time()-t))
 
 wrap(main)

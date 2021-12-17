@@ -48,3 +48,11 @@ def launch(func, *args, **kwargs):
     t = Thr(func, *args, thrname=name, daemon=True)
     t.start()
     return t
+
+def multi(nr, func, *args, **kwargs):
+    thrs = []
+    name = kwargs.get("name", getname(func))
+    for x in range(nr):
+        thr = launch(func, *args, **kwargs)
+        thrs.append(thr)
+    return thrs

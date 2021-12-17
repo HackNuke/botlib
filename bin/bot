@@ -4,26 +4,24 @@
 
 import os
 import sys
-sys.path.insert(0, os.getcwd())
-
 import termios
 
-import bot.all
+
+sys.path.insert(0, os.getcwd())
+
 
 from bot.clt import Client
 from bot.krn import k
 
+
+from run import daemon, wrap
+
+
 class Console(Client):
 
-    def cmd(self, txt):
-        e = self.event(txt)
-        k.do(e)
-        e.wait()
-        return e
-
-    def handle(self, e):
-        super().handle(e)
-        e.wait()
+    def handle(self, event):
+        super().handle(event)
+        event.wait()
 
     def poll(self):
         return input("> ")
@@ -32,29 +30,7 @@ class Console(Client):
         print(txt)
 
 
-def daemon():
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", 'r')
-    so = open("/dev/null", 'a+')
-    se = open("/dev/null", 'a+')
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
-
-
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+import bot.all
 
 
 def main():

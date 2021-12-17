@@ -20,7 +20,7 @@ class Stop(Exception):
     pass
 
 
-class Loop(Object):
+class Loop(Dispatcher):
 
     def __init__(self):
         super().__init__()
@@ -29,7 +29,7 @@ class Loop(Object):
         self.stopped = threading.Event()
 
     def do(self, e):
-        Dispatcher.dispatch(self, e)
+        self.dispatch(e)
 
     def loop(self):
         self.stopped.clear()

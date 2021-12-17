@@ -1,19 +1,21 @@
 # This file is placed in the Public Domain.
 
 
-from .dpt import Dispatcher
 from .evt import Event
 from .lop import Loop
+
 
 def __dir__():
     return ("Handler",)
 
 
-class Handler(Dispatcher, Loop):
+class Handler(Loop):
 
-    def __init__(self):
-        Loop.__init__(self)
-        Dispatcher.__init__(self)
+    def cmd(self, txt):
+        e = self.event(txt)
+        self.do(e)
+        e.wait()
+        return e
 
     def event(self, txt, origin="root@shell"):
         c = Event()

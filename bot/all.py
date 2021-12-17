@@ -16,7 +16,6 @@ import bot.opt as opt
 import bot.prs as prs
 import bot.pwd as pwd
 import bot.rpt as rpt
-import bot.run as run
 import bot.rss as rss
 import bot.sys as sys
 import bot.tbl as tbl
@@ -44,7 +43,6 @@ Table.addmod(prs)
 Table.addmod(pwd)
 Table.addmod(rpt)
 Table.addmod(rss)
-Table.addmod(run)
 Table.addmod(sys)
 Table.addmod(tbl)
 Table.addmod(thr)

@@ -10,20 +10,25 @@ import termios
 import time
 
 
+sys.path.insert(0, os.getcwd())
+
+
 from bot.clt import Client
 from bot.krn import k
 from bot.obj import Cfg, Object, cdir, values
 from bot.ofn import indexed
 from bot.ofn import fmt
 from bot.tbl import Table
-from bot.thr import launch
+from bot.thr import launch, multi
 from bot.tms import elapsed
+from bot.utl import consume
+
+
+from run import skel, wrap
 
 
 Cfg.wd = ".test"
 
-
-events = []
 
 param = Object()
 param.add = ["test@shell", "bart", ""]
@@ -40,32 +45,15 @@ param.tdo = ["test4", ""]
 
 class CLI(Client):
 
-    def __init__(self):
-        super().__init__()
-        k.add(self)
-        
     def raw(self, txt):
         indexed(results, txt)
 
 
 clt = CLI()
+events = []
 
 
-def consume():
-    fixed = []
-    res = []
-    for e in events:
-        e.wait()
-        fixed.append(e)
-    for f in fixed:
-        try:
-            events.remove(f)
-        except ValueError:
-            continue
-    return res
-
-
-def exec():
+def payload():
     for mod in values(Table.modules):
         for on in dir(mod):
             o = getattr(mod, on, None)
@@ -76,40 +64,21 @@ def exec():
                 for nm in o.__code__.co_names:
                     print(nm)
 
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
 
 import bot.all
 
 
 def main():
-    if os.path.exists(Cfg.wd):
-        shutil.rmtree(Cfg.wd)
-        os.sync()
-    else:
-        cdir(Cfg.wd)
+    t = time.time()
+    skel(Cfg.wd)
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.stdout = sys.stdout
     k.cfg.debug = True
+    k.scan()
     k.start()
     clt.start()
-    thrs = []
-    nr = k.cfg.index or 1
-    t = time.time()
-    for x in range(nr):
-        thr = launch(exec, name="task%s" % x)
-        thrs.append(thr)
-    for thr in thrs:
+    for thr in multi(k.cfg.index or 1, payload):
         thr.join()
-    consume()
-    k.log(elapsed(time.time()-t))
+    consume(events)
+    print(elapsed(time.time()-t))
 
 wrap(main)
