@@ -4,8 +4,8 @@
 import unittest
 
 
-from bot.krn import Cfg, k
-
+from bot.krn import k
+from bot.run import Cfg
 
 class Test_Kernel(unittest.TestCase):
 

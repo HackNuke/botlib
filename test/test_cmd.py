@@ -5,7 +5,9 @@ import unittest
 
 
 from bot.clt import Client
+from bot.dpt import Dispatcher
 from bot.krn import k
+from bot.hdl import event
 from bot.obj import Cfg, Object, get
 from bot.ofn import indexed
 from bot.tbl import Table
@@ -44,7 +46,7 @@ class Test_Commands(unittest.TestCase):
             k.add(c)
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
-                e = c.event(cmd + " " + ex)
-                k.dispatch(e)
+                e = event(cmd + " " + ex, repr(c))
+                Dispatcher.dispatch(e)
                 cmdstr = cmd + " " + ex
                 events.append(e)

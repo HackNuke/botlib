@@ -36,7 +36,6 @@ class CLI(Client):
 
 
 clt = CLI()
-k.add(clt)
 origs = Object()
 results = Object()
 
@@ -56,7 +55,7 @@ def main():
     global origs
     k.parse_cli(" ".join(sys.argv[1:]))
     k.cfg.debug = True
-    k.scan("bot", skip="bot.irc")
+    k.scan()
     loadp(origs, res)
     if os.path.exists(rs):
         shutil.rmtree(rs)
