@@ -32,7 +32,7 @@ import bot.all
 
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
-    k.scan()
+    k.scan(skip="bot.log")
     k.start()
     console = k.opt("c") or k.cfg.mod
     if k.prs.txt:

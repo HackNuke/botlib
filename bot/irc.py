@@ -13,6 +13,7 @@ import _thread
 
 from .clt import Client
 from .dbs import find, last
+from .dpt import Dispatcher
 from .hdl import Event, Handler
 from .krn import k
 from .lop import Stop
@@ -143,15 +144,15 @@ class IRC(Output, Handler):
         self.threaded = False
         self.users = Users()
         self.zelf = ""
-        self.register("903", h903)
-        self.register("904", h903)
-        self.register("AUTHENTICATE", AUTH)
-        self.register("CAP", CAP)
-        self.register("ERROR", ERROR)
-        self.register("LOG", LOG)
-        self.register("NOTICE", NOTICE)
-        self.register("PRIVMSG", PRIVMSG)
-        self.register("QUIT", QUIT)
+        Dispatcher.register("903", h903)
+        Dispatcher.register("904", h903)
+        Dispatcher.register("AUTHENTICATE", AUTH)
+        Dispatcher.register("CAP", CAP)
+        Dispatcher.register("ERROR", ERROR)
+        Dispatcher.register("LOG", LOG)
+        Dispatcher.register("NOTICE", NOTICE)
+        Dispatcher.register("PRIVMSG", PRIVMSG)
+        Dispatcher.register("QUIT", QUIT)
 
     def announce(self, txt):
         for channel in self.channels:
@@ -243,7 +244,7 @@ class IRC(Output, Handler):
             self.command("JOIN", channel)
 
     def handle(self, e):
-        self.dispatch(e)
+        Dispatcher.dispatch(e)
 
     def keep(self):
         while not self.stopped.isSet():
@@ -464,7 +465,7 @@ def PRIVMSG(obj):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         obj.type = "cmd"
-        k.dispatch(obj)
+        Dispatcher.dispatch(obj)
 
 
 def QUIT(obj):

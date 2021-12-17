@@ -58,13 +58,15 @@ class Event(Object):
 
 class Handler(Loop):
 
+    def event(self, txt):
+        return event(txt, repr(self))
 
     def handle(self, e):
         self.put(e)
 
     def loop(self):
         while not self.stopped.isSet():
-            self.handle(event(self.poll(), repr(self)))
+            self.handle(self.event(self.poll(), repr(self)))
 
     def poll(self):
         return self.queue.get()
