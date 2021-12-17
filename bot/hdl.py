@@ -79,8 +79,8 @@ def event(txt, orig=None, origin="root@shell"):
     c.parse()
     return c
 
+
 def cmd(clt, txt):
-    from .krn import k
     e = event(txt, repr(clt))
     k.do(e)
     e.wait()

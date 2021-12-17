@@ -51,8 +51,7 @@ def launch(func, *args, **kwargs):
 
 def multi(nr, func, *args, **kwargs):
     thrs = []
-    name = kwargs.get("name", getname(func))
-    for x in range(nr):
+    for _x in range(nr):
         thr = launch(func, *args, **kwargs)
         thrs.append(thr)
     return thrs

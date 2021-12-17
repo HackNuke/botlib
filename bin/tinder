@@ -4,9 +4,7 @@
 
 import os
 import random
-import shutil
 import sys
-import termios
 import time
 
 
@@ -14,14 +12,14 @@ sys.path.insert(0, os.getcwd())
 
 
 from bot.clt import Client
+from bot.dpt import Dispatcher
 from bot.krn import k
-from bot.obj import Cfg, Object, cdir
-from bot.ofn import fmt, indexed
+from bot.hdl import event
+from bot.obj import Cfg, Object
 from bot.tbl import Table
-from bot.thr import launch, multi
+from bot.thr import multi
 from bot.tms import elapsed
 from bot.utl import consume
-
 
 from run import skel, wrap
 
@@ -58,8 +56,8 @@ def payload():
     random.shuffle(cmds)
     for cmd in cmds:
         for ex in getattr(param, cmd, [""]):
-            e = c.event(cmd + " " + ex)
-            k.dispatch(e)
+            e = event(cmd + " " + ex, repr(clt))
+            Dispatcher.dispatch(e)
             events.append(e)
 
 

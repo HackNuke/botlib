@@ -4,23 +4,23 @@
 
 import os
 import sys
-import termios
 
 
 sys.path.insert(0, os.getcwd())
 
+import bot.all
 
 from bot.clt import Client
 from bot.krn import k
-from bot.hdl import cmd
+from bot.hdl import cmd, event
 
 from run import daemon, wrap
 
 
 class Console(Client):
 
-    def handle(self, event):
-        super().handle(event)
+    def handle(self, e):
+        super().handle(e)
         event.wait()
 
     def poll(self):
@@ -30,16 +30,12 @@ class Console(Client):
         print(txt)
 
 
-import bot.all
-
-
 def main():
     k.parse_cli(" ".join(sys.argv[1:]))
     k.scan()
     k.start()
     console = k.opt("c") or k.cfg.mod
     if k.prs.txt:
-        import readline
         c = Console()
         return cmd(c, k.prs.otxt)
     if k.opt("d"):
