@@ -6,11 +6,11 @@ import unittest
 
 
 from bot.dbs import NoModule, NoType, Db, fns, hook, last
+from bot.krn import Cfg as RunCfg
 from bot.obj import NoPickle
 from bot.obj import Cfg, Object, cdir, get, items, keys, register
 from bot.obj import set, update, values
 from bot.ofn import edit, fmt, gettype, load, save
-from bot.run import Cfg as RunCfg
 
 
 attrs = [

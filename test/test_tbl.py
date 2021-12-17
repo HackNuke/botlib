@@ -13,6 +13,5 @@ import bot.all
 class Test_Table(unittest.TestCase):
 
     def test_tblclasses(self):
-        Table.scan("bot", skip="bot.irc")
+        Table.scan()
         self.assertTrue(Object in values(Table.classes))
-
