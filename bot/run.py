@@ -8,6 +8,7 @@ from .bus import Bus
 from .dpt import Dispatcher
 from .lop import Loop
 from .obj import Object, get, update
+from .obj import Cfg as ObjCfg
 from .prs import parse
 from .tbl import Table
 
@@ -22,11 +23,12 @@ def __dir__():
 
 class Cfg(Object):
 
+    debug = False
     index = None
     mod = ""
     mask = 0o22
     uuids = []
-
+    wd = ""
 
 class Runtime(Bus, Loop):
 
@@ -76,6 +78,8 @@ class Runtime(Bus, Loop):
         parse(self.prs, txt)
         update(self.opts, self.prs.opts)
         update(self.cfg, self.prs.sets)
+        if self.cfg.wd:
+            ObjCfg.wd = self.cfg.wd
         self.cfg.index = self.prs.index
         self.cfg.mask = 0o22
 

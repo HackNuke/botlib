@@ -58,8 +58,8 @@ class Event(Object):
 
 class Handler(Loop):
 
-    def event(self, txt):
-        return event(txt, repr(self))
+    def event(self, txt, orig=None):
+        return event(txt, orig or repr(self))
 
     def handle(self, e):
         self.put(e)
