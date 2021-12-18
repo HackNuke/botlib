@@ -35,11 +35,10 @@ def daemon():
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-
 def main():
     k.cfg.mod += ",irc"
     k.scan()
-    k.init("bot", k.cfg.mod)
+    k.init(k.cfg.mod, "bot")
     k.wait()
 
 

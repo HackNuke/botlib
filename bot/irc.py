@@ -269,6 +269,7 @@ class IRC(Output, Handler):
         )
 
     def parsing(self, txt):
+        print(txt)
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
