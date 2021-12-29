@@ -21,7 +21,7 @@ class Parsed(Default):
         if self.txt:
             return self.txt.split()[0].lower()
 
-    def gets(self):
+    def gets(self, keyz=None):
         return Object([(x.split("==")[0], x.split("==")[-1]) for x in self.txt.split() if "==" in x])
 
     def opts(self):

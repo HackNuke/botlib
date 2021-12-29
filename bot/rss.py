@@ -187,13 +187,13 @@ def useragent(txt):
 
 
 def dpl(event):
-    if len(event.args) < 2:
+    if len(event.args()) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
     db = Db()
-    setter = {"display_list": event.args[1]}
+    setter = {"display_list": event.args()[1]}
     name = get(db.names, "rss", "rss")
-    _fn, o = db.lastmatch(name, {"rss": event.args[0]})
+    _fn, o = db.lastmatch(name, {"rss": event.args()[0]})
     if o:
         edit(o, setter)
         save(o)
@@ -214,10 +214,10 @@ def ftc(event):
 
 
 def rem(event):
-    if not event.args:
+    if not event.args():
         event.reply("rem <stringinurl>")
         return
-    selector = {"rss": event.args[0]}
+    selector = {"rss": event.args()[0]}
     nr = 0
     got = []
     for _fn, o in find("rss", selector):
@@ -230,10 +230,10 @@ def rem(event):
 
 
 def rss(event):
-    if not event.args:
+    if not event.args():
         event.reply("rss <url>")
         return
-    url = event.args[0]
+    url = event.args()[0]
     if "http" not in url:
         event.reply("i need an url")
         return
@@ -241,6 +241,6 @@ def rss(event):
     if res:
         return
     o = Rss()
-    o.rss = event.args[0]
+    o.rss = event.args()[0]
     save(o)
     event.reply("ok")

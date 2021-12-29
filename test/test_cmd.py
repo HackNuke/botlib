@@ -4,13 +4,12 @@
 import unittest
 
 
-from bot.clt import Client
-from bot.dpt import Dispatcher
-from bot.krn import k
-from bot.hdl import event
-from bot.obj import Cfg, Object, get
-from bot.ofn import indexed
-from bot.tbl import Table
+from obj import Object, get
+from ocf import Cfg
+from oev import Event
+from ofn import fmt, idx
+from ohd import Handler
+from otb import Cmd, Obj
 
 
 events = []
@@ -33,20 +32,29 @@ param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["things todo"]
 
 
+class CLI(Handler):
+
+
+     def raw(self, txt):
+         idx(results, txt)
+        
+         
+c = CLI()
+results = Object()
+
 import bot.all
 
 
 class Test_Commands(unittest.TestCase):
 
     def test_commands(self):
-        cmds = list(Table.modnames)
-        c = k.first()
-        if not c:
-            c = Client()
-            k.add(c)
+        cmds = list(Cmd.cmds)
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
-                e = event(cmd + " " + ex, repr(c))
-                Dispatcher.dispatch(e)
-                cmdstr = cmd + " " + ex
+                e = Event(cmd + " " + ex, repr(c))
+                c.handle(e)
+                Obj.add(c)
                 events.append(e)
+        if Cfg.verbose:
+            print(fmt(results, newline=True))
+        

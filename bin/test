@@ -2,77 +2,32 @@
 # This file is placed in the Public Domain.
 
 
-import os, sys ; sys.path.insert(0, os.getcwd())
-
-
 import doctest
-import json
-import os
-import reproducible
-import shutil
-import time
+import sys
 import unittest
 
 
-from bot.clt import Client
-from bot.obj import Cfg, Object, cdir
-from bot.krn import k
-from bot.ofn import diff, dump, fmt, indexed, loadp, savep
-from bot.run import Runtime
-from bot.run import Cfg as RunCfg
+sys.path.insert(0, "lib")
 
 
+from ocf import Cfg
+from opr import Parsed
+
+
+p = Parsed(" ".join(sys.argv[1:]))
+
+
+Cfg.verbose = "v" in p.opts()
 Cfg.wd = ".test"
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 
-class CLI(Client):
-
-    def raw(self, txt):
-        global results
-        indexed(results, txt)
-
-
-clt = CLI()
-origs = Object()
-results = Object()
-
-
-import bot.all
-
-
-pat = "test_%s*" % "*"
-r = ".test"
-rcfg = os.path.join(r, "config.yaml")
-rs = os.path.join(r, "store")
-res = os.path.join(r, "results")
-
-
 def main():
-    global results
-    global origs
-    k.parse_cli(" ".join(sys.argv[1:]))
-    k.cfg.debug = True
-    k.scan()
-    loadp(origs, res)
-    if os.path.exists(rs):
-        shutil.rmtree(rs)
-        os.sync()
-    else:
-        cdir(rs)
-    context = reproducible.Context()
-    context.add_repo(path='.', allow_dirty=True, diff=True)
-    clt.start()
+    pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    savep(results, res)
-    context.export_yaml(rcfg)
-    context.add_file(res, category='output')
-    if k.opt("v"):
-        print(fmt(results, newline=True))
-        d = diff(origs, results)
-        print(str(d))
+
 
 main()

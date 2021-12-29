@@ -9,4 +9,5 @@ from odf import Default
 class Cfg(Default):
 
     debug = False
+    verbose = False
     wd = ""

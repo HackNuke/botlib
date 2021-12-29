@@ -10,7 +10,7 @@ import bot.rss
 import bot.udp
 
 
-from otb import Cls, Cmd
+from otb import Cls, Cmd, Tbl
 
 
 def scan(mod):
@@ -19,7 +19,7 @@ def scan(mod):
              Cmd.cmds[k] = o
     for k, clz in inspect.getmembers(mod, inspect.isclass):
        Cls.add(clz)
-
+    Tbl.add(mod)
 
 scan(bot.bsc)
 scan(bot.irc)

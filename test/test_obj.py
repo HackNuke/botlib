@@ -2,66 +2,86 @@
 
 
 import os
+import sys
 import unittest
 
 
-from bot.dbs import NoModule, NoType, Db, fns, hook, last
-from bot.obj import NoPickle
-from bot.obj import Cfg, Object, cdir, get, items, keys, register
-from bot.obj import set, update, values
-from bot.ofn import edit, fmt, gettype, load, save
-from bot.run import Cfg as RunCfg
+sys.path.insert(0, "lib")
 
 
-attrs = [
-    "Object",
-    "cdir",
-    "dump",
-    "dumps",
-    "get",
-    "gettype",
-    "hook",
-    "indexed",
-    "items",
-    "keys",
-    "loads",
-    "register",
-    "search",
-    "set",
-    "update",
-    "values",
-]
+from obj import Object, get, items, keys, update, values
+from ocf import Cfg
+from odb import Db, fns, hook, last, loado, save
+from ofn import cdir, edit, fmt, register, set
 
 
-import bot.all
+
+attrs1 = (
+    'Object',
+    'clear',
+    'copy',
+    'fromkeys',
+    'get',
+    'items',
+    'keys',
+    'pop',
+    'popitem',
+    'register',
+    'setdefault',
+    'update',
+    'values'
+)
+
+
+attrs2 = (
+    '__class__',
+    '__contains__',
+    '__delattr__',
+    '__delitem__',
+    '__dict__',
+    '__dir__',
+    '__doc__',
+    '__eq__',
+    '__format__',
+    '__ge__',
+    '__getattribute__',
+    '__getitem__',
+    '__gt__',
+    '__hash__',
+    '__idx__',
+    '__init__',
+    '__init_subclass__',
+    '__iter__',
+    '__le__',
+    '__len__',
+    '__lt__',
+    '__module__',
+    '__ne__',
+    '__new__',
+    '__oqn__',
+    '__otype__',
+    '__reduce__',
+    '__reduce_ex__',
+    '__repr__',
+    '__setattr__',
+    '__setitem__',
+    '__sizeof__',
+    '__slots__',
+    '__stp__',
+    '__str__',
+    '__subclasshook__'
+)
 
 
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
-        import bot
-        import bot.obj
-        self.assertEqual(dir(bot.obj), attrs)
+        import obj
+        self.assertEqual(tuple(dir(obj)), attrs1)
 
-    def test_NoType(self):
-        with self.assertRaises(NoType):
-            o = Object()
-            o.key = "value"
-            p = save(o)
-            splitted = p.split(os.sep)
-            splitted[0] = "bot.obj.Bla"
-            pp = os.sep.join(splitted)
-            hook(pp)
-
-    def test_NoModule(self):
-        with self.assertRaises(NoModule):
-            o = Object()
-            o.key = "value"
-            p = save(o)
-            splitted = p.split(os.sep)
-            splitted[0] = "bot.bla.Object"
-            pp = os.sep.join(splitted)
-            hook(pp)
+    def test_attributes(self):
+        o = Object()
+        self.assertEqual(tuple(dir(o)), attrs2)
 
     def test_Object(self):
         o = Object()
@@ -113,7 +133,7 @@ class Test_Object(unittest.TestCase):
                 "__getitem__",
                 "__gt__",
                 "__hash__",
-                "__index__",
+                "__idx__",
                 "__init__",
                 "__init_subclass__",
                 "__iter__",
@@ -140,7 +160,7 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__doc__(self):
         o = Object()
-        self.assertEqual(o.__doc__, "Big O Object class")
+        self.assertEqual(o.__doc__, None)
 
     def test_Object__eq__(self):
         o = Object()
@@ -227,17 +247,15 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o, oo)
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "bot.obj.Object")
+        self.assertEqual(Object().__otype__, "obj.Object")
 
     def test_Object__reduce__(self):
-        with self.assertRaises(NoPickle):
-            o = Object()
-            o.__reduce__()
-
+        o = Object()
+        o.__reduce__()
+        
     def test_Object__reduce_ex__(self):
-        with self.assertRaises(NoPickle):
-            o = Object()
-            o.__reduce__()
+        o = Object()
+        o.__reduce__()
 
     def test_Object__repr__(self):
         self.assertTrue(update(Object(),
@@ -258,13 +276,13 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__slots__(self):
         self.assertEqual(Object().__slots__, ("__dict__",
-                                              "__stp__",
+                                              "__idx__",
                                               "__otype__",
-                                              "__index__"))
+                                              "__stp__"))
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("bot.obj.Object" in o.__stp__)
+        self.assertTrue("obj.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -280,10 +298,8 @@ class Test_Object(unittest.TestCase):
         self.assertTrue(type(db), Db)
 
     def test_cdir(self):
-        from bot.obj import Cfg
-        Cfg.wd = ".test"
-        cdir(Cfg.wd)
-        self.assertTrue(os.path.exists(Cfg.wd))
+        cdir(".test")
+        self.assertTrue(os.path.exists(".test"))
 
     def test_edit(self):
         o = Object()
@@ -296,22 +312,18 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(fmt(o), "")
 
     def test_fns(self):
-        from bot.obj import Cfg, Object
-        from bot.ofn import save
+        from obj import Object
+        from ocf import Cfg
+        from odb import save
         Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("bot.obj.Object")[0])
+        self.assertTrue("Object" in fns("obj.Object")[0])
 
     def test_get(self):
         o = Object()
         o.key = "value"
         self.assertEqual(get(o, "key"), "value")
-
-    def test_gettype(self):
-        o = Object()
-        t = gettype(o)
-        self.assertEqual(t, "bot.obj.Object")
 
     def test_hook(self):
         o = Object()
@@ -352,7 +364,7 @@ class Test_Object(unittest.TestCase):
         o.key = "value"
         p = save(o)
         oo = Object()
-        load(oo, p)
+        loado(oo, p)
         self.assertEqual(oo.key, "value")
 
     def test_register(self):
@@ -361,10 +373,10 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o.key, "value")
 
     def test_save(self):
-        RunCfg.wd = ".test"
+        Cfg.wd = ".test"
         o = Object()
         p = save(o)
-        self.assertTrue(os.path.exists(os.path.join(RunCfg.wd, "store", p)))
+        self.assertTrue(os.path.exists(os.path.join(Cfg.wd, "store", p)))
 
     def test_set(self):
         o = Object()
@@ -388,3 +400,4 @@ class Test_Object(unittest.TestCase):
                 "value",
             ],
         )
+

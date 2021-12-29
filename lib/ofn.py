@@ -43,7 +43,7 @@ def edit(o, setter, skip=True, skiplist=None):
         elif v in ["False", "false"]:
             o[key] = False
         else:
-            o[key] = v
+            setattr(o, key, v)
     return count
 
 
