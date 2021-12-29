@@ -2,23 +2,48 @@
 # This file is placed in the Public Domain.
 
 
+"object command"
+
+
+import inspect
 import os
 import sys
+import termios
+import traceback
 
 
-from bot.irc import Cfg as IRC
-from bot.krn import k
-from bot.obj import Cfg
+sys.path.insert(0, "lib")
+sys.path.insert(0, os.getcwd())
+
+from odb import Cfg
+from otb import Cls, Cmd, Obj
+from oev import Event
+from ohd import Handler
+from otb import Cmd, Obj
+from oth import launch
 
 
-Cfg.wd = "/var/lib/botd/"
+from bot.irc import IRC
+from bot.irc import Cfg as ICfg
+from bot.rss import Fetcher
 
-
-IRC.nick = "botd"
-IRC.channel = "#botd"
+ICfg.channel = "#botd"
+ICfg.nick = "botd"
 
 
 import bot.all
+
+
+Cfg.wd = "/var/lib/botd"
+
+
+class CLI(Handler):
+
+    def cmd(self, txt):
+        self.handle(Event(txt, repr(self)))
+                
+    def raw(self, txt):
+        print(txt)
 
 
 def daemon():
@@ -36,10 +61,14 @@ def daemon():
 
 
 def main():
-    k.cfg.mod += ",irc"
-    k.scan()
-    k.init(k.cfg.mod, "bot")
-    k.wait()
+    txt = " ".join(sys.argv[1:])
+    i = IRC()
+    i.start()
+    f = Fetcher()
+    f.start()
+    c = CLI()
+    c.start()
+    c.wait()
 
 
 main()

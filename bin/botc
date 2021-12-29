@@ -2,38 +2,54 @@
 # This file is placed in the Public Domain.
 
 
+"object command"
+
+
+import inspect
+import os
 import sys
+import termios
+import traceback
 
 
-from bot.clt import Client
-from bot.hdl import cmd
-from bot.irc import Cfg as IRC
-from bot.krn import k
-from bot.obj import Cfg
+sys.path.insert(0, "lib")
+sys.path.insert(0, os.getcwd())
+
+from odb import Cfg
+from otb import Cls, Cmd, Obj
+from oev import Event
+from ohd import Handler
+from otb import Cmd, Obj
+from oth import launch
 
 
-Cfg.wd = "/var/lib/botd/"
+Cfg.wd = "/var/lib/botd"
 
 
-IRC.nick = "botd"
-IRC.channel = "#botd"
+class CLI(Handler):
+
+    def cmd(self, txt):
+        self.handle(Event(txt, repr(self)))
+                
+    def raw(self, txt):
+        print(txt)
+
+
+def scan(mod):
+    for k, o in inspect.getmembers(mod, inspect.isfunction):
+         if "event" in o.__code__.co_varnames:
+             Cmd.cmds[k] = o
+    for k, clz in inspect.getmembers(mod, inspect.isclass):
+       Cls.add(clz)
 
 
 import bot.all
 
 
-class CLI(Client):
-
-    def raw(self, txt):
-        print(txt)
-
-
 def main():
-    k.parse_cli(" ".join(sys.argv[1:]))
-    k.scan()
-    if not k.prs.txt:
-        return
+    txt = " ".join(sys.argv[1:])
     c = CLI()
-    cmd(c, k.prs.otxt)
+    c.cmd(txt)
+
 
 main()
