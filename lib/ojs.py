@@ -1,0 +1,67 @@
+# This file is placed in the Public Domain.
+
+
+"object json"
+
+
+import json
+
+
+from obj import Object, update
+
+
+def __dir__():
+    return (
+        'ObjectDecoder',
+        'ObjectEncoder',
+        "dump",
+        "dumps",
+        "load",
+        "loads"
+    )
+
+
+class ObjectDecoder(json.JSONDecoder):
+
+    def decode(self, s, _w=None):
+        v = json.loads(s, object_hook=Object)
+        o = Object()
+        update(o, v)
+        return o
+
+
+class ObjectEncoder(json.JSONEncoder):
+
+    def default(self, o):
+        if isinstance(o, dict):
+            return o.items()
+        if isinstance(o, Object):
+            d = vars(o)
+            d["__otype__"] = o.__otype__
+            return d
+        if isinstance(o, list):
+            return iter(o)
+        if isinstance(o,
+                      (type(str), type(True), type(False),
+                       type(int), type(float))):
+            return o
+        try:
+            return json.JSONEncoder.default(self, o)
+        except TypeError:
+            return repr(o)
+
+
+def dump(o, f):
+    return json.dump(o, f, cls=ObjectEncoder)
+
+
+def dumps(o):
+    return json.dumps(o, cls=ObjectEncoder)
+
+
+def load(s, f):
+    return json.load(s, f, cls=ObjectDecoder)
+
+
+def loads(s):
+    return json.loads(s, cls=ObjectDecoder)

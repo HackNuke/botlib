@@ -1,58 +1,39 @@
 # This file is placed in the Public Domain.
 
+
 import html.parser
 import re
 import threading
 import urllib
 
-from .dbs import Db, find, last
-from .krn import k
-from .obj import Object, get, update
-from .ofn import edit, save
-from .rpt import Repeater
-from .tbl import Table
-from .thr import launch
+
+from obj import Object, get, update
+from ocf import Cfg
+from odb import Db, find, last, save
+from odf import Default
+from ofn import edit
+from otb import Obj 
+from otm import Repeater
+from oth import launch
+
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 from urllib.request import Request, urlopen
 
-gotparser = False
-try:
-    import feedparser
-
-    gotparser = True
-except ModuleNotFoundError:
-    pass
-
 
 def __dir__():
-    return ("init",
-            "Cfg",
-            "Feed",
-            "Rss",
-            "Seen",
-            "Fetcher",
-            "dpl",
-            "ftc",
-            "rem",
-            "rss")
-
-
-def init():
-    f = Fetcher()
-    last(f.cfg)
-    launch(f.start)
-    return f
-
-
-class Cfg(Object):
-
-    def __init__(self):
-        super().__init__()
-        self.dosave = False
-        self.display_list = "title,link"
-        self.tinyurl = False
+    return (
+        "Cfg",
+        "Feed",
+        "Rss",
+        "Seen",
+        "Fetcher",
+        "dpl",
+        "ftc",
+        "rem",
+        "rss"
+    )
 
 
 class Feed(Object):
@@ -66,12 +47,14 @@ class Feed(Object):
 
 
 class Rss(Object):
+
     def __init__(self):
         super().__init__()
         self.rss = ""
 
 
 class Seen(Object):
+
     def __init__(self):
         super().__init__()
         self.urls = []
@@ -79,7 +62,6 @@ class Seen(Object):
 
 class Fetcher(Object):
 
-    cfg = Cfg()
     seen = Seen()
 
     def __init__(self):
@@ -94,7 +76,7 @@ class Fetcher(Object):
         except AttributeError:
             pass
         if not dl:
-            dl = self.cfg.display_list.split(",")
+            dl = "title,link"
         if not dl or not dl[0]:
             dl = ["title", "link"]
         for key in dl:
@@ -128,13 +110,11 @@ class Fetcher(Object):
             Fetcher.seen.urls.append(url)
             counter += 1
             objs.append(f)
-            if self.cfg.dosave:
-                save(f)
         if objs:
             save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
-            k.announce(txt)
+            Obj.announce(txt)
         return counter
 
     def run(self):
@@ -151,7 +131,7 @@ class Fetcher(Object):
 
 
 def getfeed(url):
-    if not gotparser or k.cfg.debug:
+    if Cfg.debug:
         return [Object(), Object()]
     try:
         result = geturl(url)
@@ -159,6 +139,7 @@ def getfeed(url):
         return [Object(), Object()]
     if not result:
         return [Object(), Object()]
+    import feedparser
     result = feedparser.parse(result.data)
     if result and "entries" in result:
         for entry in result["entries"]:
@@ -166,8 +147,6 @@ def getfeed(url):
 
 
 def gettinyurl(url):
-    if k.cfg.debug:
-        return []
     postarray = [
         ("submit", "submit"),
         ("url", url),
@@ -185,8 +164,6 @@ def gettinyurl(url):
 
 
 def geturl(url):
-    if k.cfg.debug:
-        return
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)
     req.add_header("User-agent", useragent("BOTLIB"))
@@ -210,19 +187,13 @@ def useragent(txt):
 
 
 def dpl(event):
-    if len(event.prs.args) < 2:
+    if len(event.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
     db = Db()
-    setter = {"display_list": event.prs.args[1]}
-    names = get(
-        Table.names,
-        "rss",
-        [
-            "rss",
-        ],
-    )
-    _fn, o = db.lastmatch(names[0], {"rss": event.prs.args[0]})
+    setter = {"display_list": event.args[1]}
+    name = get(db.names, "rss", "rss")
+    _fn, o = db.lastmatch(name, {"rss": event.args[0]})
     if o:
         edit(o, setter)
         save(o)
@@ -238,15 +209,15 @@ def ftc(event):
     for thr in thrs:
         res.append(thr.join() or 0)
     if res:
-        event.reply("fetched %s" % ",".join([str(x) for x in res]))
+        event.reply(",".join([str(x) for x in res]))
         return
 
 
 def rem(event):
-    if not event.prs.args:
+    if not event.args:
         event.reply("rem <stringinurl>")
         return
-    selector = {"rss": event.prs.args[0]}
+    selector = {"rss": event.args[0]}
     nr = 0
     got = []
     for _fn, o in find("rss", selector):
@@ -259,17 +230,17 @@ def rem(event):
 
 
 def rss(event):
-    if not event.prs.args:
+    if not event.args:
         event.reply("rss <url>")
         return
-    url = event.prs.args[0]
+    url = event.args[0]
     if "http" not in url:
-        event.reply("%s is not an url" % url)
+        event.reply("i need an url")
         return
     res = list(find("rss", {"rss": url}))
     if res:
         return
     o = Rss()
-    o.rss = event.prs.args[0]
+    o.rss = event.args[0]
     save(o)
     event.reply("ok")

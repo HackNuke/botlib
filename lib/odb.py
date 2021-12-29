@@ -1,30 +1,35 @@
 # This file is placed in the Public Domain.
 
 
+"object database"
+
+
+import datetime
+import json
 import os
 import time
 
 
-from .obj import Object, Cfg, get, search, update
-from .ofn import load
-from .tbl import Table
+from obj import Object, update
+from ocf import Cfg
+from ofn import cdir, search
+from ojs import ObjectDecoder, ObjectEncoder
+from otb import Cls
 
 
 def __dir__():
-    return ("NoModule", "NoType", "Db", "all", "fns", "fntime", "find", "hook", "last")
-
-
-class NoModule(Exception):
-
-    pass
-
-
-class NoType(Exception):
-
-    pass
+    return (
+        "Db",
+        "all",
+        "fns",
+        "last",
+        "wd"
+    )
 
 
 class Db(Object):
+
+    names = Object()
 
     def all(self, otype, selector=None, index=None, timed=None):
         nr = -1
@@ -49,6 +54,7 @@ class Db(Object):
             yield fn, o
 
     def every(self, selector=None, index=None, timed=None):
+        assert Cfg.wd
         if selector is None:
             selector = {}
         nr = -1
@@ -109,6 +115,24 @@ class Db(Object):
         return (None, None)
 
 
+def all(timed=None):
+    assert Cfg.wd
+    p = os.path.join(Cfg.wd, "store")
+    for name in os.listdir(p):
+        for fn in fns(name):
+            yield fn
+
+
+def find(name, selector=None, index=None, timed=None, names=None):
+    db = Db()
+    if not names:
+        names = Cls.full(name)
+    for n in names:
+        for fn, o in db.find(n, selector, index, timed):
+            yield fn, o
+
+
+
 def fns(name, timed=None):
     if not name:
         return []
@@ -137,14 +161,6 @@ def fns(name, timed=None):
     return sorted(res, key=fntime)
 
 
-def all(timed=None):
-    assert Cfg.wd
-    p = os.path.join(Cfg.wd, "store")
-    for name in os.listdir(p):
-        for fn in fns(name):
-            yield fn
-
-
 def fntime(daystr):
     daystr = daystr.replace("_", ":")
     datestr = " ".join(daystr.split(os.sep)[-2:])
@@ -160,18 +176,6 @@ def fntime(daystr):
     return t
 
 
-def find(name, selector=None, index=None, timed=None):
-    db = Db()
-    for n in get(
-        Table.names,
-        name,
-        [
-            name,
-        ],
-    ):
-        for fn, o in db.find(n, selector, index, timed):
-            yield fn, o
-
 
 def hook(hfn):
     if hfn.count(os.sep) > 3:
@@ -179,17 +183,14 @@ def hook(hfn):
     else:
         oname = hfn.split(os.sep)
     cname = oname[0]
+    cls = Cls.get(cname)
+    if cls:
+        o = cls()
+    else:
+        o = Object()
     fn = os.sep.join(oname)
-    mn, cn = cname.rsplit(".", 1)
-    mod = Table.get(mn)
-    if not mod:
-        raise NoModule(mn)
-    t = getattr(mod, cn, None)
-    if t:
-        o = t()
-        load(o, fn)
-        return o
-    raise NoType(cname)
+    loado(o, fn)
+    return o
 
 
 def last(o):
@@ -202,3 +203,56 @@ def last(o):
         stp = os.sep.join(splitted[-4:])
         return stp
     return None
+
+
+def listfiles(workdir):
+    assert Cfg.wd
+    path = os.path.join(Cfg.wd, "store")
+    if not os.path.exists(path):
+        return []
+    return sorted(os.listdir(path))
+
+
+def loado(o, opath):
+    if opath.count(os.sep) != 3:
+        return
+    assert Cfg.wd
+    splitted = opath.split(os.sep)
+    stp = os.sep.join(splitted[-4:])
+    lpath = os.path.join(Cfg.wd, "store", stp)
+    if os.path.exists(lpath):
+        with open(lpath, "r") as ofile:
+            d = json.load(ofile, cls=ObjectDecoder)
+            update(o, d)
+    o.__stp__ = stp
+
+
+def loadp(o, opath):
+    assert Cfg.wd
+    if os.path.exists(opath):
+        with open(opath, "r") as ofile:
+            d = json.load(ofile, cls=ObjectDecoder)
+            update(o, d)
+
+def save(o):
+    assert Cfg.wd
+    prv = os.sep.join(o.__stp__.split(os.sep)[:2])
+    o.__stp__ = os.path.join(prv,
+                             os.sep.join(str(datetime.datetime.now()).split()))
+    opath = os.path.join(Cfg.wd, "store", o.__stp__)
+    savep(o, opath)
+    with open(opath, "w") as ofile:
+        json.dump(
+            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
+        )
+    os.chmod(opath, 0o444)
+    return o.__stp__
+
+
+def savep(o, opath):
+    cdir(opath)
+    with open(opath, "w") as ofile:
+        json.dump(
+            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
+        )
+    return o.__stp__

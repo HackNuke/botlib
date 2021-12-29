@@ -5,19 +5,14 @@ import socket
 import time
 
 
-from .dbs import last
-from .krn import k
-from .obj import Cfg, Object
-from .thr import launch
+from obj import Object
+from odb import last
+from odf import Default
+from otb import Obj
+from oth import launch
 
 
-def init():
-    u = UDP()
-    u.start()
-    return u
-
-
-class Cfg(Cfg):
+class Cfg(Default):
 
     host = "localhost"
     port = 5500
@@ -41,7 +36,7 @@ class UDP(Object):
         self.cfg = Cfg()
 
     def output(self, txt, addr):
-        k.announce(txt.replace("\00", ""))
+        Obj.announce(txt.replace("\00", ""))
 
     def server(self):
         try:

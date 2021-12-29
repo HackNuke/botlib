@@ -1,56 +1,54 @@
 # This file is placed in the Public Domain.
 
 
+"object bot"
+
+
 import os
 import queue
 import socket
 import ssl
 import textwrap
-import time
 import threading
+import time
 import _thread
 
 
-from .clt import Client
-from .dbs import find, last
-from .dpt import Dispatcher
-from .hdl import Event, Handler
-from .krn import k
-from .lop import Stop
-from .obj import Object, update
-from .ofn import edit, fmt, save
-from .opt import Output
-from .thr import launch
+from obj import Object, update
+from odb import find, last, save
+from odf import Default
+from ofn import edit, fmt, register
+from otb import Cbs, Cmd, Obj
+from oev import Event
+from ohd import Handler
+from oth import launch
+
+
+## defines
 
 
 def __dir__():
     return (
-        "init",
+        "NoUser",
+        "Stop",
         "Cfg",
-        "DCC",
         "Event",
+        "Output",
         "IRC",
+        "DCC",
         "User",
         "Users",
         "cfg",
         "dlt",
-        "locked",
         "met",
         "mre",
         "nck",
-        "ops",
-        "pwd",
+        "ops"
     )
 
 
-def init():
-    i = IRC()
-    last(i.cfg)
-    i.start()
-    return i
-
-
 def locked(obj):
+
     def lockeddec(func, *args, **kwargs):
         def lockedfunc(*args, **kwargs):
             obj.acquire()
@@ -67,47 +65,8 @@ def locked(obj):
     return lockeddec
 
 
-saylock = _thread.allocate_lock()
-
-
-class NoUser(Exception):
-
-    pass
-
-
-class Cfg(Object):
-
-    cc = "!"
-    channel = "#botlib"
-    nick = "botlib"
-    password = ""
-    port = 6667
-    realname = "24/7 channel daemon"
-    server = "localhost"
-    servermodes = ""
-    sleep = 30
-    username = "botlib"
-    users = False
-
-    def __init__(self):
-        super().__init__()
-        for n in dir(Cfg):
-            if not n.startswith("_"):
-                self[n] = getattr(Cfg, n, None)
-
-
-class Event(Event):
-    def __init__(self):
-        super().__init__()
-        self.args = []
-        self.arguments = []
-        self.command = ""
-        self.nick = ""
-        self.rawstr = ""
-        self.sock = None
-
-
 class TextWrap(textwrap.TextWrapper):
+
     def __init__(self):
         super().__init__()
         self.break_long_words = False
@@ -118,11 +77,111 @@ class TextWrap(textwrap.TextWrapper):
         self.width = 450
 
 
+saylock = _thread.allocate_lock()
+
+
+class NoUser(Exception):
+
+    pass
+
+
+class Stop(Exception):
+
+    pass
+
+
+class Cfg(Default):
+
+    cc = "!"
+    channel = "#botlib"
+    nick = "botlib"
+    password = ""
+    port = 6667
+    realname = "botlib"
+    server = "localhost"
+    servermodes = ""
+    sleep = 30
+    username = "botlib"
+    users = False
+
+    def __init__(self):
+        super().__init__()
+        self.cc = Cfg.cc
+        self.channel = Cfg.channel
+        self.nick = Cfg.nick
+        self.password = Cfg.password
+        self.port = Cfg.port
+        self.realname = Cfg.realname
+        self.server = Cfg.server
+        self.servermodes = Cfg.servermodes
+        self.sleep = Cfg.sleep
+        self.username = Cfg.username
+        self.users = Cfg.users
+
+
+class Event(Event):
+
+    def __init__(self, txt, orig=None, origin=None):
+        super().__init__(txt, orig, origin)
+        self.args = []
+        self.arguments = []
+        self.channel = ""
+        self.command = ""
+        self.nick = ""
+        self.origin = ""
+        self.rawstr = ""
+        self.sock = None
+
+
+class Output(Object):
+
+    cache = Object()
+
+    def __init__(self):
+        Object.__init__(self)
+        self.oqueue = queue.Queue()
+        self.dostop = threading.Event()
+
+    @staticmethod
+    def append(channel, txtlist):
+        if channel not in Output.cache:
+            Output.cache[channel] = []
+        Output.cache[channel].extend(txtlist)
+
+    def dosay(self, channel, txt):
+        pass
+
+    def oput(self, channel, txt):
+        self.oqueue.put_nowait((channel, txt))
+
+    def output(self):
+        while not self.dostop.isSet():
+            (channel, txt) = self.oqueue.get()
+            if self.dostop.isSet():
+                break
+            self.dosay(channel, txt)
+
+    @staticmethod
+    def size(name):
+        if name in Output.cache:
+            return len(Output.cache[name])
+        return 0
+
+    def start(self):
+        self.dostop.clear()
+        launch(self.output)
+        return self
+
+    def stop(self):
+        self.dostop.set()
+        self.oqueue.put_nowait((None, None))
+
+
 class IRC(Output, Handler):
 
     def __init__(self):
-        Handler.__init__(self)
         Output.__init__(self)
+        Handler.__init__(self)
         self.buffer = []
         self.cfg = Cfg()
         self.connected = threading.Event()
@@ -144,15 +203,15 @@ class IRC(Output, Handler):
         self.threaded = False
         self.users = Users()
         self.zelf = ""
-        Dispatcher.register("903", h903)
-        Dispatcher.register("904", h903)
-        Dispatcher.register("AUTHENTICATE", AUTH)
-        Dispatcher.register("CAP", CAP)
-        Dispatcher.register("ERROR", ERROR)
-        Dispatcher.register("LOG", LOG)
-        Dispatcher.register("NOTICE", NOTICE)
-        Dispatcher.register("PRIVMSG", PRIVMSG)
-        Dispatcher.register("QUIT", QUIT)
+        self.register("903", h903)
+        self.register("904", h903)
+        self.register("AUTHENTICATE", AUTH)
+        self.register("CAP", CAP)
+        self.register("ERROR", ERROR)
+        self.register("LOG", LOG)
+        self.register("NOTICE", NOTICE)
+        self.register("PRIVMSG", PRIVMSG)
+        self.register("QUIT", QUIT)
 
     def announce(self, txt):
         for channel in self.channels:
@@ -188,15 +247,20 @@ class IRC(Output, Handler):
         else:
             addr = socket.getaddrinfo(server, port, socket.AF_INET)[-1][-1]
             self.sock = socket.create_connection(addr)
-        os.set_inheritable(self.fileno(), os.O_RDWR)
-        self.sock.setblocking(True)
-        self.sock.settimeout(180.0)
-        self.connected.set()
-        return True
+        if self.sock:
+            os.set_inheritable(self.fileno(), os.O_RDWR)
+            self.sock.setblocking(True)
+            self.sock.settimeout(180.0)
+            self.connected.set()
+            return True
+        return False
+
+    def handle(self, e):
+        Cbs.dispatch(e)
 
     def doconnect(self, server, nick, port=6667):
         self.state.nrconnect = 0
-        while not self.stopped.isSet():
+        while 1:
             self.state.nrconnect += 1
             if self.connect(server, port):
                 self.logon(server, nick)
@@ -243,11 +307,8 @@ class IRC(Output, Handler):
         for channel in self.channels:
             self.command("JOIN", channel)
 
-    def handle(self, e):
-        Dispatcher.dispatch(e)
-
     def keep(self):
-        while not self.stopped.isSet():
+        while 1:
             self.keeprunning = True
             time.sleep(60)
             self.state.pongcheck = True
@@ -272,9 +333,8 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        o = Event()
+        o = Event(rawstr, repr(self))
         o.rawstr = rawstr
-        o.orig = repr(self)
         o.command = ""
         o.arguments = []
         arguments = rawstr.split()
@@ -329,7 +389,7 @@ class IRC(Output, Handler):
         if not self.buffer:
             self.some()
         if self.buffer:
-            return self.buffer.pop(0)
+            return self.event(self.buffer.pop(0))
 
     def raw(self, txt):
         txt = txt.rstrip()
@@ -338,18 +398,24 @@ class IRC(Output, Handler):
         txt = txt[:512]
         txt += "\n"
         txt = bytes(txt, "utf-8")
-        try:
-            self.sock.send(txt)
-        except BrokenPipeError:
-            self.stop()
+        if self.sock:
+            try:
+                self.sock.send(txt)
+            except BrokenPipeError:
+                self.stop()
         self.state.last = time.time()
         self.state.nrsend += 1
+
+    def register(self, k, v):
+        Cbs.add(k, v)
 
     def say(self, channel, txt):
         self.oput(channel, txt)
 
     def some(self):
         self.connected.wait()
+        if not self.sock:
+            return
         inbytes = self.sock.recv(512)
         txt = str(inbytes, "utf-8")
         if txt == "":
@@ -361,13 +427,14 @@ class IRC(Output, Handler):
         self.state.lastline = splitted[-1]
 
     def start(self):
+        last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         assert self.cfg.nick
         assert self.cfg.server
         assert self.cfg.channel
+        Obj.add(self)
         save(self.cfg)
-        self.stopped.clear()
         self.connected.clear()
         self.joined.clear()
         self.sock = None
@@ -375,13 +442,11 @@ class IRC(Output, Handler):
         self.connected.wait()
         Handler.start(self)
         Output.start(self)
-        k.add(self)
         if not self.keeprunning:
             launch(self.keep)
         self.wait()
 
     def stop(self):
-        self.stopped.set()
         try:
             self.sock.shutdown(2)
         except OSError:
@@ -394,12 +459,12 @@ class IRC(Output, Handler):
 
 
 def AUTH(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     clt.raw("AUTHENTICATE %s" % clt.cfg.password)
 
 
 def CAP(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     if clt.cfg.password and "ACK" in obj.arguments:
         clt.raw("AUTHENTICATE PLAIN")
     else:
@@ -407,17 +472,17 @@ def CAP(obj):
 
 
 def h903(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     clt.raw("CAP END")
 
 
 def h904(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     clt.raw("CAP END")
 
 
 def ERROR(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     clt.state.nrerror += 1
     clt.state.error = obj.txt
 
@@ -431,7 +496,7 @@ def LOG(obj):
 
 
 def NOTICE(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
             clt.cfg.name.upper(),
@@ -442,7 +507,7 @@ def NOTICE(obj):
 
 
 def PRIVMSG(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     if obj.txt.startswith("DCC CHAT"):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
@@ -464,17 +529,16 @@ def PRIVMSG(obj):
         obj.txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
-        obj.type = "cmd"
-        Dispatcher.dispatch(obj)
+        Cmd.dispatch(obj)
 
 
 def QUIT(obj):
-    clt = k.byorig(obj.orig)
+    clt = obj.bot()
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
 
 
-class DCC(Client):
+class DCC(Handler):
 
     def __init__(self):
         super().__init__()
@@ -492,8 +556,7 @@ class DCC(Client):
 
     def connect(self, dccevent):
         self.connected.clear()
-        dccevent.parse()
-        arguments = dccevent.prs.otxt.split()
+        arguments = dccevent.txt.split()
         addr = arguments[3]
         port = int(arguments[4])
         if ":" in addr:
@@ -516,25 +579,21 @@ class DCC(Client):
 
     def event(self, txt, origin=None):
         self.connected.wait()
-        e = Event()
-        e.type = "cmd"
-        e.channel = origin or self.origin
-        e.origin = origin or self.origin or "root@dcc"
-        e.orig = repr(self)
-        e.txt = txt.rstrip()
+        e = Event(txt, repr(self), origin or "root@dcc")
         e.sock = self.sock
-        e.parse()
         return e
 
     def handle(self, e):
         self.connected.wait()
-        k.put(e)
+        super().handle(e)
 
     def poll(self):
+        if not self.sock:
+            return
         txt = str(self.sock.recv(512), "utf8")
         if txt == "":
             raise Stop
-        return txt
+        return self.event(txt)
 
     def say(self, channel, txt):
         self.raw(txt)
@@ -593,27 +652,19 @@ class Users(Object):
 def cfg(event):
     c = Cfg()
     last(c)
-    delkeys(event.prs.sets, ["mod"])
-    if not event.prs.sets:
+    if not event.sets():
         event.reply(fmt(c, skip=["password", "stamp", "username", "realname"]))
         return
-    edit(c, event.prs.sets)
+    edit(c, event.sets())
     save(c)
     event.reply("ok")
 
 
-def delkeys(self, keyz=None):
-    if keyz is None:
-        keyz = []
-    for key in keyz:
-        del self[key]
-
-
 def dlt(event):
-    if not event.prs.args:
+    if not event.args():
         event.reply("dlt <username>")
         return
-    selector = {"user": event.prs.args[0]}
+    selector = {"user": event.args()[0]}
     for _fn, o in find("user", selector):
         o._deleted = True
         save(o)
@@ -622,11 +673,11 @@ def dlt(event):
 
 
 def met(event):
-    if not event.prs.args:
+    if not event.args():
         event.reply("met <userhost>")
         return
     user = User()
-    user.user = event.prs.rest
+    user.user = event.rest()
     user.perms = ["USER"]
     save(user)
     event.reply("ok")
@@ -649,8 +700,8 @@ def mre(event):
 def nck(event):
     bot = event.bot()
     if isinstance(bot, IRC):
-        bot.command("NICK", event.prs.rest)
-        bot.cfg.nick = event.prs.rest
+        bot.command("NICK", event.rest)
+        bot.cfg.nick = event.rest
         save(bot.cfg)
 
 

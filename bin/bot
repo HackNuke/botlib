@@ -2,51 +2,86 @@
 # This file is placed in the Public Domain.
 
 
+import inspect
 import os
 import sys
+import termios
+import traceback
 
+
+sys.path.insert(0, "lib")
 sys.path.insert(0, os.getcwd())
 
-from bot.clt import Client
-from bot.krn import k
-from bot.hdl import cmd, event
 
-from run import daemon, wrap
+from odb import Cfg
+from otb import Cls, Cmd, Obj
+from oev import Event
+from opr import Parsed
+from ohd import Handler
+from oth import launch
 
 
-class Console(Client):
-
-    def handle(self, e):
-        super().handle(e)
-        e.wait()
-
-    def poll(self):
-        return input("> ")
-
-    def raw(self, txt):
-        print(txt)
+from bot.irc import IRC
+from bot.rss import Fetcher
+from bot.udp import UDP
 
 
 import bot.all
 
 
+Cfg.wd = os.path.expanduser("~/.bot")
+
+
+class Console(Handler):
+
+    def cmd(self, txt):
+        Obj.add(self)
+        self.handle(Event(txt, repr(self)))
+                
+    def poll(self):
+        return Event(input("> "), repr(self))
+
+    def raw(self, txt):
+        print(txt)
+
+    def start(self):
+        Obj.add(self)
+        super().start()
+
+
+def scan(mod):
+    for k, o in inspect.getmembers(mod, inspect.isfunction):
+         if "event" in o.__code__.co_varnames:
+             Cmd.cmds[k] = o
+    for k, clz in inspect.getmembers(mod, inspect.isclass):
+       Cls.add(clz)
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
 def main():
-    k.parse_cli(" ".join(sys.argv[1:]))
-    k.scan()
-    k.start()
-    console = k.opt("c") or k.cfg.mod
-    if k.prs.txt:
-        c = Console()
-        return cmd(c, k.prs.otxt)
-    if k.opt("d"):
-        daemon()
-        console = False
-    k.init(k.cfg.mod, "bot")
-    if console:
-        csl = Console()
-        csl.start()
-    if console or k.opt("d"):
-        k.wait()
+    txt = " ".join(sys.argv[1:])
+    p = Parsed(txt)
+    c = Console()
+    Obj.add(c)
+    if "c" in p.opts():
+        f = Fetcher()
+        f.start()
+        i = IRC()
+        i.start()
+        c.start()
+        c.wait()
+        return
+    c.cmd(txt)
 
 
 wrap(main)
