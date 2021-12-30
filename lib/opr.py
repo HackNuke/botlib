@@ -15,7 +15,7 @@ class Parsed(Default):
         self.txt = txt
 
     def args(self):
-        return " ".join(self.txt.split()[1:])
+        return self.txt.split()[1:]
 
     def cmd(self):
         if self.txt:

@@ -123,7 +123,6 @@ class Event(Event):
 
     def __init__(self, txt, orig=None, origin=None):
         super().__init__(txt, orig, origin)
-        self.args = []
         self.arguments = []
         self.channel = ""
         self.command = ""
@@ -289,10 +288,10 @@ class IRC(Output, Handler):
             self.state.needconnect = False
             if self.cfg.servermodes:
                 self.raw("MODE %s %s" % (self.cfg.nick, self.cfg.servermodes))
-            self.zelf = e.args[-1]
+            self.zelf = e.args()[-1]
             self.joinall()
         elif cmd == "002":
-            self.state.host = e.args[2][:-1]
+            self.state.host = e.args()[2][:-1]
         elif cmd == "366":
             self.joined.set()
         elif cmd == "433":
@@ -378,9 +377,9 @@ class IRC(Output, Handler):
             o.txt = rawstr.split(":", 2)[-1]
         if not o.txt and len(arguments) == 1:
             o.txt = arguments[1]
-        spl = o.txt.split()
-        if len(spl) > 1:
-            o.args = spl[1:]
+        #spl = o.txt.split()
+        #if len(spl) > 1:
+        #    o.args = spl[1:]
         o.type = o.command
         return o
 

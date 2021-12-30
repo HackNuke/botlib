@@ -3,6 +3,7 @@
 
 import html.parser
 import re
+import sys
 import threading
 import urllib
 
@@ -234,6 +235,8 @@ def rss(event):
         event.reply("rss <url>")
         return
     url = event.args()[0]
+    print(url)
+    sys.stdout.flush()
     if "http" not in url:
         event.reply("i need an url")
         return
