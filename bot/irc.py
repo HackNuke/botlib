@@ -377,9 +377,10 @@ class IRC(Output, Handler):
             o.txt = rawstr.split(":", 2)[-1]
         if not o.txt and len(arguments) == 1:
             o.txt = arguments[1]
-        #spl = o.txt.split()
-        #if len(spl) > 1:
-        #    o.args = spl[1:]
+        spl = o.txt.split()
+        if len(spl) > 1:
+            o.txt = " ".join(spl[1:])
+            #o.args = spl[1:]
         o.type = o.command
         return o
 
@@ -498,9 +499,9 @@ def NOTICE(obj):
     clt = obj.bot()
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
-            clt.cfg.name.upper(),
-            clt.cfg.version or 1,
-            clt.cfg.username or "bot",
+            "botlib",
+            __version__,
+            clt.cfg.username or "botlib",
         )
         clt.command("NOTICE", obj.channel, txt)
 
