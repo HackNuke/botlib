@@ -18,7 +18,7 @@ from obj import Object, update
 from odb import find, last, save
 from odf import Default
 from ofn import edit, fmt, register
-from otb import Cbs, Cmd
+from otb import Cbs, Cmd, Obj
 from oev import Event
 from ohd import Handler
 from oth import launch
@@ -545,7 +545,8 @@ class DCC(Handler):
         self.origin = ""
         self.sock = None
         self.speed = "fast"
-
+        Obj.add(self)
+        
     def raw(self, txt):
         self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
@@ -581,6 +582,7 @@ class DCC(Handler):
         e.orig = repr(self)
         e.origin = origin or "root@dcc"
         e.sock = self.sock
+        e.txt = txt
         return e
 
     def handle(self, e):

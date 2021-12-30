@@ -28,8 +28,6 @@ from oth import launch
 
 
 from bot.irc import IRC
-from bot.rss import Fetcher
-from bot.udp import UDP
 
 
 import bot.all
@@ -81,13 +79,12 @@ def main():
     p = Object()
     parse(p, txt)
     if "c" in p.opts:
+        c = Console()
+        c.start()
         f = Fetcher()
         f.start()
         i = IRC()
         i.start()
-        i.wait()
-        c = Console()
-        c.start()
         c.wait()
         return
     c.cmd(txt)
