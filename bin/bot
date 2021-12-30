@@ -73,7 +73,7 @@ def main():
     p = Parsed(txt)
     c = Console()
     Obj.add(c)
-    if "c" in p.opts():
+    if "c" in p.opts:
         f = Fetcher()
         f.start()
         i = IRC()

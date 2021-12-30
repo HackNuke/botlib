@@ -14,11 +14,11 @@ class Test_Cfg(unittest.TestCase):
 
     def test_parse(self):
         p = Parsed("m=irc")
-        self.assertEqual(p.sets().m, "irc")
+        self.assertEqual(p.sets.m, "irc")
 
     def test_parse2(self):
         p = Parsed("m=irc,rss")
-        self.assertEqual(p.sets().m, "irc,rss")
+        self.assertEqual(p.sets.m, "irc,rss")
 
     def test_edit(self):
         d = Object({"mod": "irc,rss"})

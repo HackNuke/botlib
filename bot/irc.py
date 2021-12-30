@@ -288,10 +288,10 @@ class IRC(Output, Handler):
             self.state.needconnect = False
             if self.cfg.servermodes:
                 self.raw("MODE %s %s" % (self.cfg.nick, self.cfg.servermodes))
-            self.zelf = e.args()[-1]
+            self.zelf = e.args[-1]
             self.joinall()
         elif cmd == "002":
-            self.state.host = e.args()[2][:-1]
+            self.state.host = e.args[2][:-1]
         elif cmd == "366":
             self.joined.set()
         elif cmd == "433":
@@ -358,7 +358,7 @@ class IRC(Output, Handler):
                         txtlist.append(arg)
                     else:
                         o.arguments.append(arg)
-                o.txt = " ".join(txtlist)
+                o._txt = " ".join(txtlist)
         else:
             o.command = o.origin
             o.origin = self.cfg.server
@@ -374,13 +374,9 @@ class IRC(Output, Handler):
         else:
             o.channel = o.nick
         if not o.txt:
-            o.txt = rawstr.split(":", 2)[-1]
-        if not o.txt and len(arguments) == 1:
-            o.txt = arguments[1]
-        spl = o.txt.split()
-        if len(spl) > 1:
-            o.txt = " ".join(spl[1:])
-            #o.args = spl[1:]
+            o._txt = rawstr.split(":", 2)[-1]
+        if not o._txt and len(arguments) == 1:
+            o._txt = arguments[1]
         o.type = o.command
         return o
 
@@ -519,14 +515,14 @@ def PRIVMSG(obj):
             return
     if obj.txt:
         if obj.txt[0] in [clt.cfg.cc, "!"]:
-            obj.txt = obj.txt[1:]
+            obj._txt = obj.txt[1:]
         elif obj.txt.startswith("%s:" % clt.cfg.nick):
-            obj.txt = obj.txt[len(clt.cfg.nick)+1:]
+            obj._txt = obj.txt[len(clt.cfg.nick)+1:]
         else:
             return
         splitted = obj.txt.split()
         splitted[0] = splitted[0].lower()
-        obj.txt = " ".join(splitted)
+        obj._txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         Cmd.dispatch(obj)
@@ -652,19 +648,19 @@ class Users(Object):
 def cfg(event):
     c = Cfg()
     last(c)
-    if not event.sets():
+    if not event.sets:
         event.reply(fmt(c, skip=["password", "stamp", "username", "realname"]))
         return
-    edit(c, event.sets())
+    edit(c, event.sets)
     save(c)
     event.reply("ok")
 
 
 def dlt(event):
-    if not event.args():
+    if not event.args:
         event.reply("dlt <username>")
         return
-    selector = {"user": event.args()[0]}
+    selector = {"user": event.args[0]}
     for _fn, o in find("user", selector):
         o._deleted = True
         save(o)
@@ -673,11 +669,11 @@ def dlt(event):
 
 
 def met(event):
-    if not event.args():
+    if not event.args:
         event.reply("met <userhost>")
         return
     user = User()
-    user.user = event.rest()
+    user.user = event.rest
     user.perms = ["USER"]
     save(user)
     event.reply("ok")

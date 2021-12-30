@@ -17,7 +17,7 @@ from opr import Parsed
 p = Parsed(" ".join(sys.argv[1:]))
 
 
-Cfg.verbose = "v" in p.opts()
+Cfg.verbose = "v" in p.opts
 Cfg.wd = ".test"
 
 

@@ -12,25 +12,35 @@ class Parsed(Default):
 
     def __init__(self, txt):
         super().__init__()
-        self.txt = txt
+        self.otxt = txt
+        self._txt = txt
 
+    @property
     def args(self):
-        return self.txt.split()[1:]
+        return self._txt.split()[1:]
 
+    @property
     def cmd(self):
         if self.txt:
-            return self.txt.split()[0].lower()
+            return self._txt.split()[0].lower()
 
+    @property
     def gets(self, keyz=None):
-        return Object([(x.split("==")[0], x.split("==")[-1]) for x in self.txt.split() if "==" in x])
+        return Object([(x.split("==")[0], x.split("==")[-1]) for x in self._txt.split() if "==" in x])
 
+    @property
     def opts(self):
-        return Object([(x[1:], True) for x in self.txt.split() if x.startswith("-")])
+        return Object([(x[1:], True) for x in self._txt.split() if x.startswith("-")])
 
+    @property
     def sets(self):
-        return Object([(x.split("=")[0], x.split("=")[-1]) for x in self.txt.split() if "=" in x])
+        return Object([(x.split("=")[0], x.split("=")[-1]) for x in self._txt.split() if "=" in x])
 
-
+    @property
     def rest(self):
-        return " ".join([x for x in self.txt.split()[1:]
+        return " ".join([x for x in self._txt.split()[1:]
                    if "=" not in x and "-" not in x])
+
+    @property
+    def txt(self):
+        return self._txt.split(":", 2)[-1]

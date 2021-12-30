@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
 
 "object command"
 
 
-import sys
 import threading
 import time
 
@@ -17,11 +15,8 @@ from ofn import fmt
 from otb import Cmd, Obj
 from oth import getname
 
+
 starttime = time.time()
-
-
-def get_main(name):
-    return getattr(sys.modules["__main__"], name, None)
 
 
 class Log(Object):
@@ -80,7 +75,7 @@ def cmd(event):
 
 def flt(event):
     try:
-        index = int(event.args()[0])
+        index = int(event.args[0])
         for o in Obj.objs:
             index -= 1
             if not index:
@@ -92,13 +87,13 @@ def flt(event):
 
 
 def fnd(event):
-    if not event.args():
+    if not event.args:
         fls = listfiles(Cfg.wd)
         if fls:
             event.reply(",".join(sorted({x.split(".")[-1].lower()
                         for x in fls})))
         return
-    otype = event.args()[0]
+    otype = event.args[0]
     nr = -1
     got = False
     for fn, o in find(otype):
@@ -113,12 +108,11 @@ def fnd(event):
 
 
 def log(event):
-    print(event)
-    if not event.rest():
+    if not event.rest:
         event.reply("log <txt>")
         return
     o = Log()
-    o.txt = event.rest()
+    o.txt = event.rest
     save(o)
     event.reply("ok")
 

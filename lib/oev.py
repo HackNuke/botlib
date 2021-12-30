@@ -7,6 +7,7 @@
 from opr import Parsed
 from otb import Obj
 
+
 class Event(Parsed):
 
     def __init__(self, txt, orig=None, origin=None):

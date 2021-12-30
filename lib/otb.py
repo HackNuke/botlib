@@ -57,7 +57,7 @@ class Cmd(Object):
 
     @staticmethod
     def dispatch(e):
-        f = Cmd.get(e.cmd())
+        f = Cmd.get(e.cmd)
         if f:
             f(e)
             e.show()
