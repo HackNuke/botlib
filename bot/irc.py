@@ -24,9 +24,6 @@ from ohd import Handler
 from oth import launch
 
 
-## defines
-
-
 def __dir__():
     return (
         "NoUser",
@@ -121,8 +118,8 @@ class Cfg(Default):
 
 class Event(Event):
 
-    def __init__(self, txt, orig=None, origin=None):
-        super().__init__(txt, orig, origin)
+    def __init__(self):
+        super().__init__()
         self.arguments = []
         self.channel = ""
         self.command = ""
@@ -332,7 +329,7 @@ class IRC(Output, Handler):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        o = Event(rawstr, repr(self))
+        o = Event()
         o.rawstr = rawstr
         o.command = ""
         o.arguments = []
@@ -358,7 +355,7 @@ class IRC(Output, Handler):
                         txtlist.append(arg)
                     else:
                         o.arguments.append(arg)
-                o._txt = " ".join(txtlist)
+                o.txt = " ".join(txtlist)
         else:
             o.command = o.origin
             o.origin = self.cfg.server
@@ -374,9 +371,12 @@ class IRC(Output, Handler):
         else:
             o.channel = o.nick
         if not o.txt:
-            o._txt = rawstr.split(":", 2)[-1]
-        if not o._txt and len(arguments) == 1:
-            o._txt = arguments[1]
+            o.txt = rawstr.split(":", 2)[-1]
+        if not o.txt and len(arguments) == 1:
+            o.txt = arguments[1]
+        spl = o.txt.split()
+        if len(spl) > 1:
+            o.args = spl[1:]
         o.type = o.command
         return o
 
@@ -514,15 +514,16 @@ def PRIVMSG(obj):
         except ConnectionError:
             return
     if obj.txt:
+        print(clt)
         if obj.txt[0] in [clt.cfg.cc, "!"]:
-            obj._txt = obj.txt[1:]
+            obj.txt = obj.txt[1:]
         elif obj.txt.startswith("%s:" % clt.cfg.nick):
-            obj._txt = obj.txt[len(clt.cfg.nick)+1:]
+            obj.txt = obj.txt[len(clt.cfg.nick)+1:]
         else:
             return
         splitted = obj.txt.split()
         splitted[0] = splitted[0].lower()
-        obj._txt = " ".join(splitted)
+        obj.txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         Cmd.dispatch(obj)

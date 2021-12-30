@@ -25,6 +25,7 @@ class Handler(Loop):
         self.raw(txt)
 
     def handle(self, e):
+        e.parse()
         f = Cmd.get(e.cmd)
         if f:
             f(e)

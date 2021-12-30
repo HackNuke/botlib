@@ -13,10 +13,11 @@ sys.path.insert(0, "lib")
 sys.path.insert(0, os.getcwd())
 
 
+from obj import Object
 from odb import Cfg
 from otb import Cls, Cmd, Obj
 from oev import Event
-from opr import Parsed
+from opr import parse
 from ohd import Handler
 from oth import launch
 
@@ -70,7 +71,8 @@ def wrap(func):
 
 def main():
     txt = " ".join(sys.argv[1:])
-    p = Parsed(txt)
+    p = Object()
+    parse(p, txt)
     c = Console()
     Obj.add(c)
     if "c" in p.opts:
