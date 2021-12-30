@@ -113,6 +113,7 @@ def fnd(event):
 
 
 def log(event):
+    print(event)
     if not event.rest():
         event.reply("log <txt>")
         return
