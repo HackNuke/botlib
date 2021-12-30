@@ -507,6 +507,7 @@ def NOTICE(obj):
 
 
 def PRIVMSG(obj):
+    print(Obj.objs)
     clt = obj.bot()
     if obj.txt.startswith("DCC CHAT"):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):

@@ -86,7 +86,8 @@ class Obj(Object):
 
     @staticmethod
     def add(o):
-        idx(Obj.objs, o)
+        if o not in values(Obj.objs):
+            idx(Obj.objs, o)
 
     @staticmethod
     def announce(txt):
