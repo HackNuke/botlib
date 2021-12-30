@@ -21,10 +21,8 @@ class Event(Default):
     def bot(self):
         return Obj.byorig(self.orig)
 
-    def parse(self, txt=None, orig=None, origin=None):
+    def parse(self, txt=None):
         parse(self, txt or self.txt)
-        self.orig = orig or self.orig or ""
-        self.origin = origin or self.origin or ""
       
     def reply(self, txt):
         self.result.append(txt)

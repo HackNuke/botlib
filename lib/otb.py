@@ -8,6 +8,11 @@ from obj import Object, get, items, values
 from ofn import idx, register
 
 
+class NoObj(Exception):
+
+    pass
+
+
 class Cbs(Object):
 
     cbs = Object()
@@ -97,9 +102,11 @@ class Obj(Object):
     @staticmethod
     def byorig(orig):
         for o in values(Obj.objs):
+            print(o, orig)
             if repr(o) == orig:
                 return o
-
+        raise NoObj(orig)
+        
     @staticmethod
     def say(orig, channel, txt):
         o = Obj.byorig(orig)

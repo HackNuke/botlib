@@ -18,7 +18,7 @@ from obj import Object, update
 from odb import find, last, save
 from odf import Default
 from ofn import edit, fmt, register
-from otb import Cbs, Cmd, Obj
+from otb import Cbs, Cmd
 from oev import Event
 from ohd import Handler
 from oth import launch
@@ -233,9 +233,7 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
-        self.log("connect %s:%s" % (server, port))
         if self.cfg.password:
-            self.log("using SASL")
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -250,20 +248,15 @@ class IRC(Output, Handler):
             self.sock.setblocking(True)
             self.sock.settimeout(180.0)
             self.connected.set()
-            self.log("connected")
             return True
         return False
 
-    def handle(self, e):
-        self.log(e.txt)
-        Cbs.dispatch(e)
 
     def doconnect(self, server, nick, port=6667):
         self.state.nrconnect = 0
         while 1:
             self.state.nrconnect += 1
             if self.connect(server, port):
-                self.logon(server, nick)
                 break
             time.sleep(self.cfg.sleep)
 
@@ -302,6 +295,9 @@ class IRC(Output, Handler):
 
     def fileno(self):
         return self.sock.fileno()
+
+    def handle(self, e):
+        Cbs.dispatch(e)
 
     def joinall(self):
         for channel in self.channels:
@@ -382,6 +378,8 @@ class IRC(Output, Handler):
         if len(spl) > 1:
             o.args = spl[1:]
         o.type = o.command
+        o.orig = repr(self)
+        o.txt = o.txt.strip()
         return o
 
     def poll(self):
@@ -396,7 +394,6 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
-        self.log(txt)
         txt += "\n"
         txt = bytes(txt, "utf-8")
         if self.sock:
@@ -440,11 +437,11 @@ class IRC(Output, Handler):
         self.sock = None
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         self.connected.wait()
+        self.logon(self.cfg.server, self.cfg.nick)
         Handler.start(self)
         Output.start(self)
         if not self.keeprunning:
             launch(self.keep)
-        self.wait()
 
     def stop(self):
         try:
@@ -507,7 +504,6 @@ def NOTICE(obj):
 
 
 def PRIVMSG(obj):
-    print(Obj.objs)
     clt = obj.bot()
     if obj.txt.startswith("DCC CHAT"):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
@@ -530,6 +526,7 @@ def PRIVMSG(obj):
         obj.txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
+        obj.parse()
         Cmd.dispatch(obj)
 
 
@@ -580,7 +577,9 @@ class DCC(Handler):
 
     def event(self, txt, origin=None):
         self.connected.wait()
-        e = Event(txt, repr(self), origin or "root@dcc")
+        e = Event()
+        e.orig = repr(self)
+        e.origin = origin or "root@dcc"
         e.sock = self.sock
         return e
 
