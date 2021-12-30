@@ -18,7 +18,6 @@ class Handler(Loop):
 
     def __init__(self):
         Loop.__init__(self)
-        self.cfg = Cfg()
         Obj.add(self)
 
     def announce(self, txt):
@@ -30,6 +29,9 @@ class Handler(Loop):
         if f:
             f(e)
             e.show()
+
+    def log(self, txt):
+        pass
 
     def raw(self, txt):
         pass

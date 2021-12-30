@@ -139,7 +139,6 @@ def parse(o, ptxt):
     o.args = args[1:]
     o.txt = " ".join(args)
     o.rest = " ".join(args[1:])
-    return o
 
 
 def elapsed(seconds, short=True):

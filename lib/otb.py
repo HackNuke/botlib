@@ -5,7 +5,7 @@
 
 
 from obj import Object, get, items, values
-from ofn import register
+from ofn import idx, register
 
 
 class Cbs(Object):
@@ -86,7 +86,7 @@ class Obj(Object):
 
     @staticmethod
     def add(o):
-        Obj.objs[repr(o)] = o
+        idx(Obj.objs, o)
 
     @staticmethod
     def announce(txt):
@@ -95,8 +95,8 @@ class Obj(Object):
 
     @staticmethod
     def byorig(orig):
-        for k, o in items(Obj.objs):
-            if k == orig:
+        for o in values(Obj.objs):
+            if repr(o) == orig:
                 return o
 
     @staticmethod

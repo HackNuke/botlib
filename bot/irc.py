@@ -233,7 +233,9 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
+        self.log("connect %s:%s" % (server, port))
         if self.cfg.password:
+            self.log("using SASL")
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -248,10 +250,12 @@ class IRC(Output, Handler):
             self.sock.setblocking(True)
             self.sock.settimeout(180.0)
             self.connected.set()
+            self.log("connected")
             return True
         return False
 
     def handle(self, e):
+        self.log(e.txt)
         Cbs.dispatch(e)
 
     def doconnect(self, server, nick, port=6667):
@@ -392,6 +396,7 @@ class IRC(Output, Handler):
         if not txt.endswith("\r\n"):
             txt += "\r\n"
         txt = txt[:512]
+        self.log(txt)
         txt += "\n"
         txt = bytes(txt, "utf-8")
         if self.sock:
@@ -429,7 +434,6 @@ class IRC(Output, Handler):
         assert self.cfg.nick
         assert self.cfg.server
         assert self.cfg.channel
-        Obj.add(self)
         save(self.cfg)
         self.connected.clear()
         self.joined.clear()
@@ -514,7 +518,6 @@ def PRIVMSG(obj):
         except ConnectionError:
             return
     if obj.txt:
-        print(clt)
         if obj.txt[0] in [clt.cfg.cc, "!"]:
             obj.txt = obj.txt[1:]
         elif obj.txt.startswith("%s:" % clt.cfg.nick):

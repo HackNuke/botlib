@@ -19,6 +19,7 @@ from otb import Cls, Cmd, Obj
 from oev import Event
 from opr import parse
 from ohd import Handler
+from otm import tfmt
 from oth import launch
 
 
@@ -37,7 +38,11 @@ class Console(Handler):
 
     def cmd(self, txt):
         Obj.add(self)
-        self.handle(Event(txt, repr(self)))
+        e = Event()
+        e.channel = ""
+        e.orig = repr(self)
+        e.txt = txt
+        self.handle(e)
                 
     def poll(self):
         return Event(input("> "), repr(self))
@@ -69,6 +74,9 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
+def log(txt):
+    print("%s %s" % (tfmt("%H:%M"), txt.rstrip()))
+
 def main():
     txt = " ".join(sys.argv[1:])
     p = Object()
@@ -79,6 +87,7 @@ def main():
         f = Fetcher()
         f.start()
         i = IRC()
+        i.log = log
         i.start()
         c.start()
         c.wait()

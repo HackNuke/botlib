@@ -36,9 +36,7 @@ class ObjectEncoder(json.JSONEncoder):
         if isinstance(o, dict):
             return o.items()
         if isinstance(o, Object):
-            d = vars(o)
-            d["__otype__"] = o.__otype__
-            return d
+            return vars(o)
         if isinstance(o, list):
             return iter(o)
         if isinstance(o,
@@ -48,7 +46,7 @@ class ObjectEncoder(json.JSONEncoder):
         try:
             return json.JSONEncoder.default(self, o)
         except TypeError:
-            return repr(o)
+            return str(o)
 
 
 def dump(o, f):

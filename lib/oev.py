@@ -30,7 +30,6 @@ class Event(Default):
         self.result.append(txt)
 
     def show(self):
-        assert self.channel
         assert self.orig
         for txt in self.result:
             Obj.say(self.orig, self.channel, txt)

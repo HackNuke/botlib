@@ -8,6 +8,9 @@ import time
 import threading
 
 
+from datetime import datetime
+
+
 from obj import Object
 from oth import launch, getname
 
@@ -60,3 +63,15 @@ class Repeater(Timer):
         thr = launch(self.start)
         super().run()
         return thr
+
+
+def tfmt(t):
+    return datetime.now().strftime(t)
+
+
+def hours():
+    return datetime.now().strftime("%H")
+    
+
+def minutes():
+    return datetime.now().strftime("%M")
