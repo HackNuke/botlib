@@ -102,7 +102,6 @@ class Obj(Object):
     @staticmethod
     def byorig(orig):
         for o in values(Obj.objs):
-            print(o, orig)
             if repr(o) == orig:
                 return o
         raise NoObj(orig)
