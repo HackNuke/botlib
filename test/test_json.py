@@ -7,8 +7,9 @@ import unittest
 from obj import Object
 from ojs import dumps, loads
 
+#validjson = '{"test": "bla", "otype": "Object"}'
 validjson = '{"test": "bla"}'
-validjson = '{"test": "bla", "__otype__": "obj.Object"}'
+
 
 class Test_JSON(unittest.TestCase):
 

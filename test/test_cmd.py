@@ -42,8 +42,6 @@ class CLI(Handler):
 c = CLI()
 results = Object()
 
-import bot.all
-
 
 class Test_Commands(unittest.TestCase):
 
@@ -51,9 +49,10 @@ class Test_Commands(unittest.TestCase):
         cmds = list(Cmd.cmds)
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
-                e = Event(cmd + " " + ex, repr(c))
+                e = Event()
+                e.txt = cmd + " " + ex
+                e.orig = repr(c)
                 c.handle(e)
-                Obj.add(c)
                 events.append(e)
         if Cfg.verbose:
             print(fmt(results, newline=True))

@@ -2,18 +2,14 @@
 
 
 import os
-import sys
 import unittest
-
-
-sys.path.insert(0, "lib")
 
 
 from obj import Object, get, items, keys, update, values
 from ocf import Cfg
-from odb import Db, fns, hook, last, loado, save
+from odb import Db, fns, hook, loado, last, save
 from ofn import cdir, edit, fmt, register, set
-
+from ojs import loads
 
 
 attrs1 = (

@@ -3,28 +3,30 @@
 
 
 import doctest
+import os
 import sys
 import unittest
 
 
 sys.path.insert(0, "lib")
+sys.path.insert(0, os.getcwd())
 
 
+from obj import Object
 from ocf import Cfg
-from opr import Parsed
-
-
-p = Parsed(" ".join(sys.argv[1:]))
-
-
-Cfg.verbose = "v" in p.opts
-Cfg.wd = ".test"
+from opr import parse
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
 
 
+Cfg.wd = ".test"
+
+
 def main():
+    p = Object()
+    parse(p, " ".join(sys.argv[1:]))
+    Cfg.verbose = "v" in p.opts
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
