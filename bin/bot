@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
-__version__ = 147
-
 
 import inspect
 import os
@@ -10,7 +8,6 @@ import sys
 import termios
 import time
 import traceback
-
 
 sys.path.insert(0, "lib")
 sys.path.insert(0, os.getcwd())
@@ -30,7 +27,8 @@ from oth import launch
 from bot.irc import IRC
 
 
-import bot.all
+import bot.bsc
+import bot.irc
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
@@ -75,14 +73,14 @@ def wrap(func):
 
 
 def main():
+    scan(bot.bsc)
+    scan(bot.irc)
     txt = " ".join(sys.argv[1:])
     p = Object()
     parse(p, txt)
+    c = Console()
     if "c" in p.opts:
-        c = Console()
         c.start()
-        f = Fetcher()
-        f.start()
         i = IRC()
         i.start()
         c.wait()
