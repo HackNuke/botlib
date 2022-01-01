@@ -4,9 +4,9 @@
 "object event"
 
 
-from odf import Default
-from opr import parse
-from otb import Obj
+from .bus import Bus
+from .dft import Default
+from .prs import parse
 
 
 class Event(Default):
@@ -19,7 +19,7 @@ class Event(Default):
         self.result = []
 
     def bot(self):
-        return Obj.byorig(self.orig)
+        return Bus.byorig(self.orig)
 
     def parse(self, txt=None):
         parse(self, txt or self.txt)
@@ -30,4 +30,4 @@ class Event(Default):
     def show(self):
         assert self.orig
         for txt in self.result:
-            Obj.say(self.orig, self.channel, txt)
+            Bus.say(self.orig, self.channel, txt)

@@ -8,8 +8,8 @@ import queue
 import time
 
 
-from obj import Object
-from oth import launch
+from .obj import Object
+from .thr import launch
 
 
 class Loop(Object):

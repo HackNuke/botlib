@@ -1,7 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"object bot"
+"irc bot"
+
+
+## imports
 
 
 import os
@@ -14,14 +17,19 @@ import time
 import _thread
 
 
-from obj import Object, update
-from odb import find, last, save
-from odf import Default
-from ofn import edit, fmt, register
-from otb import Cbs, Cmd, Obj
-from oev import Event
-from ohd import Handler
-from oth import launch
+from op.bus import Bus
+from op.cbs import Cbs
+from op.cmd import Cmd
+from op.dbs import find, last, save
+from op.dft import Default
+from op.evt import Event
+from op.fnc import edit, format
+from op.hdl import Handler
+from op.obj import Object, update
+from op.thr import launch
+
+
+## defines
 
 
 def __dir__():
@@ -62,17 +70,6 @@ def locked(obj):
     return lockeddec
 
 
-class TextWrap(textwrap.TextWrapper):
-
-    def __init__(self):
-        super().__init__()
-        self.break_long_words = False
-        self.drop_whitespace = False
-        self.fix_sentence_endings = True
-        self.replace_whitespace = True
-        self.tabsize = 4
-        self.width = 450
-
 
 saylock = _thread.allocate_lock()
 
@@ -87,18 +84,21 @@ class Stop(Exception):
     pass
 
 
+## classes
+
+
 class Cfg(Default):
 
     cc = "!"
-    channel = "#botlib"
-    nick = "botlib"
+    channel = "#botd"
+    nick = "botd"
     password = ""
     port = 6667
-    realname = "botlib"
+    realname = "24/7 channel daemon"
     server = "localhost"
     servermodes = ""
     sleep = 30
-    username = "botlib"
+    username = "botd"
     users = False
 
     def __init__(self):
@@ -425,13 +425,12 @@ class IRC(Output, Handler):
         self.state.lastline = splitted[-1]
 
     def start(self):
-        last(self.cfg)
+        p = last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         assert self.cfg.nick
         assert self.cfg.server
         assert self.cfg.channel
-        save(self.cfg)
         self.connected.clear()
         self.joined.clear()
         self.sock = None
@@ -453,6 +452,137 @@ class IRC(Output, Handler):
 
     def wait(self):
         self.joined.wait()
+
+
+class DCC(Handler):
+
+    def __init__(self):
+        super().__init__()
+        self.connected = threading.Event()
+        self.encoding = "utf-8"
+        self.origin = ""
+        self.sock = None
+        self.speed = "fast"
+        Bus.add(self)
+        
+    def raw(self, txt):
+        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
+
+    def announce(self, txt):
+        pass
+
+    def connect(self, dccevent):
+        self.connected.clear()
+        arguments = dccevent.txt.split()
+        addr = arguments[3]
+        port = int(arguments[4])
+        if ":" in addr:
+            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        else:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.connect((addr, port))
+        except ConnectionRefusedError:
+            return
+        self.sock.setblocking(1)
+        os.set_inheritable(self.sock.fileno(), os.O_RDWR)
+        self.raw("Welcome %s" % dccevent.origin)
+        self.origin = dccevent.origin
+        Handler.start(self)
+        self.connected.set()
+
+    def dosay(self, channel, txt):
+        self.raw(txt)
+
+    def event(self, txt, origin=None):
+        self.connected.wait()
+        e = Event()
+        e.orig = repr(self)
+        e.origin = origin or "root@dcc"
+        e.sock = self.sock
+        e.txt = txt
+        return e
+
+    def handle(self, e):
+        self.connected.wait()
+        super().handle(e)
+
+    def poll(self):
+        if not self.sock:
+            return
+        txt = str(self.sock.recv(512), "utf8")
+        if txt == "":
+            raise Stop
+        return self.event(txt)
+
+    def say(self, channel, txt):
+        self.raw(txt)
+
+
+class User(Object):
+
+    def __init__(self, val=None):
+        super().__init__()
+        self.user = ""
+        self.perms = []
+        if val:
+            update(self, val)
+
+
+class Users(Object):
+
+    userhosts = Object()
+
+    def allowed(self, origin, perm):
+        perm = perm.upper()
+        origin = getattr(self.userhosts, origin, origin)
+        user = self.get_user(origin)
+        if user:
+            if perm in user.perms:
+                return True
+        return False
+
+    def delete(self, origin, perm):
+        for user in self.get_users(origin):
+            try:
+                user.perms.remove(perm)
+                save(user)
+                return True
+            except ValueError:
+                pass
+
+    def get_users(self, origin=""):
+        s = {"user": origin}
+        return find("user", s)
+
+    def get_user(self, origin):
+        u = list(self.get_users(origin))
+        if u:
+            return u[-1][-1]
+
+    def perm(self, origin, permission):
+        user = self.get_user(origin)
+        if not user:
+            raise NoUser(origin)
+        if permission.upper() not in user.perms:
+            user.perms.append(permission.upper())
+            save(user)
+        return user
+
+
+class TextWrap(textwrap.TextWrapper):
+
+    def __init__(self):
+        super().__init__()
+        self.break_long_words = False
+        self.drop_whitespace = False
+        self.fix_sentence_endings = True
+        self.replace_whitespace = True
+        self.tabsize = 4
+        self.width = 450
+
+
+## callbacks
 
 
 def AUTH(obj):
@@ -536,126 +666,14 @@ def QUIT(obj):
         clt.reconnect()
 
 
-class DCC(Handler):
-
-    def __init__(self):
-        super().__init__()
-        self.connected = threading.Event()
-        self.encoding = "utf-8"
-        self.origin = ""
-        self.sock = None
-        self.speed = "fast"
-        Obj.add(self)
-        
-    def raw(self, txt):
-        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
-
-    def announce(self, txt):
-        pass
-
-    def connect(self, dccevent):
-        self.connected.clear()
-        arguments = dccevent.txt.split()
-        addr = arguments[3]
-        port = int(arguments[4])
-        if ":" in addr:
-            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        else:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            self.sock.connect((addr, port))
-        except ConnectionRefusedError:
-            return
-        self.sock.setblocking(1)
-        os.set_inheritable(self.sock.fileno(), os.O_RDWR)
-        self.raw("Welcome %s" % dccevent.origin)
-        self.origin = dccevent.origin
-        Handler.start(self)
-        self.connected.set()
-
-    def dosay(self, channel, txt):
-        self.raw(txt)
-
-    def event(self, txt, origin=None):
-        self.connected.wait()
-        e = Event()
-        e.orig = repr(self)
-        e.origin = origin or "root@dcc"
-        e.sock = self.sock
-        e.txt = txt
-        return e
-
-    def handle(self, e):
-        self.connected.wait()
-        super().handle(e)
-
-    def poll(self):
-        if not self.sock:
-            return
-        txt = str(self.sock.recv(512), "utf8")
-        if txt == "":
-            raise Stop
-        return self.event(txt)
-
-    def say(self, channel, txt):
-        self.raw(txt)
-
-
-class User(Object):
-    def __init__(self, val=None):
-        super().__init__()
-        self.user = ""
-        self.perms = []
-        if val:
-            update(self, val)
-
-
-class Users(Object):
-
-    userhosts = Object()
-
-    def allowed(self, origin, perm):
-        perm = perm.upper()
-        origin = getattr(self.userhosts, origin, origin)
-        user = self.get_user(origin)
-        if user:
-            if perm in user.perms:
-                return True
-        return False
-
-    def delete(self, origin, perm):
-        for user in self.get_users(origin):
-            try:
-                user.perms.remove(perm)
-                user.save()
-                return True
-            except ValueError:
-                pass
-
-    def get_users(self, origin=""):
-        s = {"user": origin}
-        return find("user", s)
-
-    def get_user(self, origin):
-        u = list(self.get_users(origin))
-        if u:
-            return u[-1][-1]
-
-    def perm(self, origin, permission):
-        user = self.get_user(origin)
-        if not user:
-            raise NoUser(origin)
-        if permission.upper() not in user.perms:
-            user.perms.append(permission.upper())
-            user.save()
-        return user
+## commands
 
 
 def cfg(event):
     c = Cfg()
-    last(c)
+    p = last(c)
     if not event.sets:
-        event.reply(fmt(c, skip=["password", "stamp", "username", "realname"]))
+        event.reply(format(c, "cc,password,realname,username"))
         return
     edit(c, event.sets)
     save(c)
@@ -667,7 +685,7 @@ def dlt(event):
         event.reply("dlt <username>")
         return
     selector = {"user": event.args[0]}
-    for _fn, o in find("user", selector):
+    for _fn, o in fnd("user", selector):
         o._deleted = True
         save(o)
         event.reply("ok")

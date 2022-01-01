@@ -11,8 +11,8 @@ import threading
 from datetime import datetime
 
 
-from obj import Object
-from oth import launch, getname
+from .obj import Object
+from .thr import launch, getname
 
 
 def __dir__():

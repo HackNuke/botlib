@@ -2,54 +2,98 @@
 # This file is placed in the Public Domain.
 
 
-"object command"
-
-
 import inspect
 import os
+import readline
 import sys
 import termios
+import time
 import traceback
 
 
-sys.path.insert(0, "lib")
 sys.path.insert(0, os.getcwd())
 
-from odb import Cfg
-from otb import Cls, Cmd, Obj
-from oev import Event
-from ohd import Handler
-from otb import Cmd, Obj
-from oth import launch
 
-
-Cfg.wd = "/var/lib/botd"
-
-
-class CLI(Handler):
-
-    def cmd(self, txt):
-        self.handle(Event(txt, repr(self)))
-                
-    def raw(self, txt):
-        print(txt)
-
-
-def scan(mod):
-    for k, o in inspect.getmembers(mod, inspect.isfunction):
-         if "event" in o.__code__.co_varnames:
-             Cmd.cmds[k] = o
-    for k, clz in inspect.getmembers(mod, inspect.isclass):
-       Cls.add(clz)
+from op.cfg import Cfg
+from op.cls import Cls
+from op.cmd import Cmd
+from op.dft import Default
+from op.evt import Event
+from op.fnc import format
+from op.krn import boot, kcmd
+from op.obj import Object, update, values
+from op.prs import parse, parse_cli
+from op.hdl import Handler
+from op.tbl import Tbl
+from op.tms import tfmt
+from op.thr import launch
 
 
 import bot.all
 
 
+from bot.irc import IRC
+from bot.rss import Fetcher
+
+
+Cfg.wd = os.path.expanduser("~/.bot")
+
+
+class Cfg(Default):
+
+    pass
+
+
+class Console(Handler):
+
+    def __init__(self):
+        Handler.__init__(self)
+        self.cfg = Cfg()
+
+    def poll(self):
+        e = Event()
+        e.orig = repr(self)
+        e.txt = input("> ")
+        return e
+ 
+    def raw(self, txt):
+        print(txt)
+
+
+def scan():
+    for mod in values(Tbl.mod):
+        for k, o in inspect.getmembers(mod, inspect.isfunction):
+            if "event" in o.__code__.co_varnames:
+                Cmd.cmds[k] = o
+        for k, clz in inspect.getmembers(mod, inspect.isclass):
+            Cls.add(clz)
+        Tbl.add(mod)
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
 def main():
-    txt = " ".join(sys.argv[1:])
-    c = CLI()
-    c.cmd(txt)
+    scan()
+    cfg = boot(" ".join(sys.argv[1:]))
+    if cfg.txt:
+        c = Console()
+        return kcmd(c, cfg.otxt)
+    if "c" in cfg.opts:
+        i = IRC()
+        i.start()
+        f = Fetcher()
+        f.start()
+        c = Console()
+        c.start()
+        c.wait()
 
-
-main()
+wrap(main)

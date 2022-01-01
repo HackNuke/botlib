@@ -4,7 +4,7 @@
 "object default"
 
 
-from obj import Object
+from .obj import Object
 
 
 class Default(Object):

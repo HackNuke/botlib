@@ -21,7 +21,6 @@ def __dir__():
         'keys',
         'pop',
         'popitem',
-        'register',
         'setdefault',
         'update',
         'values'
@@ -47,12 +46,16 @@ class Object:
         )
         self.__idx__ = 0
         if args:
-            update(self, args[0])
+            self.__dict__.update(args[0])
         if kwargs:
-            update(self, kwargs)
+            self.__dict__.update(kwargs)
+
+
+    def __class_getitem__(self):
+        return self.__dict__.__class_geitem__()
 
     def __contains__(self, k):
-        if k in keys(self):
+        if k in self.__dict__.keys():
             return True
         return False
 
@@ -60,11 +63,52 @@ class Object:
         if k in self:
             del self.__dict__[k]
 
+    def __dir__(self):
+        return (
+            '__class__',
+            '__class_getitem__',
+            '__contains__',
+            '__delattr__',
+            '__delitem__',
+            '__dir__',
+            '__doc__',
+            '__eq__',
+            '__format__',
+            '__ge__',
+            '__getattribute__',
+            '__getitem__',
+            '__gt__',
+            '__hash__',
+            '__init__',
+            '__init_subclass__',
+            '__ior__',
+            '__iter__',
+            '__le__',
+            '__len__',
+            '__lt__',
+            '__ne__',
+            '__new__',
+            '__or__',
+            '__reduce__',
+            '__reduce_ex__',
+            '__repr__',
+            '__reversed__',
+            '__ror__',
+            '__setattr__',
+            '__setitem__',
+            '__sizeof__',
+            '__str__',
+            '__subclasshook__'
+        )
+
     def __eq__(self, o):
         return len(self) == len(o)
 
     def __getitem__(self, k):
         return self.__dict__[k]
+
+    def __ior__(self, o):
+        return self.__dict__.__ior__(o)
 
     def __iter__(self):
         return iter(self.__dict__)
@@ -87,11 +131,17 @@ class Object:
     def __hash__(self):
         return id(self)
 
+    def __or__(self, o):
+        return self.__dict__.__or__(o)
+
     def __reduce__(self):
         pass
-
+        
     def __reduce_ex__(self, k):
         pass
+
+    def __reversed__(self):
+        return self.__dict__.__reversed__()
 
     def __setitem__(self, k, v):
         self.__dict__[k] = v
@@ -102,6 +152,9 @@ class Object:
             self.__class__.__name__,
             hex(id(self)),
         )
+
+    def __ror__(self, o):
+        return self.__dict__.__ror__(o)
 
     def __str__(self):
         return str(self.__dict__)

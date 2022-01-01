@@ -1,7 +1,17 @@
-grep -R --exclude-dir=docs __import__ bot 
-grep -R --exclude-dir=docs __main__ bot 
-grep -R --exclude-dir=docs popen bot
-grep -R --exclude-dir=docs pkgutil bot
-grep -R --exclude-dir=docs importlib bot
-grep -R --exclude-dir=docs print bot
-grep -R --exclude-dir=docs "import sys" bot
+grep -R __import__ op
+grep -R __main__ op
+grep -R popen op
+grep -R pkgutil op
+grep -R importlib op
+grep -R print op
+grep -R "import sys" op
+grep -R "import inspect" op
+
+grep -R __import__ bot
+grep -R __main__ bot
+grep -R popen bot
+grep -R pkgutil bot
+grep -R importlib bot
+grep -R print bot
+grep -R "import sys" bot
+grep -R "import inspect" bot

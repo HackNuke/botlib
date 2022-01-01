@@ -3,23 +3,17 @@
 
 "object handler"
 
-
-from obj import Object
-from olp import Loop
-from otb import Cmd, Obj
-
-
-class Cfg(Object):
-
-    pass
+from .bus import Bus
+from .cmd import Cmd
+from .obj import Object
+from .lop import Loop
 
 
 class Handler(Loop):
 
     def __init__(self):
         Loop.__init__(self)
-        self.cfg = Cfg()
-        Obj.add(self)
+        Bus.add(self)
 
     def announce(self, txt):
         self.raw(txt)

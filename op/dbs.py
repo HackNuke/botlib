@@ -10,20 +10,23 @@ import os
 import time
 
 
-from obj import Object, update
-from ocf import Cfg
-from ofn import cdir, search
-from ojs import ObjectDecoder, ObjectEncoder
-from otb import Cls
+from .obj import Object, update
+from .cfg import Cfg
+from .fnc import cdir, search
+from .jsn import ObjectDecoder, ObjectEncoder
+from .cls import Cls
 
 
 def __dir__():
     return (
-        "Db",
-        "all",
-        "fns",
-        "last",
-        "wd"
+         'Db',
+         'all',
+         'fnd',
+         'loa',
+         'lst',
+         'rea',
+         'sve',
+         'dmp',
     )
 
 
@@ -37,7 +40,7 @@ class Db(Object):
             selector = {}
         for fn in fns(otype, timed):
             o = hook(fn)
-            if selector and not search(o, selector):
+            if selector and not srh(o, selector):
                 continue
             if "_deleted" in o and o._deleted:
                 continue
@@ -61,7 +64,7 @@ class Db(Object):
         for otype in os.listdir(os.path.join(Cfg.wd, "store")):
             for fn in fns(otype, timed):
                 o = hook(fn)
-                if selector and not search(o, selector):
+                if selector and not srh(o, selector):
                     continue
                 if "_deleted" in o and o._deleted:
                     continue
@@ -77,7 +80,7 @@ class Db(Object):
         nr = -1
         for fn in fns(otype, timed):
             o = hook(fn)
-            if selector and not search(o, selector):
+            if selector and not srh(o, selector):
                 continue
             if "_deleted" in o and o._deleted:
                 continue
@@ -115,23 +118,27 @@ class Db(Object):
         return (None, None)
 
 
-def all(timed=None):
-    assert Cfg.wd
-    p = os.path.join(Cfg.wd, "store")
-    for name in os.listdir(p):
-        for fn in fns(name):
-            yield fn
+    def types(workdir):
+        assert Cfg.wd
+        path = os.path.join(Cfg.wd, "store")
+        if not os.path.exists(path):
+            return []
+        return sorted(os.listdir(path))
 
 
-def find(name, selector=None, index=None, timed=None, names=None):
-    db = Db()
-    if not names:
-        names = Cls.full(name)
-    for n in names:
-        for fn, o in db.find(n, selector, index, timed):
-            yield fn, o
-
-
+def fntime(daystr):
+    daystr = daystr.replace("_", ":")
+    datestr = " ".join(daystr.split(os.sep)[-2:])
+    if "." in datestr:
+        datestr, rest = datestr.rsplit(".", 1)
+    else:
+        rest = ""
+    t = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+    if rest:
+        t += float("." + rest)
+    else:
+        t = 0
+    return t
 
 def fns(name, timed=None):
     if not name:
@@ -161,22 +168,6 @@ def fns(name, timed=None):
     return sorted(res, key=fntime)
 
 
-def fntime(daystr):
-    daystr = daystr.replace("_", ":")
-    datestr = " ".join(daystr.split(os.sep)[-2:])
-    if "." in datestr:
-        datestr, rest = datestr.rsplit(".", 1)
-    else:
-        rest = ""
-    t = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
-    if rest:
-        t += float("." + rest)
-    else:
-        t = 0
-    return t
-
-
-
 def hook(hfn):
     if hfn.count(os.sep) > 3:
         oname = hfn.split(os.sep)[-4:]
@@ -189,8 +180,25 @@ def hook(hfn):
     else:
         o = Object()
     fn = os.sep.join(oname)
-    loado(o, fn)
+    read(o, fn)
     return o
+
+
+def all(timed=None):
+    assert Cfg.wd
+    p = os.path.join(Cfg.wd, "store")
+    for name in os.listdir(p):
+        for fn in fns(name):
+            yield fn
+
+
+def find(name, selector=None, index=None, timed=None, names=None):
+    db = Db()
+    if not names:
+        names = Cls.full(name)
+    for n in names:
+        for fn, o in db.find(n, selector, index, timed):
+            yield fn, o
 
 
 def last(o):
@@ -205,15 +213,7 @@ def last(o):
     return None
 
 
-def listfiles(workdir):
-    assert Cfg.wd
-    path = os.path.join(Cfg.wd, "store")
-    if not os.path.exists(path):
-        return []
-    return sorted(os.listdir(path))
-
-
-def loado(o, opath):
+def load(o, opath):
     if opath.count(os.sep) != 3:
         return
     assert Cfg.wd
@@ -227,30 +227,27 @@ def loado(o, opath):
     o.__stp__ = stp
 
 
-def loadp(o, opath):
-    assert Cfg.wd
-    if os.path.exists(opath):
-        with open(opath, "r") as ofile:
-            d = json.load(ofile, cls=ObjectDecoder)
-            update(o, d)
-
 def save(o):
     assert Cfg.wd
     prv = os.sep.join(o.__stp__.split(os.sep)[:2])
     o.__stp__ = os.path.join(prv,
                              os.sep.join(str(datetime.datetime.now()).split()))
     opath = os.path.join(Cfg.wd, "store", o.__stp__)
-    savep(o, opath)
-    with open(opath, "w") as ofile:
-        json.dump(
-            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
-        )
+    dmp(o, opath)
     os.chmod(opath, 0o444)
     return o.__stp__
 
 
-def savep(o, opath):
-    cdir(opath)
+def read(o, opath):
+    assert Cfg.wd
+    if os.path.exists(opath):
+        with open(opath, "r") as ofile:
+            d = json.load(ofile, cls=ObjectDecoder)
+            update(o, d)
+
+
+def dump(o, opath):
+    cdr(opath)
     with open(opath, "w") as ofile:
         json.dump(
             o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True

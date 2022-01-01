@@ -3,7 +3,7 @@
 "object runtime"
 
 
-from odf import Default
+from .dft import Default
 
 
 class Cfg(Default):

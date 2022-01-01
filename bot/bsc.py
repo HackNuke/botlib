@@ -1,120 +1,58 @@
 # This file is placed in the Public Domain.
 
 
-"object command"
-
-
 import threading
 import time
 
 
-from obj import Object, get, keys, update
-from odb import Cfg, find, fntime, listfiles, save
-from odf import Default
-from ofn import fmt
-from otb import Cmd, Obj
-from oth import getname
+from op.bus import Bus
+from op.cfg import Cfg
+from op.cmd import Cmd
+from op.dbs import Db, fntime, save
+from op.dbs import find
+from op.dft import Default
+from op.fnc import format
+from op.obj import Object, get, keys, update, values
+from op.thr import getname
+from op.prs import elapsed
 
 
 starttime = time.time()
 
 
-class Log(Object):
-
-    def __init__(self):
-        super().__init__()
-        self.txt = ""
-
-
-def elapsed(seconds, short=True):
-    txt = ""
-    nsec = float(seconds)
-    year = 365*24*60*60
-    week = 7*24*60*60
-    nday = 24*60*60
-    hour = 60*60
-    minute = 60
-    years = int(nsec/year)
-    nsec -= years*year
-    weeks = int(nsec/week)
-    nsec -= weeks*week
-    nrdays = int(nsec/nday)
-    nsec -= nrdays*nday
-    hours = int(nsec/hour)
-    nsec -= hours*hour
-    minutes = int(nsec/minute)
-    sec = nsec - minutes*minute
-    if years:
-        txt += "%sy" % years
-    if weeks:
-        nrdays += weeks * 7
-    if nrdays:
-        txt += "%sd" % nrdays
-    if years and short and txt:
-        return txt
-    if hours:
-        txt += "%sh" % hours
-    if nrdays and short and txt:
-        return txt
-    if minutes:
-        txt += "%sm" % minutes
-    if hours and short and txt:
-        return txt
-    if sec == 0:
-        txt += "0s"
-    else:
-        txt += "%ss" % int(sec)
-    txt = txt.strip()
-    return txt
-
-
 def cmd(event):
-    
     event.reply(",".join(sorted(Cmd.cmds)))
     
 
 def flt(event):
     try:
         index = int(event.args[0])
-        for o in Obj.objs:
-            index -= 1
-            if not index:
-                event.reply(fmt(Obj.objs[str(index)], skip=["queue", "ready", "iqueue"]))
+        event.reply(fmt(Obj.objs[str(index)]))
         return
-    except (TypeError, IndexError, ValueError):
+    except (KeyError, TypeError, IndexError, ValueError):
         pass
-    event.reply(" | ".join([getname(o) for o in Obj.objs]))
+    event.reply(" | ".join([getname(o) for o in values(Obj.objs)]))
 
 
 def fnd(event):
     if not event.args:
-        fls = listfiles(Cfg.wd)
-        if fls:
-            event.reply(",".join(sorted({x.split(".")[-1].lower()
-                        for x in fls})))
+        db = Db()
+        event.reply(",".join(
+            sorted({x.split(".")[-1].lower() for x in db.types()}))
+        )
         return
     otype = event.args[0]
     nr = -1
     got = False
     for fn, o in find(otype):
         nr += 1
-        txt = "%s %s" % (str(nr), fmt(o, keys(o)))
-        if "-t" in event.txt:
+        txt = "%s %s" % (str(nr), format(o))
+        if "t" in event.opts:
             txt = txt + " %s" % (elapsed(time.time() - fntime(fn)))
         got = True
         event.reply(txt)
     if not got:
         event.reply("no result")
-
-
-def log(event):
-    if not event.rest:
-        event.reply("log <txt>")
-        return
-    o = Log()
-    o.txt = event.rest
-    save(o)
-    event.reply("ok")
 
 
 def thr(event):
