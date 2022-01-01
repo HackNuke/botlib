@@ -69,7 +69,6 @@ def scan():
             Cls.add(clz)
         Tbl.add(mod)
 
-
 def wrap(func):
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
