@@ -17,10 +17,7 @@ setup(
     description="24/7 channel daemon",
     long_description=read(),
     license="Public Domain",
-    package_dir={"": "lib",
-                 "bot": "bot"},
-    py_modules=["obj", "ocf", "odb", "odf", "oev", "ofn", "ohd", "ojs", "olp", "opr", "otb", "oth", "otm"],
-    packages=["bot"],
+    packages=["bot", "op"],
     include_package_data=True,
     data_files=[
                 ("share/botd", ["files/botd.service",]),

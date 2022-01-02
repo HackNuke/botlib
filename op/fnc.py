@@ -8,7 +8,7 @@ import os
 import pathlib
 
 
-from .obj import Object, items, keys
+from .obj import Object, get, items, keys
 
 
 def cdir(path):
@@ -37,7 +37,8 @@ def format(o, skip="", *args, **kwargs):
     for k in keys(o):
         if k in spl(skip):
             continue
-        v = getattr(o, k, None)
+        v = get(o, k, None)
+        print(v)
         res += "%s=%s " % (k, v)
     return res.rstrip()
 

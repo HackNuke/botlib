@@ -6,23 +6,14 @@
 
 
 import inspect
-import os
-import sys
-import termios
 import time
-import traceback
 
 
-from op.bus import Bus
 from op.cls import Cls
 from op.cmd import Cmd
 from op.dbs import Cfg
-from op.evt import Event
-from op.obj import Object, update
-from op.prs import parse
-from op.hdl import Handler
-from op.tms import tfmt
-from op.thr import launch
+from op.obj import values
+from op.tbl import Tbl
 
 
 import bot.all
@@ -32,26 +23,23 @@ from bot.irc import IRC
 from bot.rss import Fetcher
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
+Cfg.wd = "/var/lib/botd/"
 
 
-def daemon():
-    print("BOT daemon start at %s" % time.ctime(time.time()).replace("  ", " "))
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", 'r')
-    so = open("/dev/null", 'a+')
-    se = open("/dev/null", 'a+')
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
+def scan():
+    "scan registered modules"
+    for mod in values(Tbl.mod):
+        for k, o in inspect.getmembers(mod, inspect.isfunction):
+            if "event" in o.__code__.co_varnames:
+                Cmd.cmds[k] = o
+        for k, clz in inspect.getmembers(mod, inspect.isclass):
+            Cls.add(clz)
+        Tbl.add(mod)
 
 
 def main():
-    daemon()
+    "main function"
+    scan()
     i = IRC()
     i.start()
     f = Fetcher()

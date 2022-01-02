@@ -2,65 +2,39 @@
 # This file is placed in the Public Domain.
 
 
+"bot command"
+
+
 import inspect
 import os
-import readline
 import sys
-import termios
-import time
-import traceback
-
-
-sys.path.insert(0, os.getcwd())
 
 
 from op.cfg import Cfg
 from op.cls import Cls
 from op.cmd import Cmd
-from op.dft import Default
-from op.evt import Event
-from op.fnc import format
 from op.krn import boot, kcmd
-from op.obj import Object, update, values
-from op.prs import parse, parse_cli
+from op.obj import values
 from op.hdl import Handler
 from op.tbl import Tbl
-from op.tms import tfmt
-from op.thr import launch
 
 
 import bot.all
 
 
-from bot.irc import IRC
-from bot.rss import Fetcher
+Cfg.wd = "/var/lib/botd/"
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
+class CLI(Handler):
 
+    "command line interface"
 
-class Cfg(Default):
-
-    pass
-
-
-class Console(Handler):
-
-    def __init__(self):
-        Handler.__init__(self)
-        self.cfg = Cfg()
-
-    def poll(self):
-        e = Event()
-        e.orig = repr(self)
-        e.txt = input("> ")
-        return e
- 
     def raw(self, txt):
         print(txt)
 
 
 def scan():
+    "scan registered modules"
     for mod in values(Tbl.mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if "event" in o.__code__.co_varnames:
@@ -69,30 +43,13 @@ def scan():
             Cls.add(clz)
         Tbl.add(mod)
 
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
 
 def main():
+    "main function"
     scan()
     cfg = boot(" ".join(sys.argv[1:]))
     if cfg.txt:
-        c = Console()
-        return kcmd(c, cfg.otxt)
-    if "c" in cfg.opts:
-        i = IRC()
-        i.start()
-        f = Fetcher()
-        f.start()
-        c = Console()
-        c.start()
-        c.wait()
+        c = CLI()
+        kcmd(c, cfg.otxt)
 
-wrap(main)
+main()

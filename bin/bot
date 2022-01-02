@@ -2,26 +2,26 @@
 # This file is placed in the Public Domain.
 
 
+"irc bot"
+
+
 import inspect
 import os
 import readline
 import sys
 import termios
 import time
-import traceback
 
 
 from op.cls import Cls
 from op.cmd import Cmd
-from op.obj import Object, update, values
+from op.obj import values
 from op.cfg import Cfg
 from op.dft import Default
 from op.evt import Event
-from op.prs import parse
+from op.krn import boot, kcmd
 from op.hdl import Handler
 from op.tbl import Tbl
-from op.tms import tfmt
-from op.thr import launch
 
 
 import bot.all
@@ -36,17 +36,16 @@ Cfg.wd = os.path.expanduser("~/.bot")
 
 class Cfg(Default):
 
-    pass
+    "console config"
 
 
 class Console(Handler):
 
+    "console"
+
     def __init__(self):
         Handler.__init__(self)
         self.cfg = Cfg()
-
-    def boot(self):
-        return parse(self.cfg, " ".join(sys.argv[1:]))
 
     def cmd(self, txt):
         e = Event()
@@ -60,12 +59,28 @@ class Console(Handler):
         e.orig = repr(self)
         e.txt = input("> ")
         return e
- 
+
     def raw(self, txt):
         print(txt)
 
 
+def daemon():
+    "daemonize"
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    os.umask(0)
+    si = open("/dev/null", 'r')
+    so = open("/dev/null", 'a+')
+    se = open("/dev/null", 'a+')
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
+
+
 def scan():
+    "scan registered modules"
     for mod in values(Tbl.mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if "event" in o.__code__.co_varnames:
@@ -76,6 +91,7 @@ def scan():
 
 
 def wrap(func):
+    "run function in terminal state wrappers"
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
     try:
@@ -87,15 +103,26 @@ def wrap(func):
 
 
 def main():
-    print("BOT start at %s" % time.ctime(time.time()).replace("  ", " "))
+    "main function"
     scan()
     c = Console()
-    c.boot()
+    cfg = boot(" ".join(sys.argv[1:]))
+    if cfg.txt:
+        kcmd(c, cfg.otxt)
+        return
+    print("BOT start at %s" % time.ctime(time.time()).replace("  ", " "))
+    wait = False
+    if "d" in cfg.opts:
+        daemon()
+        wait = True
+    else:
+        c.start()
+        wait = True
     i = IRC()
     i.start()
     f = Fetcher()
     f.start()
-    c.start()
-    c.wait()
+    if wait:
+        c.wait()
 
 wrap(main)

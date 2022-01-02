@@ -21,12 +21,12 @@ def __dir__():
     return (
          'Db',
          'all',
-         'fnd',
-         'loa',
-         'lst',
-         'rea',
-         'sve',
-         'dmp',
+         'find',
+         'load',
+         'last',
+         'read',
+         'save',
+         'store',
     )
 
 
@@ -40,7 +40,7 @@ class Db(Object):
             selector = {}
         for fn in fns(otype, timed):
             o = hook(fn)
-            if selector and not srh(o, selector):
+            if selector and not search(o, selector):
                 continue
             if "_deleted" in o and o._deleted:
                 continue
@@ -64,7 +64,7 @@ class Db(Object):
         for otype in os.listdir(os.path.join(Cfg.wd, "store")):
             for fn in fns(otype, timed):
                 o = hook(fn)
-                if selector and not srh(o, selector):
+                if selector and not search(o, selector):
                     continue
                 if "_deleted" in o and o._deleted:
                     continue
@@ -80,7 +80,7 @@ class Db(Object):
         nr = -1
         for fn in fns(otype, timed):
             o = hook(fn)
-            if selector and not srh(o, selector):
+            if selector and not search(o, selector):
                 continue
             if "_deleted" in o and o._deleted:
                 continue
@@ -220,22 +220,8 @@ def load(o, opath):
     splitted = opath.split(os.sep)
     stp = os.sep.join(splitted[-4:])
     lpath = os.path.join(Cfg.wd, "store", stp)
-    if os.path.exists(lpath):
-        with open(lpath, "r") as ofile:
-            d = json.load(ofile, cls=ObjectDecoder)
-            update(o, d)
+    read(o, lpath)
     o.__stp__ = stp
-
-
-def save(o):
-    assert Cfg.wd
-    prv = os.sep.join(o.__stp__.split(os.sep)[:2])
-    o.__stp__ = os.path.join(prv,
-                             os.sep.join(str(datetime.datetime.now()).split()))
-    opath = os.path.join(Cfg.wd, "store", o.__stp__)
-    dmp(o, opath)
-    os.chmod(opath, 0o444)
-    return o.__stp__
 
 
 def read(o, opath):
@@ -246,8 +232,19 @@ def read(o, opath):
             update(o, d)
 
 
-def dump(o, opath):
-    cdr(opath)
+def save(o):
+    assert Cfg.wd
+    prv = os.sep.join(o.__stp__.split(os.sep)[:2])
+    o.__stp__ = os.path.join(prv,
+                             os.sep.join(str(datetime.datetime.now()).split()))
+    opath = os.path.join(Cfg.wd, "store", o.__stp__)
+    store(o, opath)
+    os.chmod(opath, 0o444)
+    return o.__stp__
+
+
+def store(o, opath):
+    cdir(opath)
     with open(opath, "w") as ofile:
         json.dump(
             o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
