@@ -4,12 +4,13 @@
 import unittest
 
 
-from obj import Object, get
-from ocf import Cfg
-from oev import Event
-from ofn import fmt, idx
-from ohd import Handler
-from otb import Cmd, Obj
+from ol.cls import Cls
+from ol.cmd import Cmd
+from ol.cfg import Cfg
+from ol.obj import Object, get
+from ol.evt import Event
+from ol.fnc import format, index
+from ol.hdl import Handler
 
 
 events = []
@@ -36,7 +37,7 @@ class CLI(Handler):
 
 
      def raw(self, txt):
-         idx(results, txt)
+         index(results, txt)
         
          
 c = CLI()
@@ -55,5 +56,5 @@ class Test_Commands(unittest.TestCase):
                 c.handle(e)
                 events.append(e)
         if Cfg.verbose:
-            print(fmt(results, newline=True))
+            print(format(results, newline=True))
         

@@ -5,16 +5,16 @@ import threading
 import time
 
 
-from op.bus import Bus
-from op.cfg import Cfg
-from op.cmd import Cmd
-from op.dbs import Db, fntime, save
-from op.dbs import find
-from op.dft import Default
-from op.fnc import format
-from op.obj import Object, get, keys, update, values
-from op.thr import getname
-from op.prs import elapsed
+from ol.bus import Bus
+from ol.cfg import Cfg
+from ol.cmd import Cmd
+from ol.dbs import Db, fntime, save
+from ol.dbs import find
+from ol.dft import Default
+from ol.fnc import format
+from ol.obj import Object, get, keys, update, values
+from ol.thr import getname
+from ol.prs import elapsed
 
 
 starttime = time.time()

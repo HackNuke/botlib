@@ -17,16 +17,16 @@ import time
 import _thread
 
 
-from op.bus import Bus
-from op.cbs import Cbs
-from op.cmd import Cmd
-from op.dbs import find, last, save
-from op.dft import Default
-from op.evt import Event
-from op.fnc import edit, format
-from op.hdl import Handler
-from op.obj import Object, update
-from op.thr import launch
+from ol.bus import Bus
+from ol.cbs import Cbs
+from ol.cmd import Cmd
+from ol.dbs import find, last, save
+from ol.dft import Default
+from ol.evt import Event
+from ol.fnc import edit, format
+from ol.hdl import Handler
+from ol.obj import Object, update
+from ol.thr import launch
 
 
 ## defines

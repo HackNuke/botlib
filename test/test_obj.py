@@ -5,11 +5,11 @@ import os
 import unittest
 
 
-from obj import Object, get, items, keys, update, values
-from ocf import Cfg
-from odb import Db, fns, hook, loado, last, save
-from ofn import cdir, edit, fmt, register, set
-from ojs import loads
+from ol.cfg import Cfg
+from ol.obj import Object, get, items, keys, update, values
+from ol.dbs import Db, fns, hook, load, last, save
+from ol.fnc import cdir, edit, format, register, zet
+from ol.jsn import loads
 
 
 attrs1 = (
@@ -22,7 +22,6 @@ attrs1 = (
     'keys',
     'pop',
     'popitem',
-    'register',
     'setdefault',
     'update',
     'values'
@@ -31,10 +30,10 @@ attrs1 = (
 
 attrs2 = (
     '__class__',
+    '__class_getitem__',
     '__contains__',
     '__delattr__',
     '__delitem__',
-    '__dict__',
     '__dir__',
     '__doc__',
     '__eq__',
@@ -44,26 +43,24 @@ attrs2 = (
     '__getitem__',
     '__gt__',
     '__hash__',
-    '__idx__',
     '__init__',
     '__init_subclass__',
+    '__ior__',
     '__iter__',
     '__le__',
     '__len__',
     '__lt__',
-    '__module__',
     '__ne__',
     '__new__',
-    '__oqn__',
-    '__otype__',
+    '__or__',
     '__reduce__',
     '__reduce_ex__',
     '__repr__',
+    '__reversed__',
+    '__ror__',
     '__setattr__',
     '__setitem__',
     '__sizeof__',
-    '__slots__',
-    '__stp__',
     '__str__',
     '__subclasshook__'
 )
@@ -72,8 +69,8 @@ attrs2 = (
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
-        import obj
-        self.assertEqual(tuple(dir(obj)), attrs1)
+        import ol.obj
+        self.assertEqual(tuple(dir(ol.obj)), attrs1)
 
     def test_attributes(self):
         o = Object()
@@ -116,10 +113,10 @@ class Test_Object(unittest.TestCase):
             dir(o),
             [
                 "__class__",
+                "__class_getitem__",
                 "__contains__",
                 "__delattr__",
                 "__delitem__",
-                "__dict__",
                 "__dir__",
                 "__doc__",
                 "__eq__",
@@ -129,26 +126,24 @@ class Test_Object(unittest.TestCase):
                 "__getitem__",
                 "__gt__",
                 "__hash__",
-                "__idx__",
                 "__init__",
                 "__init_subclass__",
+                "__ior__",
                 "__iter__",
                 "__le__",
                 "__len__",
                 "__lt__",
-                "__module__",
                 "__ne__",
                 "__new__",
-                "__oqn__",
-                "__otype__",
+                "__or__",
                 "__reduce__",
                 "__reduce_ex__",
                 "__repr__",
+                "__reversed__",
+                "__ror__",
                 "__setattr__",
                 "__setitem__",
                 "__sizeof__",
-                "__slots__",
-                "__stp__",
                 "__str__",
                 "__subclasshook__",
             ],
@@ -243,7 +238,7 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o, oo)
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "obj.Object")
+        self.assertEqual(Object().__otype__, "ol.obj.Object")
 
     def test_Object__reduce__(self):
         o = Object()
@@ -278,7 +273,7 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("obj.Object" in o.__stp__)
+        self.assertTrue("ol.obj.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -303,18 +298,18 @@ class Test_Object(unittest.TestCase):
         edit(o, d)
         self.assertEqual(o.key, "value")
 
-    def test_fmt(self):
+    def test_format(self):
         o = Object()
-        self.assertEqual(fmt(o), "")
+        self.assertEqual(format(o), "")
 
     def test_fns(self):
-        from obj import Object
-        from ocf import Cfg
-        from odb import save
+        from ol.obj import Object
+        from ol.cfg import Cfg
+        from ol.dbs import save
         Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("obj.Object")[0])
+        self.assertTrue("Object" in fns("ol.obj.Object")[0])
 
     def test_get(self):
         o = Object()
@@ -360,7 +355,7 @@ class Test_Object(unittest.TestCase):
         o.key = "value"
         p = save(o)
         oo = Object()
-        loado(oo, p)
+        load(oo, p)
         self.assertEqual(oo.key, "value")
 
     def test_register(self):
@@ -374,9 +369,9 @@ class Test_Object(unittest.TestCase):
         p = save(o)
         self.assertTrue(os.path.exists(os.path.join(Cfg.wd, "store", p)))
 
-    def test_set(self):
+    def test_zet(self):
         o = Object()
-        set(o, "key", "value")
+        zet(o, "key", "value")
         self.assertEqual(o.key, "value")
 
     def test_update(self):

@@ -180,7 +180,7 @@ def hook(hfn):
     else:
         o = Object()
     fn = os.sep.join(oname)
-    read(o, fn)
+    load(o, fn)
     return o
 
 

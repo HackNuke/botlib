@@ -49,7 +49,7 @@ def index(o, txt):
 
 
 def register(o, k, v):
-    o.__dict__[str(k)] = v
+    setattr(o, k, v)
 
 
 def search(o, s):

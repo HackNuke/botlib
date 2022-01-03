@@ -9,11 +9,11 @@ import inspect
 import time
 
 
-from op.cls import Cls
-from op.cmd import Cmd
-from op.dbs import Cfg
-from op.obj import values
-from op.tbl import Tbl
+from ol.cls import Cls
+from ol.cmd import Cmd
+from ol.dbs import Cfg
+from ol.obj import values
+from ol.tbl import Tbl
 
 
 import bot.all

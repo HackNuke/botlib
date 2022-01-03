@@ -13,15 +13,15 @@ import termios
 import time
 
 
-from op.cls import Cls
-from op.cmd import Cmd
-from op.obj import values
-from op.cfg import Cfg
-from op.dft import Default
-from op.evt import Event
-from op.krn import boot, kcmd
-from op.hdl import Handler
-from op.tbl import Tbl
+from ol.cls import Cls
+from ol.cmd import Cmd
+from ol.obj import values
+from ol.cfg import Cfg
+from ol.dft import Default
+from ol.evt import Event
+from ol.krn import boot, kcmd
+from ol.hdl import Handler
+from ol.tbl import Tbl
 
 
 import bot.all
