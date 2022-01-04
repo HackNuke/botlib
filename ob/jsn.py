@@ -24,7 +24,7 @@ def __dir__():
 class ObjectDecoder(json.JSONDecoder):
 
     def decode(self, s, _w=None):
-        v = json.loads(s, object_hook=Object)
+        v = json.loads(s)
         o = Object()
         update(o, v)
         return o

@@ -474,7 +474,7 @@ class DCC(Client, Handler):
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
         self.origin = dccevent.origin
         self.start()
-        self.raw("BOT dcc start at %s" % time.ctime(time.time()).replace("  ", " "))
+        self.raw("%s DCC start at %s" % (Cfg.name.upper(), time.ctime(time.time()).replace("  ", " ")))
 
     def event(self, txt, origin=None):
         e = Handler.event(self, txt, origin)

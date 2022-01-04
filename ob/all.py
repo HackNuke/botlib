@@ -8,6 +8,7 @@ from ob import bus
 from ob import cbs
 from ob import cfg
 from ob import cls
+from ob import clt
 from ob import cmd
 from ob import dbs
 from ob import dft
@@ -26,6 +27,7 @@ Tbl.add(bus)
 Tbl.add(cbs)
 Tbl.add(cfg)
 Tbl.add(cls)
+Tbl.add(clt)
 Tbl.add(cmd)
 Tbl.add(dbs)
 Tbl.add(dft)

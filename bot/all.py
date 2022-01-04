@@ -6,13 +6,11 @@ from ob.tbl import Tbl
 
 from bot import bsc
 from bot import irc
-from bot import log
 from bot import rss
 from bot import udp
 
 
 Tbl.add(bsc)
 Tbl.add(irc)
-Tbl.add(log)
 Tbl.add(rss)
 Tbl.add(udp)

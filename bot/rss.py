@@ -170,7 +170,7 @@ def gettinyurl(url):
 def geturl(url):
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)
-    req.add_header("User-agent", useragent("BOTLIB"))
+    req.add_header("User-agent", useragent(Cfg.name.upper()))
     response = urllib.request.urlopen(req)
     response.data = response.read()
     return response

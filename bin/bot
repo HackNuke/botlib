@@ -39,6 +39,10 @@ from bot.irc import IRC
 from bot.rss import Fetcher
 
 
+import ob.all
+import bot.all
+
+
 class Console(Client, Handler):
 
 
@@ -78,10 +82,6 @@ def wrap(func):
         print("")
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
-
-import ob.all
-import bot.all
 
 
 def main():

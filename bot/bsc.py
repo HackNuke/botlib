@@ -7,7 +7,7 @@ import time
 
 from ob.bus import Bus
 from ob.cmd import Cmd
-from ob.dbs import Db, fntime
+from ob.dbs import Db, fntime, save
 from ob.dbs import find
 from ob.fnc import format
 from ob.thr import getname
@@ -17,7 +17,24 @@ from ob.prs import elapsed
 from ob import Object, get, update, values
 
 
+def __dir__():
+    return (
+        "cmd",
+        "flt",
+        "fnd",
+        "log",
+        "thr",
+        "upt"
+    )
+
 starttime = time.time()
+
+
+class Log(Object):
+
+    def __init__(self):
+        super().__init__()
+        self.txt = ""
 
 
 def cmd(event):
@@ -53,6 +70,15 @@ def fnd(event):
         event.reply(txt)
     if not got:
         event.reply("no result")
+
+def log(event):
+    if not event.rest:
+        event.reply("log <txt>")
+        return
+    o = Log()
+    o.txt = event.rest
+    save(o)
+    event.reply("ok")
 
 
 def thr(event):
