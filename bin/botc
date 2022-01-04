@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+
+
+"bot command"
+
+
+import inspect
+import os
+import readline
+import sys
+import termios
+import time
+import traceback
+
+
+Cfg.wd = os.path.expanduser("~/.bot")
+
+
+import ot.all
+import bot.all
+
+
+from bot.irc import IRC
+from bot.rss import Fetcher
+
+
+class Console(Handler):
+
+
+    def poll(self):
+        e = Event()
+        e.orig = repr(self)
+        e.txt = input("> ")
+        return e
+ 
+    def raw(self, txt):
+        print(txt)
+
+
+def scan():
+    for mod in values(Tbl.mod):
+        for k, o in inspect.getmembers(mod, inspect.isfunction):
+            if "event" in o.__code__.co_varnames:
+                Cmd.cmds[k] = o
+        for k, clz in inspect.getmembers(mod, inspect.isclass):
+            Cls.add(clz)
+        Tbl.add(mod)
+
+
+def main():
+    boot(" ".join(sys.argv[1:]))
+    scan()
+    c = Console()
+    return kcmd(c, Cfg.otxt)
+
+
+main()
