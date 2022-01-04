@@ -81,15 +81,15 @@ class Stop(Exception):
 class Cfg(Default):
 
     cc = "!"
-    channel = "#botd"
-    nick = "botd"
+    channel = "#bot"
+    nick = "bot"
     password = ""
     port = 6667
-    realname = "24/7 channel daemon"
+    realname = "python3 bot library"
     server = "localhost"
     servermodes = ""
     sleep = 30
-    username = "botd"
+    username = "bot"
     users = False
 
     def __init__(self):

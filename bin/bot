@@ -20,12 +20,15 @@ from ot.obj import Object, update, values
 from ot.cfg import Cfg
 from ot.dft import Default
 from ot.evt import Event
-from ot.krn import kcmd, root
+from ot.krn import boot, kcmd, root
 from ot.prs import parse
 from ot.hdl import Handler
 from ot.tbl import Tbl
 from ot.tms import tfmt
 from ot.thr import launch
+
+
+Cfg.wd = os.path.expanduser("~/.bot")
 
 
 import bot.all
@@ -87,25 +90,18 @@ def wrap(func):
 
 def main():
     scan()
-    parse(Cfg, " ".join(sys.argv[1:]))
-    if "l" in Cfg.opts:
-        Cfg.wd = os.path.expanduser("~/.bot")
-    elif root():
-        Cfg.wd = "/var/lib/botd/"
-    else:
-        print("you need root privileges")
-        return
-    if "d" in Cfg.opts:
-        print("starting daemon")
-        daemon()
+    cfg = boot(" ".join(sys.argv[1:]))
     c = Console()
+    if cfg.txt:
+        return kcmd(c, cfg.otxt)
+    if "d" in cfg.opts:
+        daemon()
     i = IRC()
     i.start()
     f = Fetcher()
     f.start()
-    if "d" not in Cfg.opts:
-        c.start()
-        c.wait()
+    c.start()
+    c.wait()
 
 
 wrap(main)
