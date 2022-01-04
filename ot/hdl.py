@@ -3,20 +3,35 @@
 
 "object handler"
 
-from .bus import Bus
+
+import queue
+import time
+
+
 from .cmd import Cmd
+from .evt import Event
 from .obj import Object
-from .lop import Loop
+from .thr import launch
 
 
-class Handler(Loop):
+class Stop(Exception):
+
+    pass
+
+
+class Handler(Object):
 
     def __init__(self):
-        Loop.__init__(self)
-        Bus.add(self)
+        Object.__init__(self)
+        self.queue = queue.Queue()
+        self.stopped = False
 
-    def announce(self, txt):
-        self.raw(txt)
+    def event(self, txt, origin=None):
+        e = Event()
+        e.orig = repr(self)
+        e.origin = origin or "user@handler"
+        e.txt = txt
+        return e
 
     def handle(self, e):
         e.parse()
@@ -26,9 +41,31 @@ class Handler(Loop):
             e.show()
         e.ready()
 
-    def raw(self, txt):
-        pass
+    def loop(self):
+        while not self.stopped:
+            try:
+                self.handle(self.poll())
+            except Stop:
+                break
 
-    def say(self, channel, txt):
-        self.raw(txt)
-    
+    def poll(self):
+        return self.queue.get()
+
+    def put(self, e):
+        self.queue.put_nowait(e)
+
+    def restart(self):
+        self.stop()
+        self.start()
+
+    def start(self):
+        launch(self.loop)
+
+    def stop(self):
+        self.stopped = True
+        self.queue.put(None)
+
+
+    def wait(self):
+        while 1:
+            time.sleep(1.0)

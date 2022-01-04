@@ -26,17 +26,14 @@ from ot.bus import Bus
 from ot.cmd import Cmd
 from ot.cfg import Cfg
 from ot.evt import Event
-from ot.lop import Loop
 from ot.dbs import find, fntime, last, listfiles, save
+from ot.krn import boot
 from ot.obj import Object, get, items, keys, values, update
 from ot.fnc import edit, format, index
 from ot.prs import elapsed, parse
 from ot.tbl import Tbl
 from ot.thr import getname, launch
 
-
-import ot.all
-import bot.all
 
 
 starttime = time.time()
@@ -102,7 +99,7 @@ errors = Object()
 exclude = ["output", "some", "keep", "wait", "loop", "handle", "poll", "event", "handler", "input", "doconnect", "raw", "start"]
 exc = []
 missing = []
-results = Object()
+results = []
 
 
 import mod.bsc
@@ -114,7 +111,7 @@ default["txt"] = "yoo"
 default["key"] = "txt"
 default["value"] = Object()
 default["d"] = {}
-default["c"] = Loop()
+default["c"] = Handler()
 default["event"] = Event()
 default["path"] = Cfg.wd
 default["channel"] = "#ob"
@@ -137,7 +134,7 @@ default["text"] = "yoo"
 default["server"] = "localhost"
 default["nick"] = "ob"
 default["rssobj"] = Object()
-default["handler"] = Loop()
+default["handler"] = Handler()
 default["dccevent"] = Event()
 default["cmd"] = "cmd"
 default["selector"] = {"txt": "test"}
@@ -210,7 +207,7 @@ class Cfg(Object):
      pass
 
 
-class CLI(Loop):
+class CLI(Handler):
 
 
     def __init__(self):
@@ -221,7 +218,7 @@ class CLI(Loop):
         super().handle(e)
 
     def raw(self, txt):
-        index(results, txt)
+        results.append(txt)
         if Cfg.verbose:
             print(txt)
 
@@ -278,16 +275,15 @@ def wrap(func):
         print("")
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
-    for key, val in items(errors):
-        print(key, val)
-    print(missing)
-    print(elapsed(time.time()-starttime))
+
+
+import ot.all
+import bot.all
 
 
 def main():
     print("BOT fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
-    parse(Cfg, " ".join(sys.argv[1:]))
-    Cfg.verbose = "v" in Cfg.opts
+    boot(" ".join(sys.argv[1:]))
     Cfg.debug = True
     c = CLI()
     c.start()
@@ -296,9 +292,14 @@ def main():
     for nr in range(nrs):
         time.sleep(0.01)
         thr = launch(payload)
-        print(thr)
         thrs.append(thr)
     consume(events)
+    for res in results:
+        print(res)
+    for key, val in items(errors):
+        print(key, val)
+    print(missing)
+    print(elapsed(time.time()-starttime))
 
 
 wrap(main)

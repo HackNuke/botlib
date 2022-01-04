@@ -2,28 +2,26 @@
 
 
 from .obj import Object, values
-from .fnc import index
+
 
 class Bus(Object):
 
-    objs = Object()
+    objs = []
 
     @staticmethod
     def add(o):
-        print(repr(o))
-        print(values(Bus.objs))
-        if o not in values(Bus.objs):
-            print("adding %s" % repr(o))
-            index(Bus.objs, o)
+        if o not in Bus.objs:
+            print("adding %s" % o.__otype__)
+            Bus.objs.append(o)
 
     @staticmethod
     def announce(txt):
-        for o in values(Bus.objs):
+        for o in Bus.objs:
             o.announce(txt)
 
     @staticmethod
     def byorig(orig):
-        for o in values(Bus.objs):
+        for o in Bus.objs:
             if repr(o) == orig:
                 return o
         

@@ -14,7 +14,9 @@ import time
 import traceback
 
 
+from ot.bus import Bus
 from ot.cls import Cls
+from ot.clt import Client
 from ot.cmd import Cmd
 from ot.obj import Object, update, values
 from ot.cfg import Cfg
@@ -31,39 +33,27 @@ from ot.thr import launch
 Cfg.wd = os.path.expanduser("~/.bot")
 
 
-import bot.all
-
-
 from bot.irc import IRC
 from bot.rss import Fetcher
 
 
-class Console(Handler):
+class Console(Client, Handler):
 
+
+    def __init__(self):
+        Client.__init__(self)
+        Handler.__init__(self)
+        Bus.add(self)
 
     def poll(self):
         e = Event()
         e.orig = repr(self)
         e.txt = input("> ")
         return e
- 
+
     def raw(self, txt):
         print(txt)
-
-
-def daemon():
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", 'r')
-    so = open("/dev/null", 'a+')
-    se = open("/dev/null", 'a+')
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
-
+ 
 
 def scan():
     for mod in values(Tbl.mod):
@@ -88,14 +78,15 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
+import ot.all
+import bot.all
+
+
 def main():
+    print("BOT shell start at %s" % time.ctime(time.time()).replace("  ", " "))
+    boot(" ".join(sys.argv[1:]))
     scan()
-    cfg = boot(" ".join(sys.argv[1:]))
     c = Console()
-    if cfg.txt:
-        return kcmd(c, cfg.otxt)
-    if "d" in cfg.opts:
-        daemon()
     i = IRC()
     i.start()
     f = Fetcher()

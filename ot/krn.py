@@ -1,10 +1,13 @@
 # This file is placed in the Public Domain.
 
+
 "kernel"
+
 
 import getpass
 import os
 import pwd
+
 
 from .cmd import Cmd
 from .cfg import Cfg
@@ -16,10 +19,11 @@ from .tbl import Tbl
 
 
 def boot(txt):
-    cfg = Cfg()
-    parse(cfg, txt)
-    return cfg
-
+    parse(Cfg, txt)
+    Cfg.console = "c" in Cfg.opts
+    Cfg.daemon = "d" in Cfg.opts
+    Cfg.verbose = "v" in Cfg.opts
+       
     
 def kcmd(o, txt):
     e = Event()
@@ -27,6 +31,7 @@ def kcmd(o, txt):
     e.orig = repr(o)
     e.txt = txt
     o.handle(e)
+
 
 def privileges(name=None):
     if os.getuid() != 0:
@@ -45,6 +50,7 @@ def privileges(name=None):
     os.setuid(pwnam.pw_uid)
     old_umask = os.umask(0o22)
     return True
+
 
 def root():
     if os.geteuid() != 0:

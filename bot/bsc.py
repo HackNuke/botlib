@@ -25,7 +25,7 @@ def cmd(event):
 def flt(event):
     try:
         index = int(event.args[0])
-        event.reply(format(Bus.objs[str(index)]))
+        event.reply(Bus.objs[index])
         return
     except (KeyError, TypeError, IndexError, ValueError):
         pass

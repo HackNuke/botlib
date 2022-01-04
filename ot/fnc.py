@@ -11,6 +11,18 @@ import pathlib
 from .obj import Object, items, keys
 
 
+def __dir__():
+    return (
+        "cdir",
+        "diff",
+        "edit",
+        "format",
+        "register",
+        "search",
+        "spl"
+    )
+
+    
 def cdir(path):
     if os.path.exists(path):
         return
@@ -42,18 +54,6 @@ def format(o, skip="", sep=" ", *args, **kwargs):
     return sep.join(res)
 
 
-def index(o, txt):
-    o[str(o.__idx__)] = txt
-    o.__idx__ += 1
-
-
-def ordered(o):
-    oo = Object()
-    for i in range(o.__idx__):
-        oo[str(i)] = o[str(i)]
-    return oo
-
-
 def register(o, k, v):
     setattr(o, k, v)
 
@@ -67,10 +67,6 @@ def search(o, s):
             break
         ok = True
     return ok
-
-
-def zet(o, key, value):
-    o.__dict__[key] = value
 
 
 def spl(txt):

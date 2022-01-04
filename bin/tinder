@@ -18,7 +18,6 @@ from ot.cls import Cls
 from ot.cmd import Cmd
 from ot.cfg import Cfg
 from ot.evt import Event
-from ot.lop import Loop
 from ot.dbs import find, fntime, last, listfiles, save
 from ot.obj import Object, get, items, keys, values, update
 from ot.fnc import edit, format, index

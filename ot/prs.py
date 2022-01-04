@@ -16,7 +16,6 @@ def __dir__():
     )
 
 
-
 class Token(Object):
 
     pass
@@ -141,12 +140,6 @@ def parse(o, ptxt):
     o.args = args[1:]
     o.txt = " ".join(args)
     o.rest = " ".join(args[1:])
-
-
-def parse_cli(txt):
-    d = Default()
-    parse(d, txt)
-    return d
 
 
 def elapsed(seconds, short=True):

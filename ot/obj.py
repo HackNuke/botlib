@@ -31,25 +31,18 @@ class Object:
 
     __slots__ = (
         "__dict__",
-        "__idx__",
         "__otype__",
         "__stp__",
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__()
+    def __init__(self):
+        object.__init__(self)
         self.__otype__ = str(type(self)).split()[-1][1:-2]
         self.__stp__ = os.path.join(
             self.__otype__,
             str(uuid.uuid4()),
             os.sep.join(str(datetime.datetime.now()).split()),
         )
-        self.__idx__ = 0
-        if args:
-            self.__dict__.update(args[0])
-        if kwargs:
-            self.__dict__.update(kwargs)
-
 
     def __class_getitem__(self):
         return self.__dict__.__class_geitem__()
@@ -102,7 +95,7 @@ class Object:
         )
 
     def __eq__(self, o):
-        return len(self) == len(o)
+        return self.__stp__ == o.__stp__
 
     def __getitem__(self, k):
         return self.__dict__[k]
@@ -133,6 +126,9 @@ class Object:
 
     def __or__(self, o):
         return self.__dict__.__or__(o)
+
+    def __ne__(self, o):
+        return self.__stp__ != o.__stp__
 
     def __reduce__(self):
         pass

@@ -16,12 +16,13 @@ import _thread
 
 from ot.bus import Bus
 from ot.cbs import Cbs
+from ot.clt import Client
 from ot.cmd import Cmd
 from ot.dbs import find, last, save
 from ot.dft import Default
 from ot.evt import Event
 from ot.fnc import edit, format
-from ot.hdl import Handler
+from ot.hdl import Handler, Stop
 from ot.obj import Object, update
 from ot.thr import launch
 
@@ -29,7 +30,6 @@ from ot.thr import launch
 def __dir__():
     return (
         "NoUser",
-        "Stop",
         "Cfg",
         "Event",
         "Output",
@@ -73,11 +73,6 @@ class NoUser(Exception):
     pass
 
 
-class Stop(Exception):
-
-    pass
-
-
 class Cfg(Default):
 
     cc = "!"
@@ -85,7 +80,7 @@ class Cfg(Default):
     nick = "bot"
     password = ""
     port = 6667
-    realname = "python3 bot library"
+    realname = "python3 irc bot"
     server = "localhost"
     servermodes = ""
     sleep = 30
@@ -121,7 +116,6 @@ class Event(Event):
         self.sock = None
         self.type = ""
         self.txt = ""
-
 
 class Output(Object):
 
@@ -431,6 +425,7 @@ class IRC(Output, Handler):
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         self.connected.wait()
         self.logon(self.cfg.server, self.cfg.nick)
+        Bus.add(self)
         Handler.start(self)
         Output.start(self)
         if not self.keeprunning:
@@ -448,11 +443,11 @@ class IRC(Output, Handler):
         self.joined.wait()
 
 
-class DCC(Handler):
+class DCC(Client, Handler):
 
     def __init__(self):
+        Client.__init__(self)
         Handler.__init__(self)
-        self.connected = threading.Event()
         self.encoding = "utf-8"
         self.origin = ""
         self.sock = None
@@ -461,11 +456,7 @@ class DCC(Handler):
     def raw(self, txt):
         self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
-    def announce(self, txt):
-        pass
-
     def connect(self, dccevent):
-        self.connected.clear()
         arguments = dccevent.txt.split()
         addr = arguments[3]
         port = int(arguments[4])
@@ -479,26 +470,14 @@ class DCC(Handler):
             return
         self.sock.setblocking(1)
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
-        self.raw("Welcome %s" % dccevent.origin)
         self.origin = dccevent.origin
-        Handler.start(self)
-        self.connected.set()
-
-    def dosay(self, channel, txt):
-        self.raw(txt)
+        self.start()
+        self.raw("BOT dcc start at %s" % time.ctime(time.time()).replace("  ", " "))
 
     def event(self, txt, origin=None):
-        self.connected.wait()
-        e = Event()
-        e.orig = repr(self)
-        e.origin = origin or "root@dcc"
+        e = Handler.event(self, txt, origin)
         e.sock = self.sock
-        e.txt = txt
         return e
-
-    def handle(self, e):
-        self.connected.wait()
-        super().handle(e)
 
     def poll(self):
         if not self.sock:
@@ -508,9 +487,11 @@ class DCC(Handler):
             raise Stop
         return self.event(txt)
 
-    def say(self, channel, txt):
-        self.raw(txt)
-
+    def start(self):
+        print("dcc start")
+        Bus.add(self)
+        print(Bus.objs)
+        Handler.start(self)
 
 class User(Object):
 
