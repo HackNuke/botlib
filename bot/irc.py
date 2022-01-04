@@ -451,13 +451,12 @@ class IRC(Output, Handler):
 class DCC(Handler):
 
     def __init__(self):
-        super().__init__()
+        Handler.__init__(self)
         self.connected = threading.Event()
         self.encoding = "utf-8"
         self.origin = ""
         self.sock = None
         self.speed = "fast"
-        Bus.add(self)
 
     def raw(self, txt):
         self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))

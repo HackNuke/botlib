@@ -10,7 +10,10 @@ class Bus(Object):
 
     @staticmethod
     def add(o):
+        print(repr(o))
+        print(values(Bus.objs))
         if o not in values(Bus.objs):
+            print("adding %s" % repr(o))
             index(Bus.objs, o)
 
     @staticmethod
@@ -27,4 +30,5 @@ class Bus(Object):
     @staticmethod
     def say(orig, channel, txt):
         o = Bus.byorig(orig)
-        o.say(channel, txt)
+        if o:
+            o.say(channel, txt)
