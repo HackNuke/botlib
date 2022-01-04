@@ -38,51 +38,6 @@ from ob.thr import errors, getname, launch
 from ob import Object, get, items, keys, values, update
 
 
-starttime = time.time()
-
-
-def get_values(v):
-    args = []
-    for k in v:
-        res = get(default, k, None)
-        if res:
-            args.append(res)
-        else:
-            if k not in missing:
-                missing.append(k)
-    return args
-
-
-def handle_error(ex, txt=None):
-    errors.append(ex)
-
-
-def pay(mod, *args, **kwargs):
-    if Cfg.verbose:
-        print(mod)
-    for k in dir(mod):
-        if k.startswith("_" or k in exclude):
-            continue
-        obj = getattr(mod, k)
-        try:
-            spec = inspect.getfullargspec(obj)
-            args = get_values(spec.args[1:])
-            o = obj(*args)
-        except Exception as ex:
-            raise ex.with_traceback(ex.__traceback__)
-        for k in dir(o):
-            if k.startswith("_" or k in exclude):
-                continue
-            f = getattr(o, k, None)
-            if f:
-                try:
-                    spec = inspect.getfullargspec(f)
-                    args = get_values(spec.args[1:])
-                    res = f(*args)
-                except Exception as ex:
-                    raise ex.with_traceback(ex.__traceback__)
-
-
 def cb(event):
     print("callback in %s" % event)
 
@@ -99,6 +54,130 @@ results = []
 
 
 import bot.bsc
+
+
+starttime = time.time()
+
+
+class CLI(Client, Handler):
+
+    def __init__(self):
+        Client.__init__(self)
+        Handler.__init__(self)
+
+
+    def handle(self, e):
+        super().handle(e)
+
+    def raw(self, txt):
+        results.append(txt)
+        if Cfg.verbose:
+            print(txt)
+
+
+def get_args(obj):
+    print(obj, dir(obj))
+    print(obj.__text_signature__)
+    sig = inspect.signature(obj)
+    print(sig.parameters)
+    try:
+        spec = inspect.getfullargspec(obj)
+        return get_values(spec.args[1:])
+    except (ValueError, TypeError):
+        return []
+
+def get_values(v):
+    args = []
+    for k in v:
+        res = get(default, k, None)
+        if res:
+            args.append(res)
+        else:
+            if k not in missing:
+                missing.append(k)
+    return args
+
+
+def pay(mod, *args, **kwargs):
+    if Cfg.verbose:
+        print(mod)
+    for k in dir(mod):
+        if k.startswith("_" or k in exclude):
+            continue
+        obj = getattr(mod, k)
+        args = get_args(obj)
+        o = obj(*args)
+        if isinstance(o, Object):
+            for k in dir(o):
+                if k.startswith("_" or k in exclude):
+                    continue
+                f = getattr(o, k, None)
+                if f:
+                    args = get_args(f)
+                    f(*args)
+
+
+def consume(events):
+    fixed = []
+    res = []
+    for e in events:
+        e.wait()
+        fixed.append(e)
+    for f in fixed:
+        try:
+            events.remove(f)
+        except ValueError:
+            continue
+    return res
+
+
+def payload():
+    mods = list(Tbl.mod)
+    random.shuffle(mods)
+    thrs = []
+    for mod in mods:
+        pay(mod)
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+#import ob.all
+import bot.all
+
+
+def main():
+    print("BOT fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
+    boot(" ".join(sys.argv[1:]))
+    Cfg.debug = True
+    c = CLI()
+    c.start()
+    thrs = []
+    nrs = Cfg.index or 10
+    for nr in range(nrs):
+        time.sleep(0.01)
+        payload()
+    consume(events)
+    for res in results:
+        print(res)
+    for err in errors:
+        fr = err.__traceback__.tb_frame
+        ln = fr.f_lineno
+        fn = fr.f_code.co_filename
+        print("%s %s:%s" % (err, fn, ln))
+    for err in errors2:
+        print(err)
+    print(missing)
+    print(elapsed(time.time()-starttime))
+
+
 
 
 default = Object()
@@ -196,88 +275,5 @@ default["length"] = 80
 default["object"] = Object
 default["start"] = time.time() - 3600
 default["stop"] = time.time()
-
-
-class CLI(Client, Handler):
-
-    def __init__(self):
-        Client.__init__(self)
-        Handler.__init__(self)
-
-
-    def handle(self, e):
-        super().handle(e)
-
-    def raw(self, txt):
-        results.append(txt)
-        if Cfg.verbose:
-            print(txt)
-
-
-def consume(events):
-    fixed = []
-    res = []
-    for e in events:
-        e.wait()
-        fixed.append(e)
-    for f in fixed:
-        try:
-            events.remove(f)
-        except ValueError:
-            continue
-    return res
-
-
-def payload():
-    mods = list(Tbl.mod)
-    random.shuffle(mods)
-    thrs = []
-    for mod in mods:
-        thrs.append(launch(pay, mod))
-    for thr in thrs:
-        thr.join()
-
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
-
-#import ob.all
-import bot.all
-
-
-def main():
-    print("BOT fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
-    boot(" ".join(sys.argv[1:]))
-    Cfg.debug = True
-    c = CLI()
-    c.start()
-    thrs = []
-    nrs = Cfg.index or 10
-    for nr in range(nrs):
-        time.sleep(0.01)
-        thr = launch(payload)
-        thrs.append(thr)
-    for thr in thrs:
-        thr.join()
-    consume(events)
-    for res in results:
-        print(res)
-    for err in errors:
-        fr = err.__traceback__.tb_frame
-        ln = fr.f_lineno
-        fn = fr.f_code.co_filename
-        print("%s %s:%s" % (err, fn, ln))
-    for err in errors2:
-        print(err)
-    print(missing)
-    print(elapsed(time.time()-starttime))
-
 
 wrap(main)
