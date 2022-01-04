@@ -15,9 +15,10 @@ sys.path.insert(0, os.getcwd())
 from ob.cfg import Cfg
 from ob.cls import Cls
 from ob.cmd import Cmd
-from ob.obj import Object, values
 from ob.tbl import Tbl
 from ob.prs import parse
+
+from ob import Object, values
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -36,7 +37,7 @@ def scan():
         Tbl.add(mod)
 
 import ob.all
-import tob.all
+import bot.all
 
 
 def main():

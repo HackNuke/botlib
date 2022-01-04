@@ -37,6 +37,7 @@ class Log(Object):
         self.txt = ""
 
 
+
 def cmd(event):
     event.reply(",".join(sorted(Cmd.cmds)))
 
@@ -48,7 +49,7 @@ def flt(event):
         return
     except (KeyError, TypeError, IndexError, ValueError):
         pass
-    event.reply(" | ".join([getname(o) for o in values(Bus.objs)]))
+    event.reply(" | ".join([getname(o) for o in Bus.objs]))
 
 
 def fnd(event):

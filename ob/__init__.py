@@ -95,7 +95,7 @@ class Object:
         )
 
     def __eq__(self, o):
-        return self.__stp__ == o.__stp__
+        return len(self.__dict__) == len(o.__dict__)
 
     def __getitem__(self, k):
         return self.__dict__[k]
@@ -124,11 +124,8 @@ class Object:
     def __hash__(self):
         return id(self)
 
-    def __or__(self, o):
-        return self.__dict__.__or__(o)
-
     def __ne__(self, o):
-        return self.__stp__ != o.__stp__
+        return len(self.__dict__) != len(o.__dict__)
 
     def __reduce__(self):
         pass

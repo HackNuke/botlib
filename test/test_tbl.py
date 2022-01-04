@@ -2,20 +2,27 @@
 
 
 import inspect
+import os
 import sys
 import unittest
 
 
-from ob.obj import Object, keys, values
+sys.path.insert(0, os.getcwd())
+
+
 from ob.tbl import Tbl
 
-import mod.bsc
+
+from ob import Object, keys, values
 
 
-Tbl.add(mod.bsc)
+import bot.bsc
+
+
+Tbl.add(bot.bsc)
 
 
 class Test_Table(unittest.TestCase):
 
     def test_mod(self):
-        self.assertTrue("mod.bsc" in keys(Tbl.mod))
+        self.assertTrue("bot.bsc" in keys(Tbl.mod))

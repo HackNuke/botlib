@@ -6,10 +6,12 @@ import unittest
 
 
 from ob.cfg import Cfg
-from ob.obj import Object, get, items, keys, update, values
 from ob.dbs import Db, fns, hook, load, last, save
-from ob.fnc import cdir, edit, format, register, zet
+from ob.fnc import cdir, edit, format, register
 from ob.jsn import loads
+
+
+from ob import Object, get, items, keys, update, values
 
 
 attrs1 = (
@@ -69,8 +71,8 @@ attrs2 = (
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
-        import ob.obj
-        self.assertEqual(tuple(dir(ob.obj)), attrs1)
+        import ob
+        self.assertEqual(tuple(dir(ob)), attrs1)
 
     def test_attributes(self):
         o = Object()
@@ -238,7 +240,7 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o, oo)
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "ob.obj.Object")
+        self.assertEqual(Object().__otype__, "ob.Object")
 
     def test_Object__reduce__(self):
         o = Object()
@@ -263,17 +265,16 @@ class Test_Object(unittest.TestCase):
         self.assertTrue(o["key"], "value")
 
     def test_Object__sizeof__(self):
-        self.assertEqual(Object().__sizeof__(), 48)
+        self.assertEqual(Object().__sizeof__(), 40)
 
     def test_Object__slots__(self):
         self.assertEqual(Object().__slots__, ("__dict__",
-                                              "__idx__",
                                               "__otype__",
                                               "__stp__"))
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("ob.obj.Object" in o.__stp__)
+        self.assertTrue("ob.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -303,13 +304,13 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(format(o), "")
 
     def test_fns(self):
-        from ob.obj import Object
+        from ob import Object
         from ob.cfg import Cfg
         from ob.dbs import save
         Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("ob.obj.Object")[0])
+        self.assertTrue("Object" in fns("ob.Object")[0])
 
     def test_get(self):
         o = Object()
@@ -368,11 +369,6 @@ class Test_Object(unittest.TestCase):
         o = Object()
         p = save(o)
         self.assertTrue(os.path.exists(os.path.join(Cfg.wd, "store", p)))
-
-    def test_zet(self):
-        o = Object()
-        zet(o, "key", "value")
-        self.assertEqual(o.key, "value")
 
     def test_update(self):
         o = Object()

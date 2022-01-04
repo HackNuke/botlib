@@ -4,12 +4,13 @@
 import unittest
 
 
-from ob.obj import Object
 from ob.jsn import dumps, loads
 
 #validjson = '{"test": "bla", "otype": "Object"}'
 validjson = '{"test": "bla"}'
 
+
+from ob import Object
 
 class Test_JSON(unittest.TestCase):
 

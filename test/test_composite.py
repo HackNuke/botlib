@@ -4,9 +4,11 @@
 import unittest
 
 
-from ob.obj import Object
 from ob.dbs import Db
 from ob.jsn import dumps, loads
+
+
+from ob import Object
 
 
 class Composite(Object):
@@ -23,4 +25,4 @@ class Test_Composite(unittest.TestCase):
         c = Composite()
         s = dumps(c)
         a = loads(dumps(c))
-        self.assertEqual(type(a.db), Object)
+        self.assertEqual(type(a.db), type({}))

@@ -8,11 +8,13 @@ import unittest
 from ob.cls import Cls
 from ob.cmd import Cmd
 from ob.cfg import Cfg
-from ob.obj import Object, get, values
 from ob.evt import Event
-from ob.fnc import format, index
+from ob.fnc import format
 from ob.hdl import Handler
 from ob.tbl import Tbl
+
+
+from ob import Object, get, values
 
 
 events = []
@@ -39,11 +41,11 @@ class CLI(Handler):
 
 
      def raw(self, txt):
-         index(results, txt)
+         results.append(txt)
         
          
 c = CLI()
-results = Object()
+results = []
 
 
 def consume(events):
@@ -70,7 +72,8 @@ def scan():
         Tbl.add(mod)
 
 
-import tob.all
+import ob.all
+import bot.all
 
 
 class Test_Commands(unittest.TestCase):
