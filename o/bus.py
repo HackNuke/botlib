@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from .obj import Object, values
+from . import Object, values
 
 
 class Bus(Object):

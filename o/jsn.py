@@ -7,7 +7,7 @@
 import json
 
 
-from .obj import Object, update
+from . import Object, update
 
 
 def __dir__():

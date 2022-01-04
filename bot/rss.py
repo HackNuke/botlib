@@ -14,10 +14,11 @@ from o.bus import Bus
 from o.cfg import Cfg
 from o.dbs import Db, find, last, save
 from o.fnc import edit
-from o.obj import Object, get, update
 from o.tms import Repeater
 from o.thr import launch
 
+
+from o import Object, get, update
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

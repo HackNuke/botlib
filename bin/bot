@@ -18,7 +18,6 @@ from o.bus import Bus
 from o.cls import Cls
 from o.clt import Client
 from o.cmd import Cmd
-from o.obj import Object, update, values
 from o.cfg import Cfg
 from o.dft import Default
 from o.evt import Event
@@ -28,6 +27,9 @@ from o.hdl import Handler
 from o.tbl import Tbl
 from o.tms import tfmt
 from o.thr import launch
+
+
+from o import Object, update, values
 
 
 Cfg.wd = os.path.expanduser("~/.bot")

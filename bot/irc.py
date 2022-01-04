@@ -23,8 +23,10 @@ from o.dft import Default
 from o.evt import Event
 from o.fnc import edit, format
 from o.hdl import Handler, Stop
-from o.obj import Object, update
 from o.thr import launch
+
+
+from o import Object, update
 
 
 def __dir__():

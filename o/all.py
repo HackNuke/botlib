@@ -16,7 +16,6 @@ from o import fnc
 from o import hdl
 from o import jsn
 from o import krn
-from o import obj
 from o import prs
 from o import tbl
 from o import thr
@@ -35,7 +34,6 @@ Tbl.add(fnc)
 Tbl.add(hdl)
 Tbl.add(jsn)
 Tbl.add(krn)
-Tbl.add(obj)
 Tbl.add(prs)
 Tbl.add(tbl)
 Tbl.add(thr)

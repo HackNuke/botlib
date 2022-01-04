@@ -10,10 +10,11 @@ from o.cmd import Cmd
 from o.dbs import Db, fntime
 from o.dbs import find
 from o.fnc import format
-from o.obj import Object, get, update, values
 from o.thr import getname
 from o.prs import elapsed
 
+
+from o import Object, get, update, values
 
 starttime = time.time()
 

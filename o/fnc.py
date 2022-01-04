@@ -8,7 +8,7 @@ import os
 import pathlib
 
 
-from .obj import Object, items, keys
+from . import Object, items, keys
 
 
 def __dir__():

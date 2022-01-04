@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from .obj import Object, get
+from . import Object, get
 
 
 class Cbs(Object):

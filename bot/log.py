@@ -2,7 +2,9 @@
 
 
 from o.dbs import save
-from o.obj import Object
+
+
+from o import Object
 
 
 class Log(Object):

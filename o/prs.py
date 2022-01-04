@@ -5,7 +5,9 @@
 
 
 from .dft import Default
-from .obj import Object, update
+
+
+from . import Object, update
 
 
 def __dir__():

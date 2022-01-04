@@ -23,7 +23,7 @@ setup(
                 ("share/botd", ["files/botd.service",]),
                 ("share/doc/botd", ["README.rst",])
                 ],
-    scripts=["bin/bot"],
+    scripts=["bin/bot", "bin/botc", "bin/botd", "bin/bots"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

@@ -10,9 +10,9 @@ import time
 
 from .cmd import Cmd
 from .evt import Event
-from .obj import Object
 from .thr import launch
 
+from . import Object
 
 class Stop(Exception):
 

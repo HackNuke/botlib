@@ -4,7 +4,7 @@
 "object client"
 
 
-from .obj import Object
+from . import Object
 
 
 class Client(Object):
