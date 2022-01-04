@@ -14,22 +14,22 @@ import time
 import traceback
 
 
-from o.bus import Bus
-from o.cls import Cls
-from o.clt import Client
-from o.cmd import Cmd
-from o.cfg import Cfg
-from o.dft import Default
-from o.evt import Event
-from o.krn import boot, kcmd, root
-from o.prs import parse
-from o.hdl import Handler
-from o.tbl import Tbl
-from o.tms import tfmt
-from o.thr import launch
+from ob.bus import Bus
+from ob.cls import Cls
+from ob.clt import Client
+from ob.cmd import Cmd
+from ob.cfg import Cfg
+from ob.dft import Default
+from ob.evt import Event
+from ob.krn import boot, kcmd, root
+from ob.prs import parse
+from ob.hdl import Handler
+from ob.tbl import Tbl
+from ob.tms import tfmt
+from ob.thr import launch
 
 
-from o import Object, update, values
+from ob import Object, update, values
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
@@ -80,7 +80,7 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
-import o.all
+import ob.all
 import bot.all
 
 

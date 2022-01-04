@@ -14,10 +14,20 @@ import time
 import traceback
 
 
+from ob.cls import Cls
+from ob.cmd import Cmd
+from ob.cfg import Cfg
+from ob.hdl import Handler
+from ob.krn import boot, kcmd
+from ob.tbl import Tbl
+
+from ob import values
+
+
 Cfg.wd = os.path.expanduser("~/.bot")
 
 
-import ot.all
+import ob.all
 import bot.all
 
 
