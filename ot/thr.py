@@ -4,26 +4,34 @@
 "object thread"
 
 
+import queue
 import threading
 import types
 
 
 class Thr(threading.Thread):
-
-    def __init__(self, func, thrname, *args):
-        super().__init__(None, func, thrname, args, {}, daemon=True)
+    def __init__(self, func, *args, daemon=True):
+        super().__init__(None, self.run, "", (), {}, daemon=daemon)
+        self.name = getname(func)
+        self.queue = queue.Queue()
+        self.queue.put_nowait((func, args))
         self.result = None
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        for key in dir(self):
-            yield key
+        for k in dir(self):
+            yield k
 
     def join(self, timeout=None):
         super().join(timeout)
         return self.result
+
+    def run(self):
+        func, args = self.queue.get()
+        self.setName(self.name)
+        self.result = func(*args)
 
 
 def getname(o):
@@ -41,10 +49,7 @@ def getname(o):
     return None
 
 
-
-
 def launch(func, *args, **kwargs):
-    name = kwargs.get("name", getname(func))
-    t = Thr(func, name, *args)
+    t = Thr(func, *args)
     t.start()
     return t

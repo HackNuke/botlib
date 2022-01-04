@@ -16,6 +16,7 @@ def __dir__():
     )
 
 
+
 class Token(Object):
 
     pass
@@ -92,10 +93,10 @@ class Url(Token):
 def parse(o, ptxt):
     o.txt = ptxt
     o.otxt = ptxt
-    o.gets = Object()
-    o.opts = Object()
-    o.sets = Object()
-    o.skip = Object()
+    o.gets = Default()
+    o.opts = Default()
+    o.sets = Default()
+    o.skip = Default()
     o.timed = []
     o.index = None
     args = []

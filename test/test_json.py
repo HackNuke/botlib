@@ -4,8 +4,8 @@
 import unittest
 
 
-from ol.obj import Object
-from ol.jsn import dumps, loads
+from ob.obj import Object
+from ob.jsn import dumps, loads
 
 #validjson = '{"test": "bla", "otype": "Object"}'
 validjson = '{"test": "bla"}'

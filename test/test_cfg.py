@@ -4,10 +4,10 @@
 import unittest
 
 
-from ol.cfg import Cfg
-from ol.obj import Object, update
-from ol.fnc import edit
-from ol.prs import parse
+from ob.cfg import Cfg
+from ob.obj import Object, update
+from ob.fnc import edit
+from ob.prs import parse
 
 
 class Test_Cfg(unittest.TestCase):

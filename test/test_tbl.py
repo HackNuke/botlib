@@ -6,17 +6,16 @@ import sys
 import unittest
 
 
-from ol.obj import Object, keys, values
-from ol.tbl import Tbl
+from ob.obj import Object, keys, values
+from ob.tbl import Tbl
+
+import mod.bsc
 
 
-import bot.bsc
-
-
-Tbl.add(bot.bsc)
+Tbl.add(mod.bsc)
 
 
 class Test_Table(unittest.TestCase):
 
     def test_mod(self):
-        self.assertTrue("bot.bsc" in keys(Tbl.mod))
+        self.assertTrue("mod.bsc" in keys(Tbl.mod))

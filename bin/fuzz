@@ -2,83 +2,303 @@
 # This file is placed in the Public Domain.
 
 
+"reverse bot fuzzer"
+
+
+import doctest
 import os
+import inspect
 import random
 import shutil
+import string
 import sys
 import termios
 import time
+import threading
+import traceback
+import unittest
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from bot.clt import Client
-from bot.krn import k
-from bot.obj import Cfg, Object, cdir, values
-from bot.ofn import indexed
-from bot.ofn import fmt
-from bot.tbl import Table
-from bot.thr import launch, multi
-from bot.tms import elapsed
-from bot.utl import consume
+from ob.bus import Bus
+from ob.cmd import Cmd
+from ob.cfg import Cfg
+from ob.evt import Event
+from ob.lop import Loop
+from ob.dbs import find, fntime, last, listfiles, save
+from ob.obj import Object, get, items, keys, values, update
+from ob.fnc import edit, format, index
+from ob.prs import elapsed, parse
+from ob.tbl import Tbl
+from ob.thr import getname, launch
 
 
-from run import skel, wrap
+import ob.all
+import mod.all
+
+
+starttime = time.time()
+
+
+def get_values(v):
+    args = []
+    for k in v:
+        res = get(default, k, None)
+        if res:
+            args.append(res)
+        else:
+            if k not in missing:
+                missing.append(k)
+    return args
+
+
+def handle_error(ex, txt=None):
+    t = str(type(ex))
+    if t not in errors:
+        errors[t] = ex
+        if txt:
+            errors[t].txt = txt
+
+
+def pay(mod, *args, **kwargs):
+    if Cfg.verbose:
+        print(mod)
+    for k in dir(mod):
+        print(k)
+        if k.startswith("_" or k in exclude):
+            continue
+        obj = getattr(mod, k)
+        try:
+            spec = inspect.getfullargspec(obj)
+            args = get_values(spec.args[1:])
+            o = obj(*args)
+        except Exception as ex:
+            handle_error(ex, get_exception())
+            continue
+        for k in dir(o):
+            if k.startswith("_" or k in exclude):
+                continue
+            f = getattr(o, k, None)
+            if f:
+                try:
+                    spec = inspect.getfullargspec(f)
+                    args = get_values(spec.args[1:])
+                    res = launch(f,*args)
+                except Exception as ex:
+                    handle_error(ex, get_exception())
+
+
+def cb(event):
+    print("callback in %s" % event)
 
 
 Cfg.wd = ".test"
 
 
-param = Object()
-param.add = ["test@shell", "bart", ""]
-param.cfg = ["server=localhost", ""]
-param.dne = ["test4", ""]
-param.rem = ["reddit", ""]
-param.dpl = ["reddit title,summary,link", ""]
-param.log = ["test1", ""]
-param.flt = ["0", ""]
-param.fnd = ["cfg", "log", "rss", "log txt==test", "cfg server==localhost", "rss rss==reddit"]
-param.rss = ["https://www.reddit.com/r/python/.rss"]
-param.tdo = ["test4", ""]
+events = []
+errors = Object()
+exclude = ["output", "some", "keep", "wait", "loop", "handle", "poll", "event", "handler", "input", "doconnect", "raw", "start"]
+exc = []
+missing = []
+results = Object()
 
 
-class CLI(Client):
+import mod.bsc
+
+
+default = Object()
+default["o"] = Object()
+default["txt"] = "yoo"
+default["key"] = "txt"
+default["value"] = Object()
+default["d"] = {}
+default["c"] = Loop()
+default["event"] = Event()
+default["path"] = Cfg.wd
+default["channel"] = "#ob"
+default["orig"] = repr(default["c"])
+default["obj"] = Object()
+default["d"] = {}
+default["value"] = 1
+default["pkgnames"] = "ob"
+default["name"] = "ob"
+default["callback"] = cb
+default["e"] = Event()
+default["mod"] = mod.bsc
+default["mns"] = "irc,udp,rss"
+default["sleep"] = 60.0
+default["func"] = cb
+default["origin"] = "test@shell"
+default["perm"] = "USER"
+default["permission"] = "USER"
+default["text"] = "yoo"
+default["server"] = "localhost"
+default["nick"] = "ob"
+default["rssobj"] = Object()
+default["handler"] = Loop()
+default["dccevent"] = Event()
+default["cmd"] = "cmd"
+default["selector"] = {"txt": "test"}
+default["newline"] = True
+default["skip"] = False
+default["empty"] = False
+default["index"] = 10
+default["timed"] = True
+default["setter"] = {"txt": "test"}
+default["skipped"] = False
+default["data"] = Event()
+default["skiplist"] = []
+default["pn"] = "ob"
+default["mns"] = ["irc", "rss", "udp", "bsc"]
+default["obj"] = Object()
+default["function"] = cb
+default["k"] = "txt"
+default["format_spec"] = "%s"
+default["v"] = "value"
+default["protocol"] = "v1"
+default["scan_once"] = True
+default["strict"] = False
+default["object_hook"] = Object
+default["object_pairs_hook"] = Object
+default["memo"] = "nope"
+default["_w"] = "bla"
+default["_ws"] = "bla"
+default["s"] = "stringified"
+default["__idx__"] = 10
+default['_one_shot'] = True
+default["o2"] = Object()
+default["f"] = ".test/test"
+default["skiplist"] = ["txt",]
+default["keyz"] = ["txt",]
+default["opath"] = default["f"]
+default["d"] = {}
+default["timeout"] = 1.0
+default["func"] = cb
+default["ptxt"] = "upt"
+default["width"] = 5
+default["fillchar"] = " "
+default["encoding"] = "utf-8"
+default["errors"] = False
+default["tabsize"] = 4
+default["iterable"] = Object()
+default["chars"] = string.printable 
+default["sep"] = "\n"
+default["prefix"] = "tob"
+default["suffix"] = ".py"
+default["old"] = Object()
+default["new"] = Object()
+default["count"] = 5
+default["maxsplit"] = 80
+default["keepends"] = True
+default["table"] = Object()
+default["string"] = ""
+default["iterable_of bytes"] = [bytes("bla1", "utf-8"), bytes("bla2", "utf-8")]
+default["bytes"] = bytes("bytes1", "utf-8")
+default["to"] = time.time()
+default["delete"] = False
+default["byteorder"] = False
+default["length"] = 80
+default["object"] = Object
+default["start"] = time.time() - 3600
+default["stop"] = time.time()
+
+
+class Cfg(Object):
+
+     pass
+
+
+class CLI(Loop):
+
+
+    def __init__(self):
+        Loop.__init__(self)
+        self.cfg = Cfg()
+
+    def handle(self, e):
+        super().handle(e)
 
     def raw(self, txt):
-        indexed(results, txt)
+        index(results, txt)
+        if Cfg.verbose:
+            print(txt)
 
 
-clt = CLI()
-events = []
+def consume(events):
+    fixed = []
+    res = []
+    for e in events:
+        e.wait()
+        fixed.append(e)
+    for f in fixed:
+        try:
+            events.remove(f)
+        except ValueError:
+            continue
+    return res
+
+
+def get_exception(txt="", sep=" "):
+    exctype, excvalue, tb = sys.exc_info()
+    trace = traceback.extract_tb(tb)
+    result = []
+    for elem in trace:
+        if elem[0].endswith(".py"):
+            plugfile = elem[0][:-3].split(os.sep)
+        else:
+            plugfile = elem[0].split(os.sep)
+        mod = []
+        for element in plugfile[:-2:-1]:
+            mod.append(element.split(".")[-1])
+        ownname = ".".join(mod[::-1])
+        result.append("%s:%s" % (ownname, elem[1]))
+    res = "%s %s: %s %s" % (sep.join(result), exctype, excvalue, str(txt))
+    del trace
+    exc.append(res)
+    return res
+
+
+def getmain(name):
+    return getattr(sys.modules["__main__"], name, None)
 
 
 def payload():
-    for mod in values(Table.modules):
-        for on in dir(mod):
-            o = getattr(mod, on, None)
-            if o and "__code__" in dir(o):
-                print(o.__code__.co_filename)
-                #for nm in o.__code__.co_varnames:
-                #    print(nm)
-                for nm in o.__code__.co_names:
-                    print(nm)
+    for mod in Tbl.mod:
+        pay(mod)
 
 
-import bot.all
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    for key, val in items(errors):
+        print(key, val)
+    print(missing)
+    print(elapsed(time.time()-starttime))
 
 
 def main():
-    t = time.time()
-    skel(Cfg.wd)
-    k.parse_cli(" ".join(sys.argv[1:]))
-    k.cfg.debug = True
-    k.scan()
-    k.start()
-    clt.start()
-    for thr in multi(k.cfg.index or 1, payload):
-        thr.join()
+    print("OB fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
+    parse(Cfg, " ".join(sys.argv[1:]))
+    Cfg.verbose = "v" in Cfg.opts
+    Cfg.debug = True
+    c = CLI()
+    c.start()
+    thrs = []
+    nrs = Cfg.index or 1
+    for nr in range(nrs):
+        time.sleep(0.01)
+        thr = launch(payload)
+        print(thr)
+        thrs.append(thr)
     consume(events)
-    print(elapsed(time.time()-t))
+
 
 wrap(main)

@@ -26,7 +26,7 @@ def __dir__():
          'last',
          'read',
          'save',
-         'store',
+         'dump',
     )
 
 
@@ -140,6 +140,7 @@ def fntime(daystr):
         t = 0
     return t
 
+
 def fns(name, timed=None):
     if not name:
         return []
@@ -184,12 +185,28 @@ def hook(hfn):
     return o
 
 
+def listfiles(workdir):
+    path = os.path.join(Cfg.wd, "store")
+    if not os.path.exists(path):
+        return []
+    return sorted(os.listdir(path))
+
+
 def all(timed=None):
     assert Cfg.wd
     p = os.path.join(Cfg.wd, "store")
     for name in os.listdir(p):
         for fn in fns(name):
             yield fn
+
+
+def dump(o, opath):
+    cdir(opath)
+    with open(opath, "w") as ofile:
+        json.dump(
+            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
+        )
+    return o.__stp__
 
 
 def find(name, selector=None, index=None, timed=None, names=None):
@@ -220,16 +237,11 @@ def load(o, opath):
     splitted = opath.split(os.sep)
     stp = os.sep.join(splitted[-4:])
     lpath = os.path.join(Cfg.wd, "store", stp)
-    read(o, lpath)
-    o.__stp__ = stp
-
-
-def read(o, opath):
-    assert Cfg.wd
-    if os.path.exists(opath):
-        with open(opath, "r") as ofile:
+    if os.path.exists(lpath):
+        with open(lpath, "r") as ofile:
             d = json.load(ofile, cls=ObjectDecoder)
             update(o, d)
+    o.__stp__ = stp
 
 
 def save(o):
@@ -238,15 +250,6 @@ def save(o):
     o.__stp__ = os.path.join(prv,
                              os.sep.join(str(datetime.datetime.now()).split()))
     opath = os.path.join(Cfg.wd, "store", o.__stp__)
-    store(o, opath)
+    dump(o, opath)
     os.chmod(opath, 0o444)
-    return o.__stp__
-
-
-def store(o, opath):
-    cdir(opath)
-    with open(opath, "w") as ofile:
-        json.dump(
-            o.__dict__, ofile, cls=ObjectEncoder, indent=4, sort_keys=True
-        )
     return o.__stp__

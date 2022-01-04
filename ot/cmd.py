@@ -18,6 +18,7 @@ class Cmd(Object):
         if f:
             f(e)
             e.show()
+        e.ready()
 
     @staticmethod
     def get(cmd):

@@ -24,6 +24,7 @@ class Handler(Loop):
         if f:
             f(e)
             e.show()
+        e.ready()
 
     def raw(self, txt):
         pass

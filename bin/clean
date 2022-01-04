@@ -1,1 +1,1 @@
-rm -fR  .bot ol/*~ ol/__pycache__ bot/*~ bot/__pycache__ build dist MANIFEST botlib.egg-info bin/*~ *~ __pycache__  test/*~ test/__pycache__ .test
+rm -fR env files/*~ ob.egg-info .test .obj build dist ob/*~ ob/__pycache__ test/*~ test/__pycache__ mod/*~ mod/__pycache__ *~ __pycache__ bin/*~

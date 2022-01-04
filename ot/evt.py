@@ -4,6 +4,9 @@
 "object event"
 
 
+import threading
+
+
 from .bus import Bus
 from .dft import Default
 from .prs import parse
@@ -13,6 +16,7 @@ class Event(Default):
 
     def __init__(self):
         super().__init__()
+        self._ready = threading.Event()
         self.channel = ""
         self.orig = ""
         self.origin = ""
@@ -23,6 +27,9 @@ class Event(Default):
 
     def parse(self, txt=None):
         parse(self, txt or self.txt)
+
+    def ready(self):
+        self._ready.set()
       
     def reply(self, txt):
         self.result.append(txt)
@@ -31,3 +38,7 @@ class Event(Default):
         assert self.orig
         for txt in self.result:
             Bus.say(self.orig, self.channel, txt)
+
+    def wait(self):
+        self._ready.wait()
+        return self.result

@@ -3,6 +3,7 @@
 
 
 import doctest
+import inspect
 import os
 import sys
 import unittest
@@ -11,12 +12,12 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ol.cfg import Cfg
-from ol.cls import Cls
-from ol.cmd import Cmd
-from ol.obj import Object, values
-from ol.tbl import Tbl
-from ol.prs import parse
+from ob.cfg import Cfg
+from ob.cls import Cls
+from ob.cmd import Cmd
+from ob.obj import Object, values
+from ob.tbl import Tbl
+from ob.prs import parse
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -34,6 +35,8 @@ def scan():
             Cls.add(clz)
         Tbl.add(mod)
 
+import ob.all
+import tob.all
 
 
 def main():

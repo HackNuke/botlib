@@ -1,16 +1,18 @@
 # This file is placed in the Public Domain.
 
 
+import inspect
 import unittest
 
 
-from ol.cls import Cls
-from ol.cmd import Cmd
-from ol.cfg import Cfg
-from ol.obj import Object, get
-from ol.evt import Event
-from ol.fnc import format, index
-from ol.hdl import Handler
+from ob.cls import Cls
+from ob.cmd import Cmd
+from ob.cfg import Cfg
+from ob.obj import Object, get, values
+from ob.evt import Event
+from ob.fnc import format, index
+from ob.hdl import Handler
+from ob.tbl import Tbl
 
 
 events = []
@@ -44,9 +46,37 @@ c = CLI()
 results = Object()
 
 
+def consume(events):
+    fixed = []
+    res = []
+    for e in events:
+        e.wait()
+        fixed.append(e)
+    for f in fixed:
+        try:
+            events.remove(f)
+        except ValueError:
+            continue
+    return res
+
+
+def scan():
+    for mod in values(Tbl.mod):
+        for k, o in inspect.getmembers(mod, inspect.isfunction):
+            if "event" in o.__code__.co_varnames:
+                Cmd.cmds[k] = o
+        for k, clz in inspect.getmembers(mod, inspect.isclass):
+            Cls.add(clz)
+        Tbl.add(mod)
+
+
+import tob.all
+
+
 class Test_Commands(unittest.TestCase):
 
     def test_commands(self):
+        scan()
         cmds = list(Cmd.cmds)
         for cmd in reversed(sorted(cmds)):
             for ex in getattr(param, cmd, [""]):
@@ -55,6 +85,5 @@ class Test_Commands(unittest.TestCase):
                 e.orig = repr(c)
                 c.handle(e)
                 events.append(e)
-        if Cfg.verbose:
-            print(format(results, newline=True))
-        
+        consume(events)
+        self.assertTrue(not events)

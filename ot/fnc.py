@@ -1,14 +1,14 @@
 # This file is placed in the Public Domain.
 
 
-"object utility"
+"object functions"
 
 
 import os
 import pathlib
 
 
-from .obj import Object, get, items, keys
+from .obj import Object, items, keys
 
 
 def cdir(path):
@@ -32,20 +32,26 @@ def edit(o, setter):
         register(o, key, v)
 
 
-def format(o, skip="", *args, **kwargs):
-    res = ""
+def format(o, skip="", sep=" ", *args, **kwargs):
+    res = []
     for k in keys(o):
         if k in spl(skip):
             continue
-        v = get(o, k, None)
-        print(v)
-        res += "%s=%s " % (k, v)
-    return res.rstrip()
+        v = getattr(o, k, None)
+        res.append("%s=%s" % (k, v))
+    return sep.join(res)
 
 
 def index(o, txt):
     o[str(o.__idx__)] = txt
     o.__idx__ += 1
+
+
+def ordered(o):
+    oo = Object()
+    for i in range(o.__idx__):
+        oo[str(i)] = o[str(i)]
+    return oo
 
 
 def register(o, k, v):

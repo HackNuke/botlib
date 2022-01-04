@@ -1,17 +1,10 @@
-grep -R __import__ op
-grep -R __main__ op
-grep -R popen op
-grep -R pkgutil op
-grep -R importlib op
-grep -R print op
-grep -R "import sys" op
-grep -R "import inspect" op
-
-grep -R __import__ bot
-grep -R __main__ bot
-grep -R popen bot
-grep -R pkgutil bot
-grep -R importlib bot
-grep -R print bot
-grep -R "import sys" bot
-grep -R "import inspect" bot
+grep -R __import__ tob
+grep -R __main__ tob
+grep -R __version__ tob
+grep -R "## " tob
+grep -R popen tob
+grep -R pkgutil tob
+grep -R importlib tob
+grep -R print tob
+grep -R "import sys" tob
+grep -R "import inspect" tob

@@ -4,9 +4,9 @@
 import unittest
 
 
-from ol.obj import Object
-from ol.dbs import Db
-from ol.jsn import dumps, loads
+from ob.obj import Object
+from ob.dbs import Db
+from ob.jsn import dumps, loads
 
 
 class Composite(Object):

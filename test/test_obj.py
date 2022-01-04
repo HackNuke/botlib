@@ -5,11 +5,11 @@ import os
 import unittest
 
 
-from ol.cfg import Cfg
-from ol.obj import Object, get, items, keys, update, values
-from ol.dbs import Db, fns, hook, load, last, save
-from ol.fnc import cdir, edit, format, register, zet
-from ol.jsn import loads
+from ob.cfg import Cfg
+from ob.obj import Object, get, items, keys, update, values
+from ob.dbs import Db, fns, hook, load, last, save
+from ob.fnc import cdir, edit, format, register, zet
+from ob.jsn import loads
 
 
 attrs1 = (
@@ -69,8 +69,8 @@ attrs2 = (
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
-        import ol.obj
-        self.assertEqual(tuple(dir(ol.obj)), attrs1)
+        import ob.obj
+        self.assertEqual(tuple(dir(ob.obj)), attrs1)
 
     def test_attributes(self):
         o = Object()
@@ -238,7 +238,7 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o, oo)
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "ol.obj.Object")
+        self.assertEqual(Object().__otype__, "ob.obj.Object")
 
     def test_Object__reduce__(self):
         o = Object()
@@ -273,7 +273,7 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("ol.obj.Object" in o.__stp__)
+        self.assertTrue("ob.obj.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -303,13 +303,13 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(format(o), "")
 
     def test_fns(self):
-        from ol.obj import Object
-        from ol.cfg import Cfg
-        from ol.dbs import save
+        from ob.obj import Object
+        from ob.cfg import Cfg
+        from ob.dbs import save
         Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("ol.obj.Object")[0])
+        self.assertTrue("Object" in fns("ob.obj.Object")[0])
 
     def test_get(self):
         o = Object()

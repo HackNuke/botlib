@@ -2,39 +2,52 @@
 # This file is placed in the Public Domain.
 
 
-"bot command"
+"reverse bot command"
 
 
 import inspect
 import os
+import readline
 import sys
+import termios
+import time
+import traceback
 
 
-from ol.cfg import Cfg
-from ol.cls import Cls
-from ol.cmd import Cmd
-from ol.krn import boot, kcmd
-from ol.obj import values
-from ol.hdl import Handler
-from ol.tbl import Tbl
+sys.path.insert(0, os.getcwd())
 
 
-import bot.all
+from ob.cfg import Cfg
+from ob.cls import Cls
+from ob.cmd import Cmd
+from ob.dft import Default
+from ob.evt import Event
+from ob.fnc import format
+from ob.krn import boot, kcmd
+from ob.obj import Object, update, values
+from ob.prs import parse, parse_cli
+from ob.hdl import Handler
+from ob.tbl import Tbl
+from ob.tms import tfmt
+from ob.thr import launch
 
 
-Cfg.wd = "/var/lib/botd/"
+import ob.all
+import mod.all
+
+
+
+Cfg.wd = os.path.expanduser("~/.ob")
 
 
 class CLI(Handler):
 
-    "command line interface"
 
     def raw(self, txt):
         print(txt)
 
 
 def scan():
-    "scan registered modules"
     for mod in values(Tbl.mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if "event" in o.__code__.co_varnames:
@@ -45,11 +58,9 @@ def scan():
 
 
 def main():
-    "main function"
     scan()
     cfg = boot(" ".join(sys.argv[1:]))
-    if cfg.txt:
-        c = CLI()
-        kcmd(c, cfg.otxt)
+    c = CLI()
+    return kcmd(c, cfg.otxt)
 
 main()

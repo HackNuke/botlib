@@ -23,3 +23,8 @@ def kcmd(o, txt):
     e.orig = repr(o)
     e.txt = txt
     o.handle(e)
+
+
+def getmain(name):
+    return getattr(sys.modules["__main__"], name, None)
+
