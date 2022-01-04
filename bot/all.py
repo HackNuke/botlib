@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from ot.tbl import Tbl
+from o.tbl import Tbl
 
 from bot import bsc
 from bot import irc

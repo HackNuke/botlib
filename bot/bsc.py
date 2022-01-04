@@ -5,14 +5,14 @@ import threading
 import time
 
 
-from ot.bus import Bus
-from ot.cmd import Cmd
-from ot.dbs import Db, fntime
-from ot.dbs import find
-from ot.fnc import format
-from ot.obj import Object, get, update, values
-from ot.thr import getname
-from ot.prs import elapsed
+from o.bus import Bus
+from o.cmd import Cmd
+from o.dbs import Db, fntime
+from o.dbs import find
+from o.fnc import format
+from o.obj import Object, get, update, values
+from o.thr import getname
+from o.prs import elapsed
 
 
 starttime = time.time()

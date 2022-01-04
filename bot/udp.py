@@ -5,11 +5,11 @@ import socket
 import time
 
 
-from ot.obj import Object
-from ot.dbs import last
-from ot.dft import Default
-from ot.bus import Bus
-from ot.thr import launch
+from o.obj import Object
+from o.dbs import last
+from o.dft import Default
+from o.bus import Bus
+from o.thr import launch
 
 
 class Cfg(Default):

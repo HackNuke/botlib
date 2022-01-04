@@ -1,8 +1,8 @@
 # This file is placed in the Public Domain.
 
 
-from ot.dbs import save
-from ot.obj import Object
+from o.dbs import save
+from o.obj import Object
 
 
 class Log(Object):

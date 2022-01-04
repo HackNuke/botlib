@@ -11,7 +11,6 @@ class Bus(Object):
     @staticmethod
     def add(o):
         if o not in Bus.objs:
-            print("adding %s" % o.__otype__)
             Bus.objs.append(o)
 
     @staticmethod

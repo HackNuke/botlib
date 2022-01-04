@@ -14,17 +14,17 @@ import time
 import _thread
 
 
-from ot.bus import Bus
-from ot.cbs import Cbs
-from ot.clt import Client
-from ot.cmd import Cmd
-from ot.dbs import find, last, save
-from ot.dft import Default
-from ot.evt import Event
-from ot.fnc import edit, format
-from ot.hdl import Handler, Stop
-from ot.obj import Object, update
-from ot.thr import launch
+from o.bus import Bus
+from o.cbs import Cbs
+from o.clt import Client
+from o.cmd import Cmd
+from o.dbs import find, last, save
+from o.dft import Default
+from o.evt import Event
+from o.fnc import edit, format
+from o.hdl import Handler, Stop
+from o.obj import Object, update
+from o.thr import launch
 
 
 def __dir__():
@@ -488,10 +488,9 @@ class DCC(Client, Handler):
         return self.event(txt)
 
     def start(self):
-        print("dcc start")
         Bus.add(self)
-        print(Bus.objs)
         Handler.start(self)
+
 
 class User(Object):
 
