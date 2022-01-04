@@ -4,8 +4,8 @@
 import unittest
 
 
-from ob.cfg import Cfg
 from ob.fnc import edit
+from ob.krn import Cfg
 from ob.prs import parse
 
 
@@ -15,12 +15,12 @@ from ob import Object, update
 class Test_Cfg(unittest.TestCase):
 
     def test_parse(self):
-        p = Object()
+        p = Cfg()
         parse(p, "mod=irc")
         self.assertEqual(p.sets.mod, "irc")
 
     def test_parse2(self):
-        p = Object()
+        p = Cfg()
         parse(p, "mod=irc,rss")
         self.assertEqual(p.sets.mod, "irc,rss")
 

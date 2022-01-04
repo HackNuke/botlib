@@ -5,11 +5,10 @@ import os
 import unittest
 
 
-from ob.cfg import Cfg
 from ob.dbs import Db, fns, hook, load, last, save
 from ob.fnc import cdir, edit, format, register
 from ob.jsn import loads
-
+from ob.krn import Cfg
 
 from ob import Object, get, items, keys, update, values
 

@@ -5,12 +5,14 @@ import inspect
 import unittest
 
 
+from ob.bus import Bus
 from ob.cls import Cls
+from ob.clt import Client
 from ob.cmd import Cmd
-from ob.cfg import Cfg
 from ob.evt import Event
 from ob.fnc import format
 from ob.hdl import Handler
+from ob.krn import Cfg
 from ob.tbl import Tbl
 
 
@@ -37,11 +39,17 @@ param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["things todo"]
 
 
-class CLI(Handler):
+class CLI(Handler, Client):
 
+
+     def __init__(self):
+         Client.__init__(self)
+         Handler.__init__(self)
 
      def raw(self, txt):
          results.append(txt)
+         if Cfg.verbose:
+             print(txt)
         
          
 c = CLI()
@@ -62,26 +70,17 @@ def consume(events):
     return res
 
 
-def scan():
-    for mod in values(Tbl.mod):
-        for k, o in inspect.getmembers(mod, inspect.isfunction):
-            if "event" in o.__code__.co_varnames:
-                Cmd.cmds[k] = o
-        for k, clz in inspect.getmembers(mod, inspect.isclass):
-            Cls.add(clz)
-        Tbl.add(mod)
-
-
-import ob.all
-import bot.all
-
-
 class Test_Commands(unittest.TestCase):
 
+    def setUp(self):
+        c.start()
+        
+    def tearDown(self):
+        c.stop()
+
     def test_commands(self):
-        scan()
-        cmds = list(Cmd.cmds)
-        for cmd in reversed(sorted(cmds)):
+        cmds = sorted(Cmd.cmds)
+        for cmd in cmds:
             for ex in getattr(param, cmd, [""]):
                 e = Event()
                 e.txt = cmd + " " + ex

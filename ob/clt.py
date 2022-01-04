@@ -4,10 +4,17 @@
 "object client"
 
 
+from .bus import Bus
+
+
 from . import Object
 
 
 class Client(Object):
+
+    def __init__(self):
+        Object.__init__(self)
+        Bus.add(self)
 
     def announce(self, txt):
         self.raw(txt)

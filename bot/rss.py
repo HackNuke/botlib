@@ -11,9 +11,9 @@ import urllib
 
 
 from ob.bus import Bus
-from ob.cfg import Cfg
 from ob.dbs import Db, find, last, save
 from ob.fnc import edit
+from ob.krn import Cfg
 from ob.tms import Repeater
 from ob.thr import launch
 

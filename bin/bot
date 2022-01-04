@@ -18,10 +18,9 @@ from ob.bus import Bus
 from ob.cls import Cls
 from ob.clt import Client
 from ob.cmd import Cmd
-from ob.cfg import Cfg
 from ob.dft import Default
 from ob.evt import Event
-from ob.krn import boot, kcmd, root
+from ob.krn import Cfg, boot, kcmd, root
 from ob.prs import parse
 from ob.hdl import Handler
 from ob.tbl import Tbl

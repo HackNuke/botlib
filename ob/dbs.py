@@ -10,7 +10,7 @@ import os
 import time
 
 
-from .cfg import Cfg
+from .krn import Cfg
 from .fnc import cdir, search
 from .jsn import ObjectDecoder, ObjectEncoder
 from .cls import Cls

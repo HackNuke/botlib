@@ -18,6 +18,15 @@ from .prs import parse
 from .tbl import Tbl
 
 
+class Cfg(Cfg):
+
+    console = False
+    debug = False
+    name = "ob"
+    verbose = False
+    wd = ""
+
+
 def boot(txt):
     parse(Cfg, txt)
     Cfg.console = "c" in Cfg.opts

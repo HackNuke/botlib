@@ -44,7 +44,9 @@ class Handler(Object):
     def loop(self):
         while not self.stopped:
             try:
-                self.handle(self.poll())
+                e = self.poll()
+                if e:
+                    self.handle(e)
             except Stop:
                 break
 

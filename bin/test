@@ -5,6 +5,7 @@
 import doctest
 import inspect
 import os
+import shutil
 import sys
 import unittest
 
@@ -12,9 +13,9 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ob.cfg import Cfg
 from ob.cls import Cls
 from ob.cmd import Cmd
+from ob.krn import Cfg, boot
 from ob.tbl import Tbl
 from ob.prs import parse
 
@@ -36,15 +37,17 @@ def scan():
             Cls.add(clz)
         Tbl.add(mod)
 
+
 import ob.all
 import bot.all
 
 
 def main():
+    if os.path.exists(Cfg.wd):
+        shutil.rmtree(Cfg.wd)
+    boot(" ".join(sys.argv[1:]))
+    Cfg.debug = True
     scan()
-    p = Object()
-    parse(p, " ".join(sys.argv[1:]))
-    Cfg.verbose = "v" in p.opts
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
