@@ -30,7 +30,7 @@ class Event(Default):
 
     def ready(self):
         self._ready.set()
-      
+
     def reply(self, txt):
         self.result.append(txt)
 

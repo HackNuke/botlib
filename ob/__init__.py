@@ -44,8 +44,8 @@ class Object:
             os.sep.join(str(datetime.datetime.now()).split()),
         )
 
-    def __class_getitem__(self):
-        return self.__dict__.__class_geitem__()
+    def __class_getitem__(cls):
+        return cls.__dict__.__class_geitem__(cls)
 
     def __contains__(self, k):
         if k in self.__dict__.keys():
@@ -129,7 +129,7 @@ class Object:
 
     def __reduce__(self):
         pass
-        
+
     def __reduce_ex__(self, k):
         pass
 

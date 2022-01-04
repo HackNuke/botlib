@@ -14,7 +14,7 @@ from ob.thr import getname
 from ob.prs import elapsed
 
 
-from ob import Object, get, update, values
+from ob import Object, get, update
 
 
 def __dir__():
@@ -35,7 +35,6 @@ class Log(Object):
     def __init__(self):
         super().__init__()
         self.txt = ""
-
 
 
 def cmd(event):

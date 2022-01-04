@@ -2,7 +2,7 @@
 
 
 from . import Object, get
-
+from .fnc import register
 
 class Cmd(Object):
 
@@ -13,14 +13,5 @@ class Cmd(Object):
         register(Cmd.cmds, cmd.__name__, cmd)
 
     @staticmethod
-    def dispatch(e):
-        f = Cmd.get(e.cmd)
-        if f:
-            f(e)
-            e.show()
-        e.ready()
-
-    @staticmethod
     def get(cmd):
         return get(Cmd.cmds, cmd)
-

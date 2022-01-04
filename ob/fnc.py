@@ -22,7 +22,7 @@ def __dir__():
         "spl"
     )
 
-    
+
 def cdir(path):
     if os.path.exists(path):
         return
@@ -44,7 +44,7 @@ def edit(o, setter):
         register(o, key, v)
 
 
-def format(o, skip="", sep=" ", *args, **kwargs):
+def format(o, *args, skip="", sep=" ", **kwargs):
     res = []
     for k in keys(o):
         if k in spl(skip):

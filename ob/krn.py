@@ -9,13 +9,9 @@ import os
 import pwd
 
 
-from .cmd import Cmd
 from .cfg import Cfg
-from .cls import Cls
-from .dft import Default
 from .evt import Event
 from .prs import parse
-from .tbl import Tbl
 
 
 class Cfg(Cfg):
@@ -33,8 +29,8 @@ def boot(txt):
     Cfg.daemon = "d" in Cfg.opts
     Cfg.index = None
     Cfg.verbose = "v" in Cfg.opts
-       
-    
+
+
 def kcmd(o, txt):
     e = Event()
     e.channel = ""
@@ -58,7 +54,7 @@ def privileges(name=None):
     os.setgroups([])
     os.setgid(pwnam.pw_gid)
     os.setuid(pwnam.pw_uid)
-    old_umask = os.umask(0o22)
+    os.umask(0o22)
     return True
 
 

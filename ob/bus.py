@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from . import Object, values
+from . import Object
 
 
 class Bus(Object):
@@ -23,7 +23,7 @@ class Bus(Object):
         for o in Bus.objs:
             if repr(o) == orig:
                 return o
-        
+
     @staticmethod
     def say(orig, channel, txt):
         o = Bus.byorig(orig)

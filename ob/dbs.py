@@ -119,8 +119,8 @@ class Db(Object):
             return (fnn, hook(fnn))
         return (None, None)
 
-
-    def types(workdir):
+    @staticmethod
+    def types():
         assert Cfg.wd
         path = os.path.join(Cfg.wd, "store")
         if not os.path.exists(path):
