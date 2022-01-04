@@ -31,6 +31,7 @@ def boot(txt):
     parse(Cfg, txt)
     Cfg.console = "c" in Cfg.opts
     Cfg.daemon = "d" in Cfg.opts
+    Cfg.index = None
     Cfg.verbose = "v" in Cfg.opts
        
     

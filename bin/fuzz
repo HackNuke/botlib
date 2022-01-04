@@ -23,16 +23,19 @@ sys.path.insert(0, os.getcwd())
 
 
 from ob.bus import Bus
+from ob.clt import Client
 from ob.cmd import Cmd
 from ob.evt import Event
 from ob.dbs import find, fntime, last, listfiles, save
+from ob.hdl import Handler
 from ob.krn import Cfg, boot
-from ob.obj import Object, get, items, keys, values, update
-from ob.fnc import edit, format, index
+from ob.fnc import edit, format
 from ob.prs import elapsed, parse
 from ob.tbl import Tbl
-from ob.thr import getname, launch
+from ob.thr import errors, getname, launch
 
+
+from ob import Object, get, items, keys, values, update
 
 
 starttime = time.time()
@@ -51,18 +54,13 @@ def get_values(v):
 
 
 def handle_error(ex, txt=None):
-    t = str(type(ex))
-    if t not in errors:
-        errors[t] = ex
-        if txt:
-            errors[t].txt = txt
+    errors.append(ex)
 
 
 def pay(mod, *args, **kwargs):
     if Cfg.verbose:
         print(mod)
     for k in dir(mod):
-        print(k)
         if k.startswith("_" or k in exclude):
             continue
         obj = getattr(mod, k)
@@ -71,8 +69,7 @@ def pay(mod, *args, **kwargs):
             args = get_values(spec.args[1:])
             o = obj(*args)
         except Exception as ex:
-            handle_error(ex, get_exception())
-            continue
+            raise ex.with_traceback(ex.__traceback__)
         for k in dir(o):
             if k.startswith("_" or k in exclude):
                 continue
@@ -81,9 +78,9 @@ def pay(mod, *args, **kwargs):
                 try:
                     spec = inspect.getfullargspec(f)
                     args = get_values(spec.args[1:])
-                    res = launch(f,*args)
+                    res = f(*args)
                 except Exception as ex:
-                    handle_error(ex, get_exception())
+                    raise ex.with_traceback(ex.__traceback__)
 
 
 def cb(event):
@@ -93,15 +90,15 @@ def cb(event):
 Cfg.wd = ".test"
 
 
+errors2 = []
 events = []
-errors = Object()
 exclude = ["output", "some", "keep", "wait", "loop", "handle", "poll", "event", "handler", "input", "doconnect", "raw", "start"]
 exc = []
 missing = []
 results = []
 
 
-import mod.bsc
+import bot.bsc
 
 
 default = Object()
@@ -122,7 +119,7 @@ default["pkgnames"] = "ob"
 default["name"] = "ob"
 default["callback"] = cb
 default["e"] = Event()
-default["mod"] = mod.bsc
+default["mod"] = bot.bsc
 default["mns"] = "irc,udp,rss"
 default["sleep"] = 60.0
 default["func"] = cb
@@ -201,17 +198,12 @@ default["start"] = time.time() - 3600
 default["stop"] = time.time()
 
 
-class Cfg(Object):
-
-     pass
-
-
-class CLI(Handler):
-
+class CLI(Client, Handler):
 
     def __init__(self):
-        Loop.__init__(self)
-        self.cfg = Cfg()
+        Client.__init__(self)
+        Handler.__init__(self)
+
 
     def handle(self, e):
         super().handle(e)
@@ -236,34 +228,14 @@ def consume(events):
     return res
 
 
-def get_exception(txt="", sep=" "):
-    exctype, excvalue, tb = sys.exc_info()
-    trace = traceback.extract_tb(tb)
-    result = []
-    for elem in trace:
-        if elem[0].endswith(".py"):
-            plugfile = elem[0][:-3].split(os.sep)
-        else:
-            plugfile = elem[0].split(os.sep)
-        mod = []
-        for element in plugfile[:-2:-1]:
-            mod.append(element.split(".")[-1])
-        ownname = ".".join(mod[::-1])
-        result.append("%s:%s" % (ownname, elem[1]))
-    res = "%s %s: %s %s" % (sep.join(result), exctype, excvalue, str(txt))
-    del trace
-    exc.append(res)
-    return res
-
-
-def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
-
-
 def payload():
-    for mod in Tbl.mod:
-        pay(mod)
-
+    mods = list(Tbl.mod)
+    random.shuffle(mods)
+    thrs = []
+    for mod in mods:
+        thrs.append(launch(pay, mod))
+    for thr in thrs:
+        thr.join()
 
 def wrap(func):
     fd = sys.stdin.fileno()
@@ -276,7 +248,7 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
-import ot.all
+#import ob.all
 import bot.all
 
 
@@ -287,16 +259,23 @@ def main():
     c = CLI()
     c.start()
     thrs = []
-    nrs = Cfg.index or 1
+    nrs = Cfg.index or 10
     for nr in range(nrs):
         time.sleep(0.01)
         thr = launch(payload)
         thrs.append(thr)
+    for thr in thrs:
+        thr.join()
     consume(events)
     for res in results:
         print(res)
-    for key, val in items(errors):
-        print(key, val)
+    for err in errors:
+        fr = err.__traceback__.tb_frame
+        ln = fr.f_lineno
+        fn = fr.f_code.co_filename
+        print("%s %s:%s" % (err, fn, ln))
+    for err in errors2:
+        print(err)
     print(missing)
     print(elapsed(time.time()-starttime))
 
