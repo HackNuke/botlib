@@ -2,7 +2,7 @@
 # This file is placed in the Public Domain.
 
 
-"reverse bot"
+"bot client"
 
 
 import inspect
@@ -14,15 +14,13 @@ import time
 import traceback
 
 
-sys.path.insert(0, os.getcwd())
-
-
 from ot.cls import Cls
 from ot.cmd import Cmd
 from ot.obj import Object, update, values
 from ot.cfg import Cfg
 from ot.dft import Default
 from ot.evt import Event
+from ot.krn import kcmd, root
 from ot.prs import parse
 from ot.hdl import Handler
 from ot.tbl import Tbl
@@ -37,29 +35,8 @@ from bot.irc import IRC
 from bot.rss import Fetcher
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
-
-
-class Cfg(Default):
-
-    pass
-
-
 class Console(Handler):
 
-    def __init__(self):
-        Handler.__init__(self)
-        self.cfg = Cfg()
-
-    def boot(self):
-        return parse(self.cfg, " ".join(sys.argv[1:]))
-
-    def cmd(self, txt):
-        e = Event()
-        e.channel = ""
-        e.orig = repr(self)
-        e.txt = txt
-        self.handle(e)
 
     def poll(self):
         e = Event()
@@ -69,6 +46,20 @@ class Console(Handler):
  
     def raw(self, txt):
         print(txt)
+
+
+def daemon():
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    os.umask(0)
+    si = open("/dev/null", 'r')
+    so = open("/dev/null", 'a+')
+    se = open("/dev/null", 'a+')
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
 
 
 def scan():
@@ -86,6 +77,8 @@ def wrap(func):
     old = termios.tcgetattr(fd)
     try:
         func()
+    except PermissionError:
+        print("you need root privileges")
     except (EOFError, KeyboardInterrupt):
         print("")
     finally:
@@ -94,14 +87,25 @@ def wrap(func):
 
 def main():
     scan()
+    parse(Cfg, " ".join(sys.argv[1:]))
+    if "l" in Cfg.opts:
+        Cfg.wd = os.path.expanduser("~/.bot")
+    elif root():
+        Cfg.wd = "/var/lib/botd/"
+    else:
+        print("you need root privileges")
+        return
+    if "d" in Cfg.opts:
+        print("starting daemon")
+        daemon()
     c = Console()
-    c.boot()
     i = IRC()
     i.start()
     f = Fetcher()
     f.start()
-    c.start()
-    c.wait()
+    if "d" not in Cfg.opts:
+        c.start()
+        c.wait()
 
 
 wrap(main)

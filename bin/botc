@@ -14,9 +14,6 @@ import time
 import traceback
 
 
-sys.path.insert(0, os.getcwd())
-
-
 from ot.cfg import Cfg
 from ot.cls import Cls
 from ot.cmd import Cmd
@@ -36,8 +33,7 @@ import ot.all
 import bot.all
 
 
-
-Cfg.wd = os.path.expanduser("~/.bot")
+Cfg.wd = "/var/lib/botd"
 
 
 class CLI(Handler):
@@ -60,6 +56,8 @@ def scan():
 def main():
     scan()
     cfg = boot(" ".join(sys.argv[1:]))
+    if "l" in cfg.opts:
+        Cfg.wd = os.path.expanduser("~/.bot")
     c = CLI()
     return kcmd(c, cfg.otxt)
 

@@ -2,7 +2,7 @@
 # This file is placed in the Public Domain.
 
 
-"reverse bot daemon"
+"bot service"
 
 
 import inspect
@@ -13,9 +13,6 @@ import time
 import traceback
 
 
-sys.path.insert(0, os.getcwd())
-
-
 from ot.bus import Bus
 from ot.cls import Cls
 from ot.cmd import Cmd
@@ -24,9 +21,9 @@ from ot.evt import Event
 from ot.obj import Object, update, values
 from ot.prs import parse
 from ot.hdl import Handler
+from ot.tbl import Tbl
 from ot.tms import tfmt
 from ot.thr import launch
-from ot.tbl import Tbl
 
 
 import ot.all
@@ -37,21 +34,7 @@ from bot.irc import IRC
 from bot.rss import Fetcher
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
-
-
-def daemon():
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    os.umask(0)
-    si = open("/dev/null", 'r')
-    so = open("/dev/null", 'a+')
-    se = open("/dev/null", 'a+')
-    os.dup2(si.fileno(), sys.stdin.fileno())
-    os.dup2(so.fileno(), sys.stdout.fileno())
-    os.dup2(se.fileno(), sys.stderr.fileno())
+Cfg.wd = "/var/lib/botd/"
 
 
 def scan():
@@ -66,13 +49,12 @@ def scan():
 
 def main():
     scan()
-    sys.stdout.flush()
-    daemon()
     i = IRC()
     i.start()
     f = Fetcher()
     f.start()
     while 1:
         time.sleep(1.0)
+
 
 main()

@@ -2,6 +2,10 @@
 
 "kernel"
 
+import getpass
+import os
+import pwd
+
 from .cmd import Cmd
 from .cfg import Cfg
 from .cls import Cls
@@ -24,7 +28,25 @@ def kcmd(o, txt):
     e.txt = txt
     o.handle(e)
 
+def privileges(name=None):
+    if os.getuid() != 0:
+        return
+    if name is None:
+        try:
+            name = getpass.getuser()
+        except KeyError:
+            pass
+    try:
+        pwnam = pwd.getpwnam(name)
+    except KeyError:
+        return False
+    os.setgroups([])
+    os.setgid(pwnam.pw_gid)
+    os.setuid(pwnam.pw_uid)
+    old_umask = os.umask(0o22)
+    return True
 
-def getmain(name):
-    return getattr(sys.modules["__main__"], name, None)
-
+def root():
+    if os.geteuid() != 0:
+        return False
+    return True
