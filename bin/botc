@@ -2,7 +2,7 @@
 # This file is placed in the Public Domain.
 
 
-"reverse bot command"
+"bot command"
 
 
 import inspect
@@ -17,27 +17,27 @@ import traceback
 sys.path.insert(0, os.getcwd())
 
 
-from ob.cfg import Cfg
-from ob.cls import Cls
-from ob.cmd import Cmd
-from ob.dft import Default
-from ob.evt import Event
-from ob.fnc import format
-from ob.krn import boot, kcmd
-from ob.obj import Object, update, values
-from ob.prs import parse, parse_cli
-from ob.hdl import Handler
-from ob.tbl import Tbl
-from ob.tms import tfmt
-from ob.thr import launch
+from ot.cfg import Cfg
+from ot.cls import Cls
+from ot.cmd import Cmd
+from ot.dft import Default
+from ot.evt import Event
+from ot.fnc import format
+from ot.krn import boot, kcmd
+from ot.obj import Object, update, values
+from ot.prs import parse, parse_cli
+from ot.hdl import Handler
+from ot.tbl import Tbl
+from ot.tms import tfmt
+from ot.thr import launch
 
 
-import ob.all
-import mod.all
+import ot.all
+import bot.all
 
 
 
-Cfg.wd = os.path.expanduser("~/.ob")
+Cfg.wd = os.path.expanduser("~/.bot")
 
 
 class CLI(Handler):

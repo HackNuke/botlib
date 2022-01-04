@@ -1,9 +1,7 @@
 # This file is placed in the Public Domain.
 
+
 "feed fetcher"
-
-
-## imports
 
 
 import html.parser
@@ -12,22 +10,18 @@ import threading
 import urllib
 
 
-from ol.bus import Bus
-from ol.cfg import Cfg
-from ol.dbs import Db, find, last, save
-from ol.dft import Default
-from ol.fnc import edit
-from ol.obj import Object, get, update
-from ol.tms import Repeater
-from ol.thr import launch
+from ot.bus import Bus
+from ot.cfg import Cfg
+from ot.dbs import Db, find, last, save
+from ot.fnc import edit
+from ot.obj import Object, get, update
+from ot.tms import Repeater
+from ot.thr import launch
 
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 from urllib.request import Request, urlopen
-
-
-## defines
 
 
 def __dir__():
@@ -42,9 +36,6 @@ def __dir__():
         "rem",
         "rss"
     )
-
-
-## classes
 
 
 class Feed(Object):
@@ -122,7 +113,7 @@ class Fetcher(Object):
             counter += 1
             objs.append(f)
         if objs:
-            sve(Fetcher.seen)
+            save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
             Bus.announce(txt)
@@ -139,9 +130,6 @@ class Fetcher(Object):
         if repeat:
             repeater = Repeater(300.0, self.run)
             repeater.start()
-
-
-## utils
 
 
 def getfeed(url):
@@ -198,9 +186,6 @@ def unescape(text):
 
 def useragent(txt):
     return "Mozilla/5.0 (X11; Linux x86_64) " + txt
-
-
-## commands
 
 
 def dpl(event):

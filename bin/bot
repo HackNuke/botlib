@@ -17,27 +17,27 @@ import traceback
 sys.path.insert(0, os.getcwd())
 
 
-from ob.cls import Cls
-from ob.cmd import Cmd
-from ob.obj import Object, update, values
-from ob.cfg import Cfg
-from ob.dft import Default
-from ob.evt import Event
-from ob.prs import parse
-from ob.hdl import Handler
-from ob.tbl import Tbl
-from ob.tms import tfmt
-from ob.thr import launch
+from ot.cls import Cls
+from ot.cmd import Cmd
+from ot.obj import Object, update, values
+from ot.cfg import Cfg
+from ot.dft import Default
+from ot.evt import Event
+from ot.prs import parse
+from ot.hdl import Handler
+from ot.tbl import Tbl
+from ot.tms import tfmt
+from ot.thr import launch
 
 
-import mod.all
+import bot.all
 
 
-from mod.irc import IRC
-from mod.rss import Fetcher
+from bot.irc import IRC
+from bot.rss import Fetcher
 
 
-Cfg.wd = os.path.expanduser("~/.ob")
+Cfg.wd = os.path.expanduser("~/.bot")
 
 
 class Cfg(Default):

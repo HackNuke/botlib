@@ -5,11 +5,11 @@ import socket
 import time
 
 
-from ol.obj import Object
-from ol.dbs import last
-from ol.dft import Default
-from ol.bus import Bus
-from ol.thr import launch
+from ot.obj import Object
+from ot.dbs import last
+from ot.dft import Default
+from ot.bus import Bus
+from ot.thr import launch
 
 
 class Cfg(Default):
@@ -53,7 +53,7 @@ class UDP(Object):
             self.output(data, addr)
 
     def start(self):
-        lst(self.cfg)
+        last(self.cfg)
         launch(self.server)
 
     def stop(self):

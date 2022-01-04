@@ -4,9 +4,6 @@
 "irc bot"
 
 
-## imports
-
-
 import os
 import queue
 import socket
@@ -17,19 +14,16 @@ import time
 import _thread
 
 
-from ol.bus import Bus
-from ol.cbs import Cbs
-from ol.cmd import Cmd
-from ol.dbs import find, last, save
-from ol.dft import Default
-from ol.evt import Event
-from ol.fnc import edit, format
-from ol.hdl import Handler
-from ol.obj import Object, update
-from ol.thr import launch
-
-
-## defines
+from ot.bus import Bus
+from ot.cbs import Cbs
+from ot.cmd import Cmd
+from ot.dbs import find, last, save
+from ot.dft import Default
+from ot.evt import Event
+from ot.fnc import edit, format
+from ot.hdl import Handler
+from ot.obj import Object, update
+from ot.thr import launch
 
 
 def __dir__():
@@ -84,9 +78,6 @@ class Stop(Exception):
     pass
 
 
-## classes
-
-
 class Cfg(Default):
 
     cc = "!"
@@ -120,6 +111,7 @@ class Event(Event):
 
     def __init__(self):
         super().__init__()
+        self.args = []
         self.arguments = []
         self.channel = ""
         self.command = ""
@@ -127,6 +119,8 @@ class Event(Event):
         self.origin = ""
         self.rawstr = ""
         self.sock = None
+        self.type = ""
+        self.txt = ""
 
 
 class Output(Object):
@@ -319,10 +313,10 @@ class IRC(Output, Handler):
         self.raw("NICK %s" % nick)
         self.raw(
             "USER %s %s %s :%s"
-            % (self.cfg.username or "botd",
+            % (self.cfg.username or "tob",
                server,
                server,
-               self.cfg.realname or "botd")
+               self.cfg.realname or "tob")
         )
 
     def parsing(self, txt):
@@ -425,7 +419,7 @@ class IRC(Output, Handler):
         self.state.lastline = splitted[-1]
 
     def start(self):
-        p = last(self.cfg)
+        last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         assert self.cfg.nick
@@ -464,7 +458,7 @@ class DCC(Handler):
         self.sock = None
         self.speed = "fast"
         Bus.add(self)
-        
+
     def raw(self, txt):
         self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
@@ -582,9 +576,6 @@ class TextWrap(textwrap.TextWrapper):
         self.width = 450
 
 
-## callbacks
-
-
 def AUTH(obj):
     clt = obj.bot()
     clt.raw("AUTHENTICATE %s" % clt.cfg.password)
@@ -627,7 +618,7 @@ def NOTICE(obj):
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
             "botlib",
-            __version__,
+            clt.cfg.version or "1",
             clt.cfg.username or "botlib",
         )
         clt.command("NOTICE", obj.channel, txt)
@@ -666,13 +657,13 @@ def QUIT(obj):
         clt.reconnect()
 
 
-## commands
-
-
 def cfg(event):
     c = Cfg()
-    p = last(c)
+    last(c)
     if not event.sets:
+        if not c:
+            event.reply("no config yet")
+            return
         event.reply(format(c, "cc,password,realname,username"))
         return
     edit(c, event.sets)
@@ -685,7 +676,7 @@ def dlt(event):
         event.reply("dlt <username>")
         return
     selector = {"user": event.args[0]}
-    for _fn, o in fnd("user", selector):
+    for _fn, o in find("user", selector):
         o._deleted = True
         save(o)
         event.reply("ok")

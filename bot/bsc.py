@@ -5,16 +5,14 @@ import threading
 import time
 
 
-from ol.bus import Bus
-from ol.cfg import Cfg
-from ol.cmd import Cmd
-from ol.dbs import Db, fntime, save
-from ol.dbs import find
-from ol.dft import Default
-from ol.fnc import format
-from ol.obj import Object, get, keys, update, values
-from ol.thr import getname
-from ol.prs import elapsed
+from ot.bus import Bus
+from ot.cmd import Cmd
+from ot.dbs import Db, fntime
+from ot.dbs import find
+from ot.fnc import format
+from ot.obj import Object, get, update, values
+from ot.thr import getname
+from ot.prs import elapsed
 
 
 starttime = time.time()
@@ -22,16 +20,16 @@ starttime = time.time()
 
 def cmd(event):
     event.reply(",".join(sorted(Cmd.cmds)))
-    
+
 
 def flt(event):
     try:
         index = int(event.args[0])
-        event.reply(fmt(Obj.objs[str(index)]))
+        event.reply(format(Bus.objs[str(index)]))
         return
     except (KeyError, TypeError, IndexError, ValueError):
         pass
-    event.reply(" | ".join([getname(o) for o in values(Obj.objs)]))
+    event.reply(" | ".join([getname(o) for o in values(Bus.objs)]))
 
 
 def fnd(event):

@@ -2,7 +2,7 @@
 # This file is placed in the Public Domain.
 
 
-"reverse bot fuzzer"
+"bot fuzzer"
 
 
 import doctest
@@ -22,21 +22,21 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ob.bus import Bus
-from ob.cmd import Cmd
-from ob.cfg import Cfg
-from ob.evt import Event
-from ob.lop import Loop
-from ob.dbs import find, fntime, last, listfiles, save
-from ob.obj import Object, get, items, keys, values, update
-from ob.fnc import edit, format, index
-from ob.prs import elapsed, parse
-from ob.tbl import Tbl
-from ob.thr import getname, launch
+from ot.bus import Bus
+from ot.cmd import Cmd
+from ot.cfg import Cfg
+from ot.evt import Event
+from ot.lop import Loop
+from ot.dbs import find, fntime, last, listfiles, save
+from ot.obj import Object, get, items, keys, values, update
+from ot.fnc import edit, format, index
+from ot.prs import elapsed, parse
+from ot.tbl import Tbl
+from ot.thr import getname, launch
 
 
-import ob.all
-import mod.all
+import ot.all
+import bot.all
 
 
 starttime = time.time()
@@ -285,7 +285,7 @@ def wrap(func):
 
 
 def main():
-    print("OB fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
+    print("BOT fuzzer start at %s" % time.ctime(time.time()).replace("  ", " "))
     parse(Cfg, " ".join(sys.argv[1:]))
     Cfg.verbose = "v" in Cfg.opts
     Cfg.debug = True

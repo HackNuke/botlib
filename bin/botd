@@ -16,27 +16,28 @@ import traceback
 sys.path.insert(0, os.getcwd())
 
 
-from ob.bus import Bus
-from ob.cls import Cls
-from ob.cmd import Cmd
-from ob.dbs import Cfg
-from ob.evt import Event
-from ob.obj import Object, update, values
-from ob.prs import parse
-from ob.hdl import Handler
-from ob.tms import tfmt
-from ob.thr import launch
-from ob.tbl import Tbl
-
-import ob.all
-import mod.all
+from ot.bus import Bus
+from ot.cls import Cls
+from ot.cmd import Cmd
+from ot.dbs import Cfg
+from ot.evt import Event
+from ot.obj import Object, update, values
+from ot.prs import parse
+from ot.hdl import Handler
+from ot.tms import tfmt
+from ot.thr import launch
+from ot.tbl import Tbl
 
 
-from mod.irc import IRC
-from mod.rss import Fetcher
+import ot.all
+import bot.all
 
 
-Cfg.wd = os.path.expanduser("~/.ob")
+from bot.irc import IRC
+from bot.rss import Fetcher
+
+
+Cfg.wd = os.path.expanduser("~/.bot")
 
 
 def daemon():
