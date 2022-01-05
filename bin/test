@@ -13,13 +13,14 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ob.cls import Cls
-from ob.cmd import Cmd
-from ob.krn import Cfg, boot
-from ob.tbl import Tbl
-from ob.prs import parse
+from op.cls import Cls
+from op.cmd import Cmd
+from op.krn import Cfg, boot
+from op.tbl import Tbl
+from op.prs import parse
 
-from ob import Object, values
+
+from op import Object, values
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS

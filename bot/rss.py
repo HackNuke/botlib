@@ -10,15 +10,15 @@ import threading
 import urllib
 
 
-from ob.bus import Bus
-from ob.dbs import Db, find, last, save
-from ob.fnc import edit
-from ob.krn import Cfg
-from ob.tms import Repeater
-from ob.thr import launch
+from op.bus import Bus
+from op.dbs import Db, find, last, save
+from op.fnc import edit
+from op.krn import Cfg
+from op.obj import Object, get, update
+from op.tms import Repeater
+from op.thr import launch
 
 
-from ob import Object, get, update
 
 
 from urllib.error import HTTPError, URLError

@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"object time"
+"time"
 
 
 import time
@@ -11,10 +11,9 @@ import threading
 from datetime import datetime
 
 
+from .obj import Object
 from .thr import launch, getname
 
-
-from . import Object
 
 
 def __dir__():

@@ -1,5 +1,7 @@
 # This file is placed in the Public Domain.
 
+"all modules"
+
 
 from ob.tbl import Tbl
 

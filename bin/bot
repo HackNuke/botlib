@@ -14,21 +14,19 @@ import time
 import traceback
 
 
-from ob.bus import Bus
-from ob.cls import Cls
-from ob.clt import Client
-from ob.cmd import Cmd
-from ob.dft import Default
-from ob.evt import Event
-from ob.krn import Cfg, boot, kcmd, root
-from ob.prs import parse
-from ob.hdl import Handler
-from ob.tbl import Tbl
-from ob.tms import tfmt
-from ob.thr import launch
-
-
-from ob import Object, update, values
+from op.bus import Bus
+from op.cls import Cls
+from op.clt import Client
+from op.cmd import Cmd
+from op.dft import Default
+from op.evt import Event
+from op.krn import Cfg, boot, kcmd, root
+from op.obj import Object, update, values
+from op.prs import parse
+from op.hdl import Handler
+from op.tbl import Tbl
+from op.tms import tfmt
+from op.thr import launch
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
@@ -38,7 +36,7 @@ from bot.irc import IRC
 from bot.rss import Fetcher
 
 
-import ob.all
+import op.all
 import bot.all
 
 

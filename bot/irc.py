@@ -14,19 +14,17 @@ import time
 import _thread
 
 
-from ob.bus import Bus
-from ob.cbs import Cbs
-from ob.clt import Client
-from ob.cmd import Cmd
-from ob.dbs import find, last, save
-from ob.dft import Default
-from ob.evt import Event
-from ob.fnc import edit, format
-from ob.hdl import Handler, Stop
-from ob.thr import launch
-
-
-from ob import Object, update
+from op.bus import Bus
+from op.cbs import Cbs
+from op.clt import Client
+from op.cmd import Cmd
+from op.dbs import find, last, save
+from op.dft import Default
+from op.evt import Event
+from op.fnc import edit, format
+from op.hdl import Handler, Stop
+from op.obj import Object, update
+from op.thr import launch
 
 
 def __dir__():

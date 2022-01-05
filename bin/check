@@ -10,13 +10,13 @@ grep -R "import sys" bot
 grep -R "import inspect" bot
 
 
-grep -R __import__ ot
-grep -R __main__ ot
-grep -R __version__ ot
-grep -R "## " ot
-grep -R popen ot
-grep -R pkgutil ot
-grep -R importlib ot
-grep -R print ot
-grep -R "import sys" ot
-grep -R "import inspect" ot
+grep -R __import__ ob
+grep -R __main__ ob
+grep -R __version__ ob
+grep -R "## " ob
+grep -R popen ob
+grep -R pkgutil ob
+grep -R importlib ob
+grep -R print ob
+grep -R "import sys" ob
+grep -R "import inspect" ob

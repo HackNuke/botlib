@@ -1,7 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-from . import Object, get
+"callbacks"
+
+
+from .obj import Object, get
 
 
 class Cbs(Object):

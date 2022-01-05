@@ -1,8 +1,12 @@
 # This file is placed in the Public Domain.
 
 
-from . import Object, get
+"command"
+
+
 from .fnc import register
+from .obj import Object, get
+
 
 class Cmd(Object):
 

@@ -1,13 +1,11 @@
 # This file is placed in the Public Domain.
 
 
-"object client"
+"client"
 
 
 from .bus import Bus
-
-
-from . import Object
+from .obj import Object
 
 
 class Client(Object):

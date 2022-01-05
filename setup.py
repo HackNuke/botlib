@@ -17,12 +17,7 @@ setup(
     description="24/7 channel daemon",
     long_description=read(),
     license="Public Domain",
-    packages=["bot", "ob"],
-    include_package_data=True,
-    data_files=[
-                ("share/botd", ["files/botd.service",]),
-                ("share/doc/botd", ["README.rst",])
-                ],
+    packages=["bot", "op"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

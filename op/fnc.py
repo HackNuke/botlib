@@ -1,14 +1,14 @@
 # This file is placed in the Public Domain.
 
 
-"object functions"
+"function"
 
 
 import os
 import pathlib
 
 
-from . import Object, items, keys
+from .obj import Object, items, keys
 
 
 def __dir__():

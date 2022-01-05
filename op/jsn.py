@@ -1,13 +1,13 @@
 # This file is placed in the Public Domain.
 
 
-"object json"
+"json"
 
 
 import json
 
 
-from . import Object, update
+from .obj import Object, update
 
 
 def __dir__():

@@ -1,10 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"object default"
+"default"
 
 
-from . import Object
+from .obj import Object
 
 
 class Default(Object):

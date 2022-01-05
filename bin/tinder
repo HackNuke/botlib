@@ -13,21 +13,21 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ob.bus import Bus
-from ob.cls import Cls
-from ob.cmd import Cmd
-from ob.evt import Event
-from ob.dbs import find, fntime, last, listfiles, save
-from ob.obj import Object, get, items, keys, values, update
-from ob.fnc import edit, format, index
-from ob.hdl import Handler
-from ob.krn import Cfg
-from ob.prs import elapsed, parse
-from ob.tbl import Tbl
-from ob.thr import getname, launch
+from op.bus import Bus
+from op.cls import Cls
+from op.cmd import Cmd
+from op.evt import Event
+from op.dbs import find, fntime, last, listfiles, save
+from op.obj import Object, get, items, keys, values, update
+from op.fnc import edit, format, index
+from op.hdl import Handler
+from op.krn import Cfg
+from op.prs import elapsed, parse
+from op.tbl import Tbl
+from op.thr import getname, launch
 
 
-import ob.all
+import op.all
 import bot.all
 
 

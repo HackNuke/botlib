@@ -1,9 +1,12 @@
 # This file is placed in the Public Domain.
 
 
-from .fnc import register
+"class"
 
-from . import Object, get
+
+from .fnc import register
+from .obj import Object, get
+
 
 class Cls(Object):
 

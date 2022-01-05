@@ -1,6 +1,7 @@
 # This file is placed in the Public Domain.
 
-"object runtime"
+
+"configuration"
 
 
 from .dft import Default

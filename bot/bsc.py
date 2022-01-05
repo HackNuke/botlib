@@ -5,16 +5,14 @@ import threading
 import time
 
 
-from ob.bus import Bus
-from ob.cmd import Cmd
-from ob.dbs import Db, fntime, save
-from ob.dbs import find
-from ob.fnc import format
-from ob.thr import getname
-from ob.prs import elapsed
-
-
-from ob import Object, get, update
+from op.bus import Bus
+from op.cmd import Cmd
+from op.dbs import Db, fntime, save
+from op.dbs import find
+from op.fnc import format
+from op.obj import Object, get, update
+from op.thr import getname
+from op.prs import elapsed
 
 
 def __dir__():

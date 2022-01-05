@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"object database"
+"database"
 
 
 import datetime
@@ -10,13 +10,11 @@ import os
 import time
 
 
-from .krn import Cfg
+from .cls import Cls
 from .fnc import cdir, search
 from .jsn import ObjectDecoder, ObjectEncoder
-from .cls import Cls
-
-
-from . import Object, update
+from .krn import Cfg
+from .obj import Object, update
 
 
 def __dir__():

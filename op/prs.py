@@ -1,13 +1,11 @@
 # This file is placed in the Public Domain.
 
 
-"object parse"
+"parse"
 
 
 from .dft import Default
-
-
-from . import Object, update
+from .obj import Object, update
 
 
 def __dir__():
