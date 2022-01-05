@@ -11,6 +11,7 @@ import pwd
 
 from .cfg import Cfg
 from .evt import Event
+from .fnc import format
 from .prs import parse
 
 
@@ -18,7 +19,8 @@ class Cfg(Cfg):
 
     console = False
     debug = False
-    name = "ob"
+    index = 0
+    name = "op"
     verbose = False
     wd = ""
 
@@ -27,9 +29,8 @@ def boot(txt):
     parse(Cfg, txt)
     Cfg.console = "c" in Cfg.opts
     Cfg.daemon = "d" in Cfg.opts
-    Cfg.index = None
     Cfg.verbose = "v" in Cfg.opts
-
+    print(format(Cfg))
 
 def kcmd(o, txt):
     e = Event()

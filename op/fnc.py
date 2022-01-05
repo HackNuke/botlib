@@ -47,7 +47,7 @@ def edit(o, setter):
 def format(o, *args, skip="", sep=" ", **kwargs):
     res = []
     for k in keys(o):
-        if k in spl(skip):
+        if k in spl(skip) or k.startswith("_"):
             continue
         v = getattr(o, k, None)
         res.append("%s=%s" % (k, v))

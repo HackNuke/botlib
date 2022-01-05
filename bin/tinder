@@ -18,13 +18,14 @@ sys.path.insert(0, os.getcwd())
 
 from op.bus import Bus
 from op.cls import Cls
+from op.clt import Client
 from op.cmd import Cmd
 from op.evt import Event
 from op.dbs import find, fntime, last, listfiles, save
 from op.obj import Object, get, items, keys, values, update
-from op.fnc import edit, format, index
+from op.fnc import edit, format
 from op.hdl import Handler
-from op.krn import Cfg
+from op.krn import Cfg, boot
 from op.prs import elapsed, parse
 from op.tbl import Tbl
 from op.thr import getname, launch
@@ -49,14 +50,18 @@ param.flt = ["0", ""]
 param.fnd = ["cfg", "log", "rss", "log txt==test", "cfg server==localhost", "rss rss==reddit"]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
 param.tdo = ["test4", ""]
-results = Object()
+results = []
 starttime = time.time()
 
 
-class CLI(Handler):
+class CLI(Client, Handler):
+
+    def __init__(self):
+        Client.__init__(self)
+        Handler.__init__(self)
 
     def raw(self, txt):
-        index(results, txt)
+        results.append(txt)
         if Cfg.verbose:
             print(txt)
 
@@ -100,10 +105,10 @@ def main():
     print("BOT tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
     if os.path.exists(Cfg.wd):
         shutil.rmtree(Cfg.wd)
-    scan()
-    parse(Cfg, " ".join(sys.argv[1:]))
-    Cfg.verbose = "v" in Cfg.opts
+    boot(" ".join(sys.argv[1:]))
     Cfg.debug = True
+    print(Cfg)
+    scan()
     c = CLI()
     c.start()
     thrs = []

@@ -96,7 +96,7 @@ def parse(o, ptxt):
     o.sets = Object()
     o.skip = Object()
     o.timed = []
-    o.index = None
+    o.index = 0
     args = []
     for t in [Word(txt) for txt in ptxt.rsplit()]:
         u = Url(t.txt)
