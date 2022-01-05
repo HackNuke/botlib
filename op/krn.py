@@ -30,7 +30,6 @@ def boot(txt):
     Cfg.console = "c" in Cfg.opts
     Cfg.daemon = "d" in Cfg.opts
     Cfg.verbose = "v" in Cfg.opts
-    print(format(Cfg))
 
 def kcmd(o, txt):
     e = Event()
