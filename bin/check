@@ -1,3 +1,5 @@
+# This file is placed in the Public Domain.
+
 grep -R __import__ bot
 grep -R __main__ bot
 grep -R __version__ bot
@@ -10,13 +12,13 @@ grep -R "import sys" bot
 grep -R "import inspect" bot
 
 
-grep -R __import__ ob
-grep -R __main__ ob
-grep -R __version__ ob
-grep -R "## " ob
-grep -R popen ob
-grep -R pkgutil ob
-grep -R importlib ob
-grep -R print ob
-grep -R "import sys" ob
-grep -R "import inspect" ob
+grep -R __import__ op
+grep -R __main__ op
+grep -R __version__ op
+grep -R "## " op
+grep -R popen op
+grep -R pkgutil op
+grep -R importlib op
+grep -R print op
+grep -R "import sys" op
+grep -R "import inspect" op

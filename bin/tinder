@@ -2,6 +2,9 @@
 # This file is placed in the Public Domain.
 
 
+"tinder"
+
+
 import inspect
 import os
 import shutil
@@ -108,8 +111,8 @@ def main():
     for nr in range(nrs):
         thr = launch(payload, c)
         thrs.append(thr)
-    #for thr in thrs
-    #    print(thr.join())
+    for thr in thrs:
+        thr.join()
     consume(events)
     print("%s loops in %s" % (nrs, elapsed(time.time()-starttime)))
 

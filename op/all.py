@@ -1,28 +1,28 @@
 # This file is placed in the Public Domain.
 
-"all modules"
+
+"register"
 
 
-from ob.tbl import Tbl
+from op.tbl import Tbl
 
 
-from ob import bus
-from ob import cbs
-from ob import cfg
-from ob import cls
-from ob import clt
-from ob import cmd
-from ob import dbs
-from ob import dft
-from ob import evt
-from ob import fnc
-from ob import hdl
-from ob import jsn
-from ob import krn
-from ob import prs
-from ob import tbl
-from ob import thr
-from ob import tms
+from op import bus
+from op import cbs
+from op import cfg
+from op import cls
+from op import clt
+from op import cmd
+from op import dbs
+from op import evt
+from op import fnc
+from op import hdl
+from op import jsn
+from op import krn
+from op import prs
+from op import tbl
+from op import thr
+from op import tms
 
 
 Tbl.add(bus)
@@ -32,7 +32,6 @@ Tbl.add(cls)
 Tbl.add(clt)
 Tbl.add(cmd)
 Tbl.add(dbs)
-Tbl.add(dft)
 Tbl.add(evt)
 Tbl.add(fnc)
 Tbl.add(hdl)

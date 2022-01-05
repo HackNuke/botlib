@@ -8,11 +8,11 @@ import threading
 
 
 from .bus import Bus
-from .dft import Default
+from .obj import Object
 from .prs import parse
 
 
-class Event(Default):
+class Event(Object):
 
     def __init__(self):
         super().__init__()

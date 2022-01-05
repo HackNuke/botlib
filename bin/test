@@ -2,6 +2,9 @@
 # This file is placed in the Public Domain.
 
 
+"test"
+
+
 import doctest
 import inspect
 import os
@@ -10,17 +13,12 @@ import sys
 import unittest
 
 
-sys.path.insert(0, os.getcwd())
-
-
 from op.cls import Cls
 from op.cmd import Cmd
 from op.krn import Cfg, boot
-from op.tbl import Tbl
+from op.obj import Object, values
 from op.prs import parse
-
-
-from op import Object, values
+from op.tbl import Tbl
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -39,7 +37,7 @@ def scan():
         Tbl.add(mod)
 
 
-import ob.all
+import op.all
 import bot.all
 
 

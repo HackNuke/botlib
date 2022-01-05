@@ -13,7 +13,7 @@ class Bus(Object):
 
     @staticmethod
     def add(o):
-        if repr(o) not in [repr(o) in Bus.objs]:
+        if repr(o) not in [repr(x) for x in Bus.objs]:
             Bus.objs.append(o)
 
     @staticmethod

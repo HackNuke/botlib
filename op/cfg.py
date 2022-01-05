@@ -1,12 +1,12 @@
 # This file is placed in the Public Domain.
 
 
-"configuration"
+"config"
 
 
-from .dft import Default
+from .obj import Object
 
 
-class Cfg(Default):
+class Cfg(Object):
 
     pass

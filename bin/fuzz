@@ -2,7 +2,7 @@
 # This file is placed in the Public Domain.
 
 
-"bot fuzzer"
+"fuzzer"
 
 
 import doctest
@@ -22,20 +22,18 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from ob.bus import Bus
-from ob.clt import Client
-from ob.cmd import Cmd
-from ob.evt import Event
-from ob.dbs import find, fntime, last, listfiles, save
-from ob.hdl import Handler
-from ob.krn import Cfg, boot
-from ob.fnc import edit, format
-from ob.prs import elapsed, parse
-from ob.tbl import Tbl
-from ob.thr import errors, getname, launch
-
-
-from ob import Object, get, items, keys, values, update
+from op.bus import Bus
+from op.clt import Client
+from op.cmd import Cmd
+from op.dbs import find, fntime, last, listfiles, save
+from op.evt import Event
+from op.fnc import edit, format
+from op.hdl import Handler
+from op.krn import Cfg, boot
+from op.obj import Object, get, items, keys, values, update
+from op.prs import elapsed, parse
+from op.tbl import Tbl
+from op.thr import errors, getname, launch
 
 
 def cb(event):
@@ -51,12 +49,10 @@ exclude = ["output", "some", "keep", "wait", "loop", "handle", "poll", "event", 
 exc = []
 missing = []
 results = []
+starttime = time.time()
 
 
 import bot.bsc
-
-
-starttime = time.time()
 
 
 class CLI(Client, Handler):
@@ -84,8 +80,8 @@ def get_args(obj):
         return get_values(sig.parameters.keys())
     return []
 
+
 def get_values(v):
-    print(v)
     args = []
     for k in v:
         res = get(default, k, None)
@@ -94,7 +90,6 @@ def get_values(v):
         else:
             if k not in missing:
                 missing.append(k)
-    print(args)
     return args
 
 
@@ -105,7 +100,6 @@ def pay(mod, *args, **kwargs):
         if k.startswith("_" or k in exclude):
             continue
         obj = getattr(mod, k)
-        print(type(obj))
         args = get_args(obj)
         o = obj(*args)
         if isinstance(o, Object):
@@ -150,7 +144,7 @@ def wrap(func):
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
-#import ob.all
+import op.all
 import bot.all
 
 
@@ -177,7 +171,6 @@ def main():
         print(err)
     print(missing)
     print(elapsed(time.time()-starttime))
-
 
 
 
@@ -277,5 +270,6 @@ default["object"] = Object
 default["start"] = time.time() - 3600
 default["stop"] = time.time()
 default["sub"] = "tes"
+
 
 wrap(main)

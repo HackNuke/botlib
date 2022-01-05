@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from ob.tbl import Tbl
+from op.tbl import Tbl
 
 
 from bot import bsc

@@ -4,7 +4,6 @@
 "parse"
 
 
-from .dft import Default
 from .obj import Object, update
 
 
@@ -92,10 +91,10 @@ class Url(Token):
 def parse(o, ptxt):
     o.txt = ptxt
     o.otxt = ptxt
-    o.gets = Default()
-    o.opts = Default()
-    o.sets = Default()
-    o.skip = Default()
+    o.gets = Object()
+    o.opts = Object()
+    o.sets = Object()
+    o.skip = Object()
     o.timed = []
     o.index = None
     args = []

@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"irc bot"
+"bot"
 
 
 import os
@@ -19,7 +19,6 @@ from op.cbs import Cbs
 from op.clt import Client
 from op.cmd import Cmd
 from op.dbs import find, last, save
-from op.dft import Default
 from op.evt import Event
 from op.fnc import edit, format
 from op.hdl import Handler, Stop
@@ -73,7 +72,7 @@ class NoUser(Exception):
     pass
 
 
-class Cfg(Default):
+class Cfg(Object):
 
     cc = "!"
     channel = "#bot"

@@ -7,12 +7,11 @@ import time
 
 from op.bus import Bus
 from op.dbs import last
-from op.dft import Default
 from op.obj import Object
 from op.thr import launch
 
 
-class Cfg(Default):
+class Cfg(Object):
 
     host = "localhost"
     port = 5500
