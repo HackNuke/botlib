@@ -1,14 +1,15 @@
 # This file is placed in the Public Domain.
 
 
+"composite"
+
+
 import unittest
 
 
-from ob.dbs import Db
-from ob.jsn import dumps, loads
-
-
-from ob import Object
+from op.dbs import Db
+from op.obj import Object
+from op.jsn import dumps, loads
 
 
 class Composite(Object):

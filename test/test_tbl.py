@@ -1,19 +1,17 @@
 # This file is placed in the Public Domain.
 
 
+"table"
+
+
 import inspect
 import os
 import sys
 import unittest
 
 
-sys.path.insert(0, os.getcwd())
-
-
-from ob.tbl import Tbl
-
-
-from ob import Object, keys, values
+from op.obj import Object, keys, values
+from op.tbl import Tbl
 
 
 import bot.bsc

@@ -1,16 +1,18 @@
 # This file is placed in the Public Domain.
 
 
+"json"
+
+
 import unittest
 
 
-from ob.jsn import dumps, loads
+from op.jsn import dumps, loads
+from op.obj import Object
 
-#validjson = '{"test": "bla", "otype": "Object"}'
+
 validjson = '{"test": "bla"}'
 
-
-from ob import Object
 
 class Test_JSON(unittest.TestCase):
 
@@ -24,4 +26,3 @@ class Test_JSON(unittest.TestCase):
         o = Object()
         o.test = "bla"
         self.assertEqual(dumps(o), validjson)
-

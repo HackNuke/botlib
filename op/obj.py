@@ -95,7 +95,6 @@ class Object:
         )
 
     def __eq__(self, o):
-        print(type(o), o)
         return len(self.__dict__) == len(o.__dict__)
 
     def __getitem__(self, k):

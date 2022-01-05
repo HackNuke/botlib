@@ -1,15 +1,16 @@
 # This file is placed in the Public Domain.
 
 
+"config"
+
+
 import unittest
 
 
-from ob.fnc import edit
-from ob.krn import Cfg
-from ob.prs import parse
-
-
-from ob import Object, update
+from op.fnc import edit
+from op.krn import Cfg
+from op.obj import Object, update
+from op.prs import parse
 
 
 class Test_Cfg(unittest.TestCase):

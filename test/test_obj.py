@@ -1,16 +1,21 @@
 # This file is placed in the Public Domain.
 
 
+"object"
+
+
 import os
 import unittest
 
 
-from ob.dbs import Db, fns, hook, load, last, save
-from ob.fnc import cdir, edit, format, register
-from ob.jsn import loads
-from ob.krn import Cfg
+from op.dbs import Db, fns, hook, load, last, save
+from op.fnc import cdir, edit, format, register
+from op.jsn import loads
+from op.krn import Cfg
+from op.obj import Object, get, items, keys, update, values
 
-from ob import Object, get, items, keys, update, values
+
+import op.obj
 
 
 attrs1 = (
@@ -70,8 +75,7 @@ attrs2 = (
 class Test_Object(unittest.TestCase):
 
     def test_import(self):
-        import ob
-        self.assertEqual(tuple(dir(ob)), attrs1)
+        self.assertEqual(tuple(dir(op.obj)), attrs1)
 
     def test_attributes(self):
         o = Object()
@@ -239,7 +243,7 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(o, oo)
 
     def test_Object__otype__(self):
-        self.assertEqual(Object().__otype__, "ob.Object")
+        self.assertEqual(Object().__otype__, "op.obj.Object")
 
     def test_Object__reduce__(self):
         o = Object()
@@ -273,7 +277,7 @@ class Test_Object(unittest.TestCase):
 
     def test_Object__stp__(self):
         o = Object()
-        self.assertTrue("ob.Object" in o.__stp__)
+        self.assertTrue("op.obj.Object" in o.__stp__)
 
     def test_Object__str__(self):
         o = Object()
@@ -303,13 +307,13 @@ class Test_Object(unittest.TestCase):
         self.assertEqual(format(o), "")
 
     def test_fns(self):
-        from ob import Object
-        from ob.cfg import Cfg
-        from ob.dbs import save
+        from op.obj import Object
+        from op.cfg import Cfg
+        from op.dbs import save
         Cfg.wd = ".test"
         o = Object()
         save(o)
-        self.assertTrue("Object" in fns("ob.Object")[0])
+        self.assertTrue("Object" in fns("op.obj.Object")[0])
 
     def test_get(self):
         o = Object()
@@ -386,4 +390,3 @@ class Test_Object(unittest.TestCase):
                 "value",
             ],
         )
-

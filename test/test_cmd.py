@@ -1,22 +1,23 @@
 # This file is placed in the Public Domain.
 
 
+"command"
+
+
 import inspect
 import unittest
 
 
-from ob.bus import Bus
-from ob.cls import Cls
-from ob.clt import Client
-from ob.cmd import Cmd
-from ob.evt import Event
-from ob.fnc import format
-from ob.hdl import Handler
-from ob.krn import Cfg
-from ob.tbl import Tbl
-
-
-from ob import Object, get, values
+from op.bus import Bus
+from op.cls import Cls
+from op.clt import Client
+from op.cmd import Cmd
+from op.evt import Event
+from op.fnc import format
+from op.hdl import Handler
+from op.krn import Cfg
+from op.obj import Object, get, values
+from op.tbl import Tbl
 
 
 events = []
@@ -40,7 +41,6 @@ param.tdo = ["things todo"]
 
 
 class CLI(Handler, Client):
-
 
      def __init__(self):
          Client.__init__(self)
