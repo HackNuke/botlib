@@ -60,7 +60,7 @@ class Cfg(Object):
     nick = "botlib"
     password = ""
     port = 6667
-    realname = "OTP-CR-117/19"
+    realname = "python3 bot library"
     sasl = False
     server = "localhost"
     servermodes = ""
