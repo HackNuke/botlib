@@ -1,0 +1,12 @@
+rm -fR dev/*~
+rm -fR lib/*~ lib/__pycache__ lib/gcid.egg-info
+rm -fR gcid/*~ gcid/__pycache__ __pycache__
+rm -fR files/*~ .test gcid/mod/*~ gcid/mod/__pycache__
+rm -fR test/__pycache__ test/*~
+rm -fR docs/_templates/*~
+rm -fR docs/txt/*~ 
+rm -fR docs/src/*~ docs/src/gcid*.rst docs/src/gcid.mod*.rst docs/src/gcid.mod.rst docs/src/gcid.rst
+rm -fR docs/med/*~ 
+rm -fR docs/txt/*~ docs/*~ docs/__pycache__ html
+rm -fR build dist MANIFEST gcid.egg-info 
+rm -fR bin/*~ *~

@@ -2,41 +2,35 @@
 # This file is placed in the Public Domain.
 
 
-"client"
+"OTP-CR-117/19"
 
 
-import inspect
 import os
 import readline
 import sys
-import termios
 import time
-import traceback
 
 
-from op.bus import Bus
-from op.cls import Cls
-from op.clt import Client
-from op.cmd import Cmd
-from op.evt import Event
-from op.krn import Cfg, boot, kcmd, root
-from op.obj import Object, update, values
-from op.prs import parse
-from op.hdl import Handler
-from op.tbl import Tbl
-from op.tms import tfmt
-from op.thr import launch
+sys.path.insert(0, os.getcwd())
+sys.path.insert(0, "lib")
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
+from gcid.spc import Bus, Cfg, Client, Event, Handler, boot, kcmd, root, scan, launch
 
 
-from bot.irc import IRC
-from bot.rss import Fetcher
+from gcid.mod.irc import IRC
+from gcid.mod.irc import Cfg as ICfg
+from gcid.mod.rss import Fetcher
 
 
-import op.all
-import bot.all
+from gcidrun import daemon, watcher, wrap
+
+
+import gcid.all
+import gcid.mod.all
+
+
+Cfg.wd = os.path.expanduser("~/.gcid")
 
 
 class Console(Client, Handler):
@@ -47,6 +41,10 @@ class Console(Client, Handler):
         Handler.__init__(self)
         Bus.add(self)
 
+    def handle(self, e):
+        launch(Handler.handle, self, e)
+        e.wait()
+
     def poll(self):
         e = Event()
         e.orig = repr(self)
@@ -55,42 +53,25 @@ class Console(Client, Handler):
 
     def raw(self, txt):
         print(txt)
+
  
-
-def scan():
-    for mod in values(Tbl.mod):
-        for k, o in inspect.getmembers(mod, inspect.isfunction):
-            if "event" in o.__code__.co_varnames:
-                Cmd.cmds[k] = o
-        for k, clz in inspect.getmembers(mod, inspect.isclass):
-            Cls.add(clz)
-        Tbl.add(mod)
-
-
-def wrap(func):
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        func()
-    except PermissionError:
-        print("you need root privileges")
-    except (EOFError, KeyboardInterrupt):
-        print("")
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-
-
 def main():
-    print("BOT shell start at %s" % time.ctime(time.time()).replace("  ", " "))
     boot(" ".join(sys.argv[1:]))
     scan()
     c = Console()
+    if Cfg.txt:
+        return kcmd(c, Cfg.otxt)
+    print("GCID bot start at %s channel=%s daemon=%s sasl=%s" % (time.ctime(time.time()).replace("  ", " "), ICfg.channel, Cfg.daemon, ICfg.sasl))
+    print("using %s!%s@%s:%s" % (ICfg.nick, ICfg.username, ICfg.server, ICfg.port))
+    if Cfg.daemon:
+        daemon()
     i = IRC()
     i.start()
+    launch(watcher, i)
     f = Fetcher()
     f.start()
     c.start()
-    c.wait()
-
+    while 1:
+        time.sleep(1.0)
 
 wrap(main)

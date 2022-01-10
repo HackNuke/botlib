@@ -2,42 +2,51 @@
 # This file is placed in the Public Domain.
 
 
-"tinder"
+"OTP-CR-117/19"
 
 
 import inspect
 import os
 import shutil
 import sys
+import termios
 import time
+import traceback
 import unittest
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from op.bus import Bus
-from op.cls import Cls
-from op.clt import Client
-from op.cmd import Cmd
-from op.evt import Event
-from op.dbs import find, fntime, last, listfiles, save
-from op.obj import Object, get, items, keys, values, update
-from op.fnc import edit, format
-from op.hdl import Handler
-from op.krn import Cfg, boot
-from op.prs import elapsed, parse
-from op.tbl import Tbl
-from op.thr import getname, launch
+from gcdrun import scan, wrap 
 
 
-import op.all
-import bot.all
+from gcd.bus import Bus
+from gcd.cls import Cls
+from gcd.clt import Client
+from gcd.cmd import Cmd
+from gcd.evt import Event
+from gcd.dbs import find, fntime, last, listfiles, save
+from gcd.obj import Object, get, items, keys, values, update
+from gcd.fnc import edit, format
+from gcd.hdl import Handler
+from gcd.krn import Cfg, boot
+from gcd.prs import elapsed, parse
+from gcd.tbl import Tbl
+from gcd.thr import Thr, getname, launch
+
+
+import gcd.all
+import gcdm.all
+
+
+from gcdm.dbg import TestError
 
 
 Cfg.wd = ".test"
 
 
+errors = []
 events = []
 param = Object()
 param.add = ["test@shell", "bart", ""]
@@ -69,26 +78,41 @@ class CLI(Client, Handler):
 def consume(events):
     fixed = []
     res = []
+    have = []
     for e in events:
         e.wait()
+        for err in e.errors:
+            if type(err) == TestError:
+                continue
+            if str(err) not in have:
+                have.append(str(err))
+                errors.append(err)
         fixed.append(e)
     for f in fixed:
         try:
             events.remove(f)
         except ValueError:
             continue
-    return res
+
+
+def from_exception(ex, txt="", sep=" "):
+    result = []
+    for fr in traceback.extract_tb(ex.__traceback__):
+        result.append("%s:%s" % (os.sep.join(fr.filename.split(os.sep)[-2:]), fr.lineno))
+    return "%s(%s) %s" % (getname(ex), ex, " ".join(result))
 
 
 def payload(c):
+    thrs = []
     for cmd in Cmd.cmds:
         for ex in getattr(param, cmd, [""]):
             e = Event()
             e.type = "cmd"
             e.txt = cmd + " " + ex
             e.orig = repr(c)
-            launch(c.handle, e)
+            thrs.append(launch(c.handle, e))
             events.append(e)
+    return thrs
 
 
 def scan():
@@ -101,25 +125,36 @@ def scan():
         Tbl.add(mod)
 
 
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    if errors:
+        print("\nthere are errors\n")
+        for err in errors:
+            traceback.print_exception(type(err), err, err.__traceback__)
+    print("\n%s events left (%s)" % (len(events), elapsed(time.time()-starttime)))
+
 def main():
-    print("BOT tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
+    print("GCD tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
     if os.path.exists(Cfg.wd):
         shutil.rmtree(Cfg.wd)
     boot(" ".join(sys.argv[1:]))
     Cfg.debug = True
-    print(Cfg)
+    print(format(Cfg, "debug,verbose,index,wd"))
     scan()
     c = CLI()
     c.start()
     thrs = []
-    nrs = Cfg.index or 1
+    nrs = Cfg.index or 20
     for nr in range(nrs):
-        thr = launch(payload, c)
-        thrs.append(thr)
-    for thr in thrs:
-        thr.join()
+        launch(payload, c)
     consume(events)
-    print("%s loops in %s" % (nrs, elapsed(time.time()-starttime)))
 
 
-main()
+wrap(main)

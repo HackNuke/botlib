@@ -1,0 +1,11 @@
+# This file is placed in the Public Domain.
+
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git __import__ 
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git __main__ 
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git __version__
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git "## "
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git popen
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git pkgutil
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git importlib
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git print
+grep -R --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git --exclude-dir=bin "import sys"
