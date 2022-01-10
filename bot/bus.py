@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"list of listeners"
+"bus"
 
 
 from .obj import Object

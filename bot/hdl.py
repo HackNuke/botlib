@@ -6,12 +6,17 @@
 
 import queue
 import time
+import _thread
 
 
-from .cmd import Cmd
 from .evt import Event
 from .obj import Object
+from .tbl import Cmd
 from .thr import launch
+from .utl import locked
+
+
+cmdlock = _thread.allocate_lock()
 
 
 class Stop(Exception):
@@ -23,6 +28,7 @@ class Handler(Object):
 
     def __init__(self):
         Object.__init__(self)
+        self.errors = []
         self.queue = queue.Queue()
         self.stopped = False
 
@@ -33,13 +39,9 @@ class Handler(Object):
         e.txt = txt
         return e
 
+    @locked(cmdlock)
     def handle(self, e):
-        e.parse()
-        f = Cmd.get(e.cmd)
-        if f:
-            f(e)
-            e.show()
-        e.ready()
+        Cmd.handle(e)
 
     def loop(self):
         while not self.stopped:
@@ -66,7 +68,6 @@ class Handler(Object):
     def stop(self):
         self.stopped = True
         self.queue.put(None)
-
 
     def wait(self):
         while 1:

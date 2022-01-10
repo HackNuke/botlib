@@ -10,11 +10,11 @@ import os
 import time
 
 
-from .cls import Cls
 from .fnc import cdir, search
 from .jsn import ObjectDecoder, ObjectEncoder
 from .krn import Cfg
 from .obj import Object, update
+from .tbl import Cls
 
 
 def __dir__():

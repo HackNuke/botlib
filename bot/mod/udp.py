@@ -1,14 +1,17 @@
 # This file is placed in the Public Domain.
 
 
+"relay"
+
+
 import socket
 import time
 
 
-from op.bus import Bus
-from op.dbs import last
-from op.obj import Object
-from op.thr import launch
+from gcid.bus import Bus
+from gcid.dbs import last
+from gcid.obj import Object
+from gcid.thr import launch
 
 
 class Cfg(Object):

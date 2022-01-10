@@ -18,9 +18,11 @@ class Event(Object):
         super().__init__()
         self._ready = threading.Event()
         self.channel = ""
+        self.errors = []
         self.orig = ""
         self.origin = ""
         self.result = []
+        self.thrs = []
 
     def bot(self):
         return Bus.byorig(self.orig)
@@ -41,4 +43,6 @@ class Event(Object):
 
     def wait(self):
         self._ready.wait()
+        for thr in self.thrs:
+            thr.join()
         return self.result

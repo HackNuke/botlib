@@ -1,18 +1,21 @@
 # This file is placed in the Public Domain.
 
 
+"basic"
+
+
 import threading
 import time
 
 
-from op.bus import Bus
-from op.cmd import Cmd
-from op.dbs import Db, fntime, save
-from op.dbs import find
-from op.fnc import format
-from op.obj import Object, get, update
-from op.thr import getname
-from op.prs import elapsed
+from gcid.bus import Bus
+from gcid.dbs import Db, fntime, save
+from gcid.dbs import find
+from gcid.fnc import format
+from gcid.obj import Object, get, update
+from gcid.tbl import Cmd
+from gcid.thr import getname
+from gcid.prs import elapsed
 
 
 def __dir__():

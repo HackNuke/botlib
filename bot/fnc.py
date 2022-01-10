@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"function"
+"functions"
 
 
 import os
@@ -44,13 +44,21 @@ def edit(o, setter):
         register(o, key, v)
 
 
-def format(o, *args, skip="", sep=" ", **kwargs):
+def format(o, args="", skip="", sep=" ", **kwargs):
     res = []
-    for k in keys(o):
+    if args:
+        ks = spl(args)
+    else:
+        ks = keys(o)
+    for k in ks:
         if k in spl(skip) or k.startswith("_"):
             continue
         v = getattr(o, k, None)
-        res.append("%s=%s" % (k, v))
+        if isinstance(v, str) and len(v.split()) >= 2:
+            txt = '%s="%s"' % (k, v)
+        else:
+            txt='%s=%s' % (k, v)
+        res.append(txt)
     return sep.join(res)
 
 

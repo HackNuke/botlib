@@ -14,16 +14,16 @@ import time
 import _thread
 
 
-from op.bus import Bus
-from op.cbs import Cbs
-from op.clt import Client
-from op.cmd import Cmd
-from op.dbs import find, last, save
-from op.evt import Event
-from op.fnc import edit, format
-from op.hdl import Handler, Stop
-from op.obj import Object, update
-from op.thr import launch
+from gcid.bus import Bus
+from gcid.clt import Client
+from gcid.dbs import find, last, save
+from gcid.evt import Event
+from gcid.fnc import edit, format
+from gcid.hdl import Handler, Stop
+from gcid.obj import Object, update
+from gcid.tbl import Cmd, Dpt
+from gcid.thr import launch
+from gcid.utl import locked
 
 
 def __dir__():
@@ -45,25 +45,6 @@ def __dir__():
     )
 
 
-def locked(obj):
-
-    def lockeddec(func, *args, **kwargs):
-        def lockedfunc(*args, **kwargs):
-            obj.acquire()
-            res = None
-            try:
-                res = func(*args, **kwargs)
-            finally:
-                obj.release()
-            return res
-
-        lockedfunc.__wrapped__ = func
-        return lockedfunc
-
-    return lockeddec
-
-
-
 saylock = _thread.allocate_lock()
 
 
@@ -75,15 +56,16 @@ class NoUser(Exception):
 class Cfg(Object):
 
     cc = "!"
-    channel = "#bot"
-    nick = "bot"
+    channel = "#gcid"
+    nick = "gcid"
     password = ""
     port = 6667
-    realname = "python3 irc bot"
+    realname = "OTP-CR-117/19"
+    sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 30
-    username = "bot"
+    username = "gcid"
     users = False
 
     def __init__(self):
@@ -94,6 +76,7 @@ class Cfg(Object):
         self.password = Cfg.password
         self.port = Cfg.port
         self.realname = Cfg.realname
+        self.sasl = Cfg.sasl
         self.server = Cfg.server
         self.servermodes = Cfg.servermodes
         self.sleep = Cfg.sleep
@@ -169,10 +152,10 @@ class IRC(Output, Handler):
         self.cfg = Cfg()
         self.connected = threading.Event()
         self.channels = []
-        self.sock = None
         self.joined = threading.Event()
         self.keeprunning = False
         self.outqueue = queue.Queue()
+        self.sock = None
         self.speed = "slow"
         self.state = Object()
         self.state.needconnect = False
@@ -221,6 +204,7 @@ class IRC(Output, Handler):
 
     def connect(self, server, port=6667):
         if self.cfg.password:
+            self.cfg.sasl = True
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
             ctx.check_hostname = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -243,8 +227,11 @@ class IRC(Output, Handler):
         self.state.nrconnect = 0
         while 1:
             self.state.nrconnect += 1
-            if self.connect(server, port):
-                break
+            try:
+                if self.connect(server, port):
+                    break
+            except Exception as ex:
+                self.errors.append(ex)
             time.sleep(self.cfg.sleep)
 
     def dosay(self, channel, txt):
@@ -284,7 +271,7 @@ class IRC(Output, Handler):
         return self.sock.fileno()
 
     def handle(self, e):
-        Cbs.dispatch(e)
+        Dpt.dispatch(self, e)
 
     def joinall(self):
         for channel in self.channels:
@@ -392,7 +379,7 @@ class IRC(Output, Handler):
         self.state.nrsend += 1
 
     def register(self, k, v):
-        Cbs.add(k, v)
+        Dpt.add(k, v)
 
     def say(self, channel, txt):
         self.oput(channel, txt)
@@ -422,7 +409,6 @@ class IRC(Output, Handler):
         self.joined.clear()
         self.sock = None
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
-        self.connected.wait()
         self.logon(self.cfg.server, self.cfg.nick)
         Bus.add(self)
         Handler.start(self)
@@ -471,7 +457,7 @@ class DCC(Client, Handler):
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
         self.origin = dccevent.origin
         self.start()
-        self.raw("%s DCC start at %s" % (Cfg.name.upper(), time.ctime(time.time()).replace("  ", " ")))
+        self.raw("Welcone %s, start at %s" % (self.origin, time.ctime(time.time()).replace("  ", " ")))
 
     def event(self, txt, origin=None):
         e = Handler.event(self, txt, origin)
@@ -554,45 +540,39 @@ class TextWrap(textwrap.TextWrapper):
         self.width = 450
 
 
-def AUTH(obj):
-    clt = obj.bot()
+def AUTH(clt, obj):
     clt.raw("AUTHENTICATE %s" % clt.cfg.password)
 
 
-def CAP(obj):
-    clt = obj.bot()
+def CAP(clt, obj):
     if clt.cfg.password and "ACK" in obj.arguments:
         clt.raw("AUTHENTICATE PLAIN")
     else:
         clt.raw("CAP REQ :sasl")
 
 
-def h903(obj):
-    clt = obj.bot()
+def h903(clt, obj):
     clt.raw("CAP END")
 
 
-def h904(obj):
-    clt = obj.bot()
+def h904(clt):
     clt.raw("CAP END")
 
 
-def ERROR(obj):
-    clt = obj.bot()
+def ERROR(clt, obj):
     clt.state.nrerror += 1
     clt.state.error = obj.txt
 
 
-def KILL(obj):
+def KILL(clt, obj):
     pass
 
 
-def LOG(obj):
+def LOG(clt, obj):
     pass
 
 
-def NOTICE(obj):
-    clt = obj.bot()
+def NOTICE(clt, obj):
     if obj.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
             "botlib",
@@ -602,8 +582,7 @@ def NOTICE(obj):
         clt.command("NOTICE", obj.channel, txt)
 
 
-def PRIVMSG(obj):
-    clt = obj.bot()
+def PRIVMSG(clt, obj):
     if obj.txt.startswith("DCC CHAT"):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
@@ -626,11 +605,10 @@ def PRIVMSG(obj):
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
         obj.parse()
-        Cmd.dispatch(obj)
+        Cmd.handle(obj)
 
 
-def QUIT(obj):
-    clt = obj.bot()
+def QUIT(clt, obj):
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
 
@@ -642,7 +620,7 @@ def cfg(event):
         if not c:
             event.reply("no config yet")
             return
-        event.reply(format(c, "cc,password,realname,username"))
+        event.reply(format(c, skip="cc,password,realname,servermodes,sleep,username"))
         return
     edit(c, event.sets)
     save(c)

@@ -9,12 +9,11 @@ import threading
 import types
 
 
-errors = []
-
-
 class Thr(threading.Thread):
+
     def __init__(self, func, *args, daemon=True):
         super().__init__(None, self.run, "", (), {}, daemon=daemon)
+        self.errors = []
         self.name = getname(func)
         self.queue = queue.Queue()
         self.queue.put_nowait((func, args))
@@ -34,7 +33,14 @@ class Thr(threading.Thread):
     def run(self):
         func, args = self.queue.get()
         self.setName(self.name)
-        self.result = func(*args)
+        try:
+            self.result = func(*args)
+        except Exception as ex:
+            self.errors.append(ex)
+            if args and "errors" in args[0]:
+                args[0].errors.append(self)
+            if "ready" in args[0]:
+                args[0].ready()
 
 
 def getname(o):

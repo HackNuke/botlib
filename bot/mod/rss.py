@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"feed fetcher"
+"feeds"
 
 
 import html.parser
@@ -10,15 +10,13 @@ import threading
 import urllib
 
 
-from op.bus import Bus
-from op.dbs import Db, find, last, save
-from op.fnc import edit
-from op.krn import Cfg
-from op.obj import Object, get, update
-from op.tms import Repeater
-from op.thr import launch
-
-
+from gcid.bus import Bus
+from gcid.dbs import Db, find, last, save
+from gcid.fnc import edit
+from gcid.krn import Cfg
+from gcid.obj import Object, get, update
+from gcid.tms import Repeater
+from gcid.thr import launch
 
 
 from urllib.error import HTTPError, URLError
@@ -28,7 +26,6 @@ from urllib.request import Request, urlopen
 
 def __dir__():
     return (
-        "Cfg",
         "Feed",
         "Rss",
         "Seen",
@@ -66,6 +63,7 @@ class Seen(Object):
 
 class Fetcher(Object):
 
+    errors = []
     seen = Seen()
 
     def __init__(self):

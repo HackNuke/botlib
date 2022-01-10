@@ -11,33 +11,34 @@ import pwd
 
 from .cfg import Cfg
 from .evt import Event
-from .fnc import format
 from .prs import parse
 
 
 class Cfg(Cfg):
 
-    console = False
+    daemon = False
     debug = False
     index = 0
-    name = "op"
+    otxt = ""
+    txt = ""
     verbose = False
     wd = ""
 
 
 def boot(txt):
     parse(Cfg, txt)
-    Cfg.console = "c" in Cfg.opts
-    Cfg.daemon = "d" in Cfg.opts
     Cfg.verbose = "v" in Cfg.opts
+    Cfg.debug = False
 
 def kcmd(o, txt):
+    if not txt:
+        return False
     e = Event()
     e.channel = ""
     e.orig = repr(o)
     e.txt = txt
     o.handle(e)
-
+    return e.result
 
 def privileges(name=None):
     if os.getuid() != 0:
