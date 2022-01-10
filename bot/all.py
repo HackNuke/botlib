@@ -35,3 +35,15 @@ Tbl.add(prs)
 Tbl.add(tbl)
 Tbl.add(thr)
 Tbl.add(tms)
+
+
+from bot import bsc
+from bot import irc
+from bot import rss
+from bot import udp
+
+
+Tbl.add(bsc)
+Tbl.add(irc)
+Tbl.add(rss)
+Tbl.add(udp)
