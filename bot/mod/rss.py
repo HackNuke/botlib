@@ -10,13 +10,13 @@ import threading
 import urllib
 
 
-from gcid.bus import Bus
-from gcid.dbs import Db, find, last, save
-from gcid.fnc import edit
-from gcid.krn import Cfg
-from gcid.obj import Object, get, update
-from gcid.tms import Repeater
-from gcid.thr import launch
+from bot.bus import Bus
+from bot.dbs import Db, find, last, save
+from bot.fnc import edit
+from bot.krn import Cfg
+from bot.obj import Object, get, update
+from bot.tms import Repeater
+from bot.thr import launch
 
 
 from urllib.error import HTTPError, URLError

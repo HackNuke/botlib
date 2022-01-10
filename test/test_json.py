@@ -7,8 +7,8 @@
 import unittest
 
 
-from op.jsn import dumps, loads
-from op.obj import Object
+from bot.jsn import dumps, loads
+from bot.obj import Object
 
 
 validjson = '{"test": "bla"}'

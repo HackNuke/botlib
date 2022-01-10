@@ -8,16 +8,14 @@ import inspect
 import unittest
 
 
-from op.bus import Bus
-from op.cls import Cls
-from op.clt import Client
-from op.cmd import Cmd
-from op.evt import Event
-from op.fnc import format
-from op.hdl import Handler
-from op.krn import Cfg
-from op.obj import Object, get, values
-from op.tbl import Tbl
+from bot.bus import Bus
+from bot.clt import Client
+from bot.evt import Event
+from bot.fnc import format
+from bot.hdl import Handler
+from bot.krn import Cfg
+from bot.obj import Object, get, values
+from bot.tbl import Cls, Cmd, Tbl
 
 
 events = []
@@ -79,7 +77,7 @@ class Test_Commands(unittest.TestCase):
         c.stop()
 
     def test_commands(self):
-        cmds = sorted(Cmd.cmds)
+        cmds = sorted(Cmd.cmd)
         for cmd in cmds:
             for ex in getattr(param, cmd, [""]):
                 e = Event()

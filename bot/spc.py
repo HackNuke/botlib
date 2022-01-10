@@ -18,10 +18,10 @@ def __dir__():
     )
 
 
-from gcid.bus import Bus
-from gcid.clt import Client
-from gcid.evt import Event
-from gcid.krn import Cfg, boot, kcmd, root
-from gcid.hdl import Handler
-from gcid.thr import launch
-from gcid.tbl import scan
+from bot.bus import Bus
+from bot.clt import Client
+from bot.evt import Event
+from bot.krn import Cfg, boot, kcmd, root
+from bot.hdl import Handler
+from bot.thr import launch
+from bot.tbl import Cmd, Cls, Tbl, scan

@@ -7,9 +7,9 @@
 import unittest
 
 
-from op.dbs import Db
-from op.obj import Object
-from op.jsn import dumps, loads
+from bot.dbs import Db
+from bot.obj import Object
+from bot.jsn import dumps, loads
 
 
 class Composite(Object):

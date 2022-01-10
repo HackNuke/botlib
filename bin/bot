@@ -15,8 +15,7 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from bot.spc import Bus, Cfg, Client, Event, Handler, boot, kcmd, launch
-from bot.tbl import Cmd, Tbl, scan
+from bot.spc import Bus, Client, Event, Handler, Cfg, boot, kcmd, launch, scan
 
 
 from bot.mod.irc import IRC
@@ -30,7 +29,6 @@ import bot.mod.all
 
 Cfg.wd = os.path.expanduser("~/.bot")
 
-
 class Console(Client, Handler):
 
 
@@ -39,8 +37,9 @@ class Console(Client, Handler):
         Handler.__init__(self)
         Bus.add(self)
 
+
     def handle(self, e):
-        Cmd.handle(e)
+        Handler.handle(self, e)
         e.wait()
 
     def poll(self):

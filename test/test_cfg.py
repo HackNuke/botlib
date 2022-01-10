@@ -7,10 +7,10 @@
 import unittest
 
 
-from op.fnc import edit
-from op.krn import Cfg
-from op.obj import Object, update
-from op.prs import parse
+from bot.fnc import edit
+from bot.krn import Cfg
+from bot.obj import Object, update
+from bot.prs import parse
 
 
 class Test_Cfg(unittest.TestCase):

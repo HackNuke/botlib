@@ -16,15 +16,15 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from gcid.krn import Cfg, boot
-from gcid.fnc import format
-from gcid.obj import Object, values
-from gcid.prs import parse
-from gcid.tbl import scan
+from bot.krn import Cfg, boot
+from bot.fnc import format
+from bot.obj import Object, values
+from bot.prs import parse
+from bot.tbl import scan
 
 
-import gcid.all
-import gcid.mod.all
+import bot.all
+import bot.mod.all
 
 
 Cfg.wd = ".test"

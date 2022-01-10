@@ -14,16 +14,16 @@ import time
 import _thread
 
 
-from gcid.bus import Bus
-from gcid.clt import Client
-from gcid.dbs import find, last, save
-from gcid.evt import Event
-from gcid.fnc import edit, format
-from gcid.hdl import Handler, Stop
-from gcid.obj import Object, update
-from gcid.tbl import Cmd, Dpt
-from gcid.thr import launch
-from gcid.utl import locked
+from bot.bus import Bus
+from bot.clt import Client
+from bot.dbs import find, last, save
+from bot.evt import Event
+from bot.fnc import edit, format
+from bot.hdl import Handler, Stop
+from bot.obj import Object, update
+from bot.tbl import Cmd, Dpt
+from bot.thr import launch
+from bot.utl import locked
 
 
 def __dir__():
@@ -56,8 +56,8 @@ class NoUser(Exception):
 class Cfg(Object):
 
     cc = "!"
-    channel = "#gcid"
-    nick = "gcid"
+    channel = "#botlib"
+    nick = "botlib"
     password = ""
     port = 6667
     realname = "OTP-CR-117/19"
@@ -65,7 +65,7 @@ class Cfg(Object):
     server = "localhost"
     servermodes = ""
     sleep = 30
-    username = "gcid"
+    username = "botlib"
     users = False
 
     def __init__(self):
