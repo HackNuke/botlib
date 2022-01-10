@@ -7,30 +7,28 @@
 
 import os
 import readline
+import termios
 import sys
 import time
 
 
 sys.path.insert(0, os.getcwd())
-sys.path.insert(0, "lib")
 
 
-from gcid.spc import Bus, Cfg, Client, Event, Handler, boot, kcmd, root, scan, launch
+from bot.spc import Bus, Cfg, Client, Event, Handler, boot, kcmd, launch
+from bot.tbl import Cmd, Tbl, scan
 
 
-from gcid.mod.irc import IRC
-from gcid.mod.irc import Cfg as ICfg
-from gcid.mod.rss import Fetcher
+from bot.mod.irc import IRC
+from bot.mod.irc import Cfg as ICfg
+from bot.mod.rss import Fetcher
 
 
-from gcidrun import daemon, watcher, wrap
+import bot.all
+import bot.mod.all
 
 
-import gcid.all
-import gcid.mod.all
-
-
-Cfg.wd = os.path.expanduser("~/.gcid")
+Cfg.wd = os.path.expanduser("~/.bot")
 
 
 class Console(Client, Handler):
@@ -42,7 +40,7 @@ class Console(Client, Handler):
         Bus.add(self)
 
     def handle(self, e):
-        launch(Handler.handle, self, e)
+        Cmd.handle(e)
         e.wait()
 
     def poll(self):
@@ -54,6 +52,48 @@ class Console(Client, Handler):
     def raw(self, txt):
         print(txt)
 
+
+def daemon():
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    os.umask(0)
+    si = open("/dev/null", 'r')
+    so = open("/dev/null", 'a+')
+    se = open("/dev/null", 'a+')
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
+
+
+def watcher(clt, quit=False):
+    done = []
+    while 1:
+        time.sleep(1.0)
+        for ex in clt.errors:
+            if "reason" in dir(ex) and ex not in done:
+                print("\n")
+                traceback.print_exception(type(ex), ex, ex.__traceback__)
+                if quit:
+                    break
+            done.append(ex)
+        if quit:
+            break
+    for ex in done:
+        clt.errors.remove(ex)
+
+
+def wrap(func):
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
  
 def main():
     boot(" ".join(sys.argv[1:]))
@@ -61,17 +101,18 @@ def main():
     c = Console()
     if Cfg.txt:
         return kcmd(c, Cfg.otxt)
-    print("GCID bot start at %s channel=%s daemon=%s sasl=%s" % (time.ctime(time.time()).replace("  ", " "), ICfg.channel, Cfg.daemon, ICfg.sasl))
-    print("using %s!%s@%s:%s" % (ICfg.nick, ICfg.username, ICfg.server, ICfg.port))
-    if Cfg.daemon:
-        daemon()
-    i = IRC()
-    i.start()
-    launch(watcher, i)
-    f = Fetcher()
-    f.start()
-    c.start()
-    while 1:
-        time.sleep(1.0)
+    if Cfg.daemon or "c" in Cfg.opts:
+        if Cfg.daemon:
+            daemon()
+        print("BOT start at %s channel=%s daemon=%s sasl=%s" % (time.ctime(time.time()).replace("  ", " "), ICfg.channel, Cfg.daemon, ICfg.sasl))
+        print("using %s!%s@%s:%s" % (ICfg.nick, ICfg.username, ICfg.server, ICfg.port))
+        i = IRC()
+        i.start()
+        launch(watcher, i)
+        f = Fetcher()
+        f.start()
+        c.start()
+        while 1:
+            time.sleep(1.0)
 
 wrap(main)

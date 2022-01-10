@@ -4,16 +4,16 @@
 "OTP-CR-117/19"
 
 
-from gcid.tbl import Tbl
+from bot.tbl import Tbl
 
 
-from gcid.mod import bsc
-from gcid.mod import dbg
-from gcid.mod import irc
-from gcid.mod import req
-from gcid.mod import rss
-from gcid.mod import udp
-from gcid.mod import wsd
+from bot.mod import bsc
+from bot.mod import dbg
+from bot.mod import irc
+from bot.mod import req
+from bot.mod import rss
+from bot.mod import udp
+from bot.mod import wsd
 
 
 Tbl.add(bsc)

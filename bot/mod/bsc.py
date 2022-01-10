@@ -8,14 +8,14 @@ import threading
 import time
 
 
-from gcid.bus import Bus
-from gcid.dbs import Db, fntime, save
-from gcid.dbs import find
-from gcid.fnc import format
-from gcid.obj import Object, get, update
-from gcid.tbl import Cmd
-from gcid.thr import getname
-from gcid.prs import elapsed
+from bot.bus import Bus
+from bot.dbs import Db, fntime, save
+from bot.dbs import find
+from bot.fnc import format
+from bot.obj import Object, get, keys, update
+from bot.tbl import Cmd
+from bot.thr import getname
+from bot.prs import elapsed
 
 
 def __dir__():
@@ -39,7 +39,7 @@ class Log(Object):
 
 
 def cmd(event):
-    event.reply(",".join(sorted(Cmd.cmds)))
+    event.reply(",".join((keys(Cmd.cmd))))
 
 
 def flt(event):

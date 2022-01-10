@@ -4,23 +4,23 @@
 "OTP-CR-117/19"
 
 
-from gcid.tbl import Tbl
+from bot.tbl import Tbl
 
 
-from gcid import bus
-from gcid import cfg
-from gcid import clt
-from gcid import dbs
-from gcid import evt
-from gcid import fnc
-from gcid import hdl
-from gcid import jsn
-from gcid import krn
-from gcid import prs
-from gcid import spc
-from gcid import tbl
-from gcid import thr
-from gcid import tms
+from bot import bus
+from bot import cfg
+from bot import clt
+from bot import dbs
+from bot import evt
+from bot import fnc
+from bot import hdl
+from bot import jsn
+from bot import krn
+from bot import prs
+from bot import spc
+from bot import tbl
+from bot import thr
+from bot import tms
 
 
 Tbl.add(bus)

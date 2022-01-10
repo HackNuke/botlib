@@ -10,14 +10,14 @@ def read():
 
 setup(
     name="botlib",
-    version="147",
+    version="150",
     url="https://github.com/bthate/botlib",
     author="Bart Thate",
     author_email="bthate67@gmail.com",
-    description="24/7 channel daemon",
+    description="python3 bot library",
     long_description=read(),
     license="Public Domain",
-    packages=["bot", "op"],
+    packages=["bot"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

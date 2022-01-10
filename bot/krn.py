@@ -38,6 +38,7 @@ def kcmd(o, txt):
     e.orig = repr(o)
     e.txt = txt
     o.handle(e)
+    e.wait()
     return e.result
 
 def privileges(name=None):

@@ -26,24 +26,6 @@ def __dir__():
 cmdlock = _thread.allocate_lock()
 
 
-class Cbs(Object):
-
-    cbs = Object()
-
-    @staticmethod
-    def add(k, v):
-        Cbs.cbs[str(k)] = v
-
-    @staticmethod
-    def get(typ):
-        return get(Cbs.cbs, typ)
-
-    @staticmethod
-    def dispatch(event):
-        if event and event.type in Cbs.cbs:
-            Cbs.cbs[event.type](event)
-
-
 class Cls(Object):
 
     cls = Object()
@@ -68,11 +50,11 @@ class Cls(Object):
 
 class Cmd(Object):
 
-    cmds = Object()
+    cmd = Object()
 
     @staticmethod
     def add(cmd):
-        register(Cmd.cmds, cmd.__name__, cmd)
+        register(Cmd.cmd, cmd.__name__, cmd)
 
     @staticmethod
     def dispatch(e):
@@ -93,8 +75,8 @@ class Cmd(Object):
 
     @staticmethod
     def get(cmd):
-        return get(Cmd.cmds, cmd)
-
+        f =  get(Cmd.cmd, cmd)
+        return f
 
 class Dpt(Object):
 
@@ -134,7 +116,7 @@ def scan():
     for mod in values(Tbl.mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if "event" in o.__code__.co_varnames:
-                Cmd.cmds[k] = o
+                Cmd.cmd[k] = o
         for k, clz in inspect.getmembers(mod, inspect.isclass):
             Cls.add(clz)
         Tbl.add(mod)
