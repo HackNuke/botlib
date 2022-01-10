@@ -17,7 +17,7 @@ setup(
     description="python3 bot library",
     long_description=read(),
     license="Public Domain",
-    packages=["bot"],
+    packages=["bot", "bot.mod"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: Public Domain",

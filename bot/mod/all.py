@@ -1,5 +1,7 @@
 # This file is placed in the Public Domain.
 
+"bot.mod package modules"
+
 
 from bot.tbl import Tbl
 
