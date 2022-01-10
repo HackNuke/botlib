@@ -1,5 +1,0 @@
-# This file is placed in the Public Domain
-
-systemctl stop gcid
-systemctl start gcid
-systemctl status gcid

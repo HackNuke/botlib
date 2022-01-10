@@ -15,29 +15,21 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from gcdrun import scan, wrap 
+from bot.bus import Bus
+from bot.clt import Client
+from bot.evt import Event
+from bot.dbs import find, fntime, last, listfiles, save
+from bot.obj import Object, get, items, keys, values, update
+from bot.fnc import edit, format
+from bot.hdl import Handler
+from bot.krn import Cfg, boot
+from bot.prs import elapsed, parse
+from bot.tbl import Cls, Cmd, Tbl, scan
+from bot.thr import Thr, getname, launch
 
 
-from gcd.bus import Bus
-from gcd.cls import Cls
-from gcd.clt import Client
-from gcd.cmd import Cmd
-from gcd.evt import Event
-from gcd.dbs import find, fntime, last, listfiles, save
-from gcd.obj import Object, get, items, keys, values, update
-from gcd.fnc import edit, format
-from gcd.hdl import Handler
-from gcd.krn import Cfg, boot
-from gcd.prs import elapsed, parse
-from gcd.tbl import Tbl
-from gcd.thr import Thr, getname, launch
-
-
-import gcd.all
-import gcdm.all
-
-
-from gcdm.dbg import TestError
+import bot.all
+import bot.mod.all
 
 
 Cfg.wd = ".test"
@@ -101,7 +93,7 @@ def from_exception(ex, txt="", sep=" "):
 
 def payload(c):
     thrs = []
-    for cmd in Cmd.cmds:
+    for cmd in Cmd.cmd:
         for ex in getattr(param, cmd, [""]):
             e = Event()
             e.type = "cmd"
@@ -116,7 +108,7 @@ def scan():
     for mod in values(Tbl.mod):
         for k, o in inspect.getmembers(mod, inspect.isfunction):
             if "event" in o.__code__.co_varnames:
-                Cmd.cmds[k] = o
+                Cmd.cmd[k] = o
         for k, clz in inspect.getmembers(mod, inspect.isclass):
             Cls.add(clz)
         Tbl.add(mod)
