@@ -21,7 +21,6 @@ from bot.tbl import scan
 
 
 import bot.all
-import bot.mod.all
 
 
 Cfg.wd = ".test"

@@ -29,7 +29,6 @@ from bot.thr import Thr, getname, launch
 
 
 import bot.all
-import bot.mod.all
 
 
 Cfg.wd = ".test"
@@ -130,7 +129,7 @@ def wrap(func):
     print("\n%s events left (%s)" % (len(events), elapsed(time.time()-starttime)))
 
 def main():
-    print("GCD tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
+    print("BOT tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
     if os.path.exists(Cfg.wd):
         shutil.rmtree(Cfg.wd)
     boot(" ".join(sys.argv[1:]))
