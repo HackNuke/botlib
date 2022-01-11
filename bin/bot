@@ -15,16 +15,16 @@ sys.path.insert(0, os.getcwd())
 from bot.spc import Bus, Client, Event, Handler, Cfg, boot, kcmd, launch, scan
 
 
-from bot.mod.irc import IRC
-from bot.mod.irc import Cfg as ICfg
-from bot.mod.rss import Fetcher
+from bot.irc import IRC
+from bot.irc import Cfg as ICfg
+from bot.rss import Fetcher
 
 
 import bot.all
-import bot.mod.all
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
+
 
 class Console(Client, Handler):
 
