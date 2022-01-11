@@ -55,9 +55,10 @@ def flt(event):
 def fnd(event):
     if not event.args:
         db = Db()
-        event.reply(",".join(
+        res = ",".join(
             sorted({x.split(".")[-1].lower() for x in db.types()}))
-        )
+        if res:
+            event.reply(res)
         return
     otype = event.args[0]
     nr = -1

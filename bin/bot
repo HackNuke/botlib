@@ -100,15 +100,14 @@ def main():
     if Cfg.daemon or "c" in Cfg.opts:
         if Cfg.daemon:
             daemon()
-        print("BOT start at %s channel=%s daemon=%s sasl=%s" % (time.ctime(time.time()).replace("  ", " "), ICfg.channel, Cfg.daemon, ICfg.sasl))
-        print("using %s!%s@%s:%s" % (ICfg.nick, ICfg.username, ICfg.server, ICfg.port))
+        print("BOT start at %s (%s)" % time.ctime(time.time()).replace("  ", " "), Cfg.wd)
+        print("server=%s channel=%s daemon=%s sasl=%s" % (ICfg.server, ICfg.channel, Cfg.daemon, ICfg.sasl))
         i = IRC()
         i.start()
         launch(watcher, i)
         f = Fetcher()
         f.start()
         c.start()
-        while 1:
-            time.sleep(1.0)
+        watcher(c)
 
 wrap(main)
