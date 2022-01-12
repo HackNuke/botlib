@@ -17,7 +17,7 @@ from bot.bus import Bus
 from bot.clt import Client
 from bot.evt import Event
 from bot.hdl import Handler
-from bot.krn import Cfg, boot, kcmd
+from bot.krn import Cfg, boot, kcmd, wait
 from bot.fnc import format
 from bot.tbl import Cmd
 from bot.thr import launch
@@ -92,19 +92,26 @@ def main():
     if Cfg.txt:
         c = Console()
         return kcmd(c, Cfg.otxt)
+    dowait = False
     if Cfg.daemon:
         daemon()
-    if "c" in Cfg.opts or Cfg.daemon:
-        print("BOT start at %s (%s)" % (time.ctime(time.time()).replace("  ", " "), Cfg.wd))
+        dowait = True
+    if "c" in Cfg.opts:
+        print("BOT start at %s" % (time.ctime(time.time()).replace("  ", " ")))
         print(format(ICfg, "server,port,channel,nick,cc,sasl"))
         sys.stdout.flush()
-        i = IRC()
-        i.start()
-        f = Fetcher()
-        f.start()
         c = Console()
         c.start()
-        c.wait()
+        dowait = True
+    if "i" in Cfg.opts:
+        i = IRC()
+        i.start()
+        dowait = True
+    if "r" in Cfg.opts:
+        f = Fetcher()
+        f.start()
+        dowait = True
+    if dowait:
+        wait()
 
-    
 wrap(main)

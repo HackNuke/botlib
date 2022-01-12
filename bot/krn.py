@@ -7,6 +7,7 @@
 import getpass
 import os
 import pwd
+import time
 
 
 from .cfg import Cfg
@@ -77,3 +78,8 @@ def root():
     if os.geteuid() != 0:
         return False
     return True
+
+
+def wait():
+    while 1:
+        time.sleep(1.0)
