@@ -10,9 +10,11 @@ import pwd
 import time
 
 
+from .bus import Bus
 from .cfg import Cfg
 from .evt import Event
 from .prs import parse
+from .tbl import Cmd
 
 
 def __dir__():
@@ -44,16 +46,18 @@ def boot(txt):
     Cfg.verbose = "v" in Cfg.opts
     Cfg.debug = "z" in Cfg.opts
 
-def kcmd(o, txt):
+
+def kcmd(clt, txt):
     if not txt:
         return False
     e = Event()
     e.channel = ""
-    e.orig = repr(o)
+    e.orig = repr(clt)
     e.txt = txt
-    o.handle(e)
+    Cmd.handle(e)
     e.wait()
     return e.result
+
 
 def privileges(name=None):
     if os.getuid() != 0:
