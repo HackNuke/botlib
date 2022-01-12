@@ -12,6 +12,7 @@ from bot.bus import Bus
 from bot.dbs import last
 from bot.obj import Object
 from bot.thr import launch
+from bot.tbl import Cls
 
 
 class Cfg(Object):
@@ -68,3 +69,6 @@ class UDP(Object):
 def toudp(host, port, txt):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(bytes(txt.strip(), "utf-8"), (host, port))
+
+
+Cls.add(UDP)

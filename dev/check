@@ -9,3 +9,5 @@ grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=test -
 grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=test --exclude-dir=dev --exclude-dir=.git importlib
 grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git print
 grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git --exclude-dir=bin "import sys"
+grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git --exclude-dir=bin "import inspect"
+grep -R --exclude *.rst --exclude *check --exclude-dir=docs --exclude-dir=lib --exclude-dir=test --exclude-dir=dev --exclude-dir=bin --exclude-dir=.git --exclude-dir=bin "import traceback"

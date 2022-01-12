@@ -1,10 +1,9 @@
 # This file is placed in the Public Domain.
 
 
-"tables"
+"table"
 
 
-import inspect
 import _thread
 
 
@@ -19,7 +18,6 @@ def __dir__():
         "Cmd",
         "Dpt",
         "Tbl",
-        "scan"
     )
 
 
@@ -112,13 +110,3 @@ class Tbl(Object):
     @staticmethod
     def get(nm):
         return get(Tbl.mod, nm, None)
-
-
-def scan():
-    for mod in values(Tbl.mod):
-        for k, o in inspect.getmembers(mod, inspect.isfunction):
-            if "event" in o.__code__.co_varnames:
-                Cmd.cmd[k] = o
-        for k, clz in inspect.getmembers(mod, inspect.isclass):
-            Cls.add(clz)
-        Tbl.add(mod)

@@ -23,6 +23,7 @@ from bot.hdl import Handler, Stop
 from bot.obj import Object, update
 from bot.tbl import Cmd, Dpt
 from bot.thr import launch
+from bot.usr import Users
 from bot.utl import locked
 
 
@@ -34,11 +35,7 @@ def __dir__():
         "Output",
         "IRC",
         "DCC",
-        "User",
-        "Users",
         "cfg",
-        "dlt",
-        "met",
         "mre",
         "nck",
         "ops"
@@ -678,3 +675,8 @@ def ops(event):
         if not bot.users.allowed(event.origin, "USER"):
             return
         bot.command("MODE", event.channel, "+o", event.nick)
+
+Cmd.add(cfg)
+Cmd.add(mre)
+Cmd.add(nck)
+Cmd.add(ops)

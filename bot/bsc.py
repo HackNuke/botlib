@@ -13,7 +13,7 @@ from bot.dbs import Db, fntime, save
 from bot.dbs import find
 from bot.fnc import format
 from bot.obj import Object, get, keys, update
-from bot.tbl import Cmd
+from bot.tbl import Cls, Cmd
 from bot.thr import getname
 from bot.prs import elapsed
 
@@ -28,6 +28,7 @@ def __dir__():
         "thr",
         "upt"
     )
+
 
 starttime = time.time()
 
@@ -109,3 +110,12 @@ def thr(event):
 
 def upt(event):
     event.reply(elapsed(time.time() - starttime))
+
+
+Cls.add(Log)
+Cmd.add(cmd)
+Cmd.add(flt)
+Cmd.add(fnd)
+Cmd.add(log)
+Cmd.add(thr)
+Cmd.add(upt)

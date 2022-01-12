@@ -24,7 +24,7 @@ from bot.fnc import edit, format
 from bot.hdl import Handler
 from bot.krn import Cfg, boot
 from bot.prs import elapsed, parse
-from bot.tbl import Cls, Cmd, Tbl, scan
+from bot.tbl import Cls, Cmd, Tbl
 from bot.thr import Thr, getname, launch
 
 
@@ -133,7 +133,6 @@ def main():
     boot(" ".join(sys.argv[1:]))
     Cfg.debug = True
     print(format(Cfg, "debug,verbose,index,wd"))
-    scan()
     c = CLI()
     c.start()
     thrs = []

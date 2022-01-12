@@ -5,7 +5,6 @@
 
 
 import html.parser
-import sys
 import re
 import threading
 import urllib
@@ -17,7 +16,7 @@ from bot.fnc import edit
 from bot.krn import Cfg
 from bot.obj import Object, get, update
 from bot.prs import spl
-from bot.tbl import Cls
+from bot.tbl import Cls, Cmd
 from bot.tms import Repeater
 from bot.thr import launch
 
@@ -245,3 +244,12 @@ def rss(event):
     o.rss = event.args[0]
     save(o)
     event.reply("ok")
+
+
+Cls.add(Feed)
+Cls.add(Rss)
+Cls.add(Seen)
+Cmd.add(dpl)
+Cmd.add(ftc)
+Cmd.add(rem)
+Cmd.add(rss)

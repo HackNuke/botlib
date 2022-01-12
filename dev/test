@@ -17,7 +17,6 @@ from bot.krn import Cfg, boot
 from bot.fnc import format
 from bot.obj import Object, values
 from bot.prs import parse
-from bot.tbl import scan
 
 
 import bot.all
@@ -35,7 +34,6 @@ def main():
         shutil.rmtree(Cfg.wd)
     boot(" ".join(sys.argv[1:]))
     Cfg.debug = True
-    scan()
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)

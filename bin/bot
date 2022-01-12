@@ -18,7 +18,7 @@ from bot.clt import Client
 from bot.evt import Event
 from bot.hdl import Handler
 from bot.krn import Cfg, boot, kcmd
-from bot.tbl import Cmd, scan
+from bot.tbl import Cmd
 from bot.thr import launch
 
 
@@ -88,7 +88,6 @@ def wrap(func):
 
 def main():
     boot(" ".join(sys.argv[1:]))
-    scan()
     if Cfg.txt:
         c = Console()
         return kcmd(c, Cfg.otxt)
