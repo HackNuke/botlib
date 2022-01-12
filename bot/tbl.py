@@ -70,6 +70,7 @@ class Cmd(Object):
         try:
             Cmd.dispatch(e)
         except Exception as ex:
+            print(ex)
             e.errors.append(ex)
             e.ready()
 

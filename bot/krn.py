@@ -16,6 +16,7 @@ from .prs import parse
 
 class Cfg(Cfg):
 
+    console = False
     daemon = False
     debug = False
     index = 0
@@ -27,8 +28,10 @@ class Cfg(Cfg):
 
 def boot(txt):
     parse(Cfg, txt)
+    Cfg.console = "c" in Cfg.opts
+    Cfg.daemon = "d" in Cfg.opts
     Cfg.verbose = "v" in Cfg.opts
-    Cfg.debug = False
+    Cfg.debug = "z" in Cfg.opts
 
 def kcmd(o, txt):
     if not txt:
