@@ -39,6 +39,7 @@ Tbl.add(tms)
 
 from bot import bsc
 from bot import irc
+from bot import opt
 from bot import rss
 from bot import udp
 from bot import usr
@@ -47,6 +48,7 @@ from bot import usr
 Tbl.add(bsc)
 Tbl.add(dbg)
 Tbl.add(irc)
+Tbl.add(opt)
 Tbl.add(rss)
 Tbl.add(udp)
 Tbl.add(usr)

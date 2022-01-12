@@ -18,6 +18,7 @@ from bot.clt import Client
 from bot.evt import Event
 from bot.hdl import Handler
 from bot.krn import Cfg, boot, kcmd
+from bot.fnc import format
 from bot.tbl import Cmd
 from bot.thr import launch
 
@@ -94,8 +95,9 @@ def main():
     if Cfg.daemon:
         daemon()
     if "c" in Cfg.opts or Cfg.daemon:
-        print("BOT start at %s channel=%s daemon=%s sasl=%s" % (time.ctime(time.time()).replace("  ", " "), ICfg.channel, Cfg.daemon, ICfg.sasl))
-        print("using %s!%s@%s:%s" % (ICfg.nick, ICfg.username, ICfg.server, ICfg.port))
+        print("BOT start at %s (%s)" % (time.ctime(time.time()).replace("  ", " "), Cfg.wd))
+        print(format(ICfg, "server,port,channel,nick,cc,sasl"))
+        sys.stdout.flush()
         i = IRC()
         i.start()
         f = Fetcher()
