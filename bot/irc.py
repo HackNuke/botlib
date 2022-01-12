@@ -16,11 +16,12 @@ import _thread
 
 from bot.bus import Bus
 from bot.clt import Client
-from bot.dbs import find, last, save
+from bot.dbs import last, save
 from bot.evt import Event
 from bot.fnc import edit, format
 from bot.hdl import Handler, Stop
-from bot.obj import Object, update
+from bot.obj import Object
+from bot.opt import Output
 from bot.tbl import Cmd, Dpt
 from bot.thr import launch
 from bot.usr import Users
@@ -29,7 +30,6 @@ from bot.utl import locked
 
 def __dir__():
     return (
-        "NoUser",
         "Cfg",
         "Event",
         "Output",
@@ -43,11 +43,6 @@ def __dir__():
 
 
 saylock = _thread.allocate_lock()
-
-
-class NoUser(Exception):
-
-    pass
 
 
 class Cfg(Object):
@@ -95,49 +90,6 @@ class Event(Event):
         self.sock = None
         self.type = ""
         self.txt = ""
-
-class Output(Object):
-
-    cache = Object()
-
-    def __init__(self):
-        Object.__init__(self)
-        self.oqueue = queue.Queue()
-        self.dostop = threading.Event()
-
-    @staticmethod
-    def append(channel, txtlist):
-        if channel not in Output.cache:
-            Output.cache[channel] = []
-        Output.cache[channel].extend(txtlist)
-
-    def dosay(self, channel, txt):
-        pass
-
-    def oput(self, channel, txt):
-        self.oqueue.put_nowait((channel, txt))
-
-    def output(self):
-        while not self.dostop.isSet():
-            (channel, txt) = self.oqueue.get()
-            if self.dostop.isSet():
-                break
-            self.dosay(channel, txt)
-
-    @staticmethod
-    def size(name):
-        if name in Output.cache:
-            return len(Output.cache[name])
-        return 0
-
-    def start(self):
-        self.dostop.clear()
-        launch(self.output)
-        return self
-
-    def stop(self):
-        self.dostop.set()
-        self.oqueue.put_nowait((None, None))
 
 
 class IRC(Output, Handler):
@@ -474,57 +426,6 @@ class DCC(Client, Handler):
         Handler.start(self)
 
 
-class User(Object):
-
-    def __init__(self, val=None):
-        super().__init__()
-        self.user = ""
-        self.perms = []
-        if val:
-            update(self, val)
-
-
-class Users(Object):
-
-    userhosts = Object()
-
-    def allowed(self, origin, perm):
-        perm = perm.upper()
-        origin = getattr(self.userhosts, origin, origin)
-        user = self.get_user(origin)
-        if user:
-            if perm in user.perms:
-                return True
-        return False
-
-    def delete(self, origin, perm):
-        for user in self.get_users(origin):
-            try:
-                user.perms.remove(perm)
-                save(user)
-                return True
-            except ValueError:
-                pass
-
-    def get_users(self, origin=""):
-        s = {"user": origin}
-        return find("user", s)
-
-    def get_user(self, origin):
-        u = list(self.get_users(origin))
-        if u:
-            return u[-1][-1]
-
-    def perm(self, origin, permission):
-        user = self.get_user(origin)
-        if not user:
-            raise NoUser(origin)
-        if permission.upper() not in user.perms:
-            user.perms.append(permission.upper())
-            save(user)
-        return user
-
-
 class TextWrap(textwrap.TextWrapper):
 
     def __init__(self):
@@ -624,29 +525,6 @@ def cfg(event):
     event.reply("ok")
 
 
-def dlt(event):
-    if not event.args:
-        event.reply("dlt <username>")
-        return
-    selector = {"user": event.args[0]}
-    for _fn, o in find("user", selector):
-        o._deleted = True
-        save(o)
-        event.reply("ok")
-        break
-
-
-def met(event):
-    if not event.args:
-        event.reply("met <userhost>")
-        return
-    user = User()
-    user.user = event.rest
-    user.perms = ["USER"]
-    save(user)
-    event.reply("ok")
-
-
 def mre(event):
     if event.channel is None:
         event.reply("channel is not set.")
@@ -676,7 +554,7 @@ def ops(event):
             return
         bot.command("MODE", event.channel, "+o", event.nick)
 
+
 Cmd.add(cfg)
-Cmd.add(mre)
 Cmd.add(nck)
 Cmd.add(ops)

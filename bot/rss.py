@@ -198,7 +198,7 @@ def dpl(event):
             edit(o, setter)
             save(o)
             event.reply("ok")
-    
+
 
 def ftc(event):
     res = []

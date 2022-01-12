@@ -8,7 +8,7 @@ import _thread
 
 
 from .fnc import register
-from .obj import Object, get, values
+from .obj import Object, get
 
 
 def __dir__():

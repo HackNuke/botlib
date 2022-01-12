@@ -4,17 +4,24 @@
 "user"
 
 
-from .dbs import find
-from .obj import Object
+from .dbs import find, save
+from .obj import Object, update
 from .tbl import Cmd
 
 
 def __dir__():
     return (
+        "NoUser",
         "Users",
         "dlt",
         "met"
     )
+
+
+class NoUser(Exception):
+
+    pass
+
 
 
 class User(Object):
