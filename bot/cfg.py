@@ -7,6 +7,12 @@
 from .obj import Object
 
 
+def __dir__():
+    return (
+        "Cfg"
+    )
+
+
 class Cfg(Object):
 
     pass

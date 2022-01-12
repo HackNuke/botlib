@@ -8,6 +8,12 @@ from .bus import Bus
 from .obj import Object
 
 
+def __dir__():
+    return (
+        "Client"
+    )
+
+
 class Client(Object):
 
     def __init__(self):

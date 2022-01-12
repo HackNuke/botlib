@@ -8,10 +8,10 @@ import socket
 import time
 
 
-from gcid.bus import Bus
-from gcid.dbs import last
-from gcid.obj import Object
-from gcid.thr import launch
+from bot.bus import Bus
+from bot.dbs import last
+from bot.obj import Object
+from bot.thr import launch
 
 
 class Cfg(Object):

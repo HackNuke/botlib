@@ -20,6 +20,7 @@ from bot.prs import elapsed
 
 def __dir__():
     return (
+        "Log",
         "cmd",
         "flt",
         "fnd",

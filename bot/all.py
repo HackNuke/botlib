@@ -17,7 +17,6 @@ from bot import hdl
 from bot import jsn
 from bot import krn
 from bot import prs
-from bot import spc
 from bot import tbl
 from bot import thr
 from bot import tms

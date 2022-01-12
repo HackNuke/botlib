@@ -213,6 +213,7 @@ def find(name, selector=None, index=None, timed=None, names=None):
     db = Db()
     if not names:
         names = Cls.full(name)
+    print(names)
     for n in names:
         for fn, o in db.find(n, selector, index, timed):
             yield fn, o

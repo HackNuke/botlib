@@ -16,6 +16,13 @@ from .thr import launch
 from .utl import locked
 
 
+def __dir__():
+    return (
+        "Handler",
+        "Stop"
+    )
+
+
 cmdlock = _thread.allocate_lock()
 
 

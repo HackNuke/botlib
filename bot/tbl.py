@@ -51,6 +51,7 @@ class Cls(Object):
 class Cmd(Object):
 
     cmd = Object()
+    errors = []
 
     @staticmethod
     def add(cmd):
@@ -70,8 +71,8 @@ class Cmd(Object):
         try:
             Cmd.dispatch(e)
         except Exception as ex:
-            print(ex)
             e.errors.append(ex)
+            Cmd.errors.append(ex)
             e.ready()
 
     @staticmethod

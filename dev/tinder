@@ -70,8 +70,6 @@ def consume(events):
     for e in events:
         e.wait()
         for err in e.errors:
-            if type(err) == TestError:
-                continue
             if str(err) not in have:
                 have.append(str(err))
                 errors.append(err)

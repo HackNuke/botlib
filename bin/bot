@@ -5,6 +5,7 @@
 import os
 import readline
 import termios
+import traceback
 import sys
 import time
 
@@ -12,7 +13,13 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from bot.spc import Bus, Client, Event, Handler, Cfg, boot, kcmd, launch, scan
+from bot.bus import Bus
+from bot.clt import Client
+from bot.evt import Event
+from bot.hdl import Handler
+from bot.krn import Cfg, boot, kcmd
+from bot.tbl import Cmd, scan
+from bot.thr import launch
 
 
 from bot.irc import IRC
@@ -24,6 +31,9 @@ import bot.all
 
 
 Cfg.wd = os.path.expanduser("~/.bot")
+
+
+errors = []
 
 
 class Console(Client, Handler):
@@ -63,20 +73,6 @@ def daemon():
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-def wait(clt, quit=False):
-    done = []
-    clt.wait()
-    for ex in clt.errors:
-        if "reason" in dir(ex) and ex not in done:
-            print("\n\n")
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
-            if quit:
-                break
-        done.append(ex)
-    for ex in done:
-        clt.errors.remove(ex)
-
-
 def wrap(func):
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
@@ -85,9 +81,11 @@ def wrap(func):
     except (EOFError, KeyboardInterrupt):
         print("")
     finally:
+        for err in Cmd.errors:
+            traceback.print_exception(type(err), err, err.__traceback__)
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
- 
+
 def main():
     boot(" ".join(sys.argv[1:]))
     scan()
@@ -105,6 +103,7 @@ def main():
         f.start()
         c = Console()
         c.start()
-        wait(c)
+        c.wait()
+
     
 wrap(main)

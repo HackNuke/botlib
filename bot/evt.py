@@ -12,6 +12,12 @@ from .obj import Object
 from .prs import parse
 
 
+def __dir__():
+    return (
+        "Event"
+    )
+
+
 class Event(Object):
 
     def __init__(self):

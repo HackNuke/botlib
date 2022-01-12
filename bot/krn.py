@@ -14,6 +14,16 @@ from .evt import Event
 from .prs import parse
 
 
+def __dir__():
+    return (
+        "Cfg",
+        "boot",
+        "kcmd",
+        "privileges",
+        "root"
+    )
+
+
 class Cfg(Cfg):
 
     console = False
