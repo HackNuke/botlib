@@ -5,6 +5,7 @@
 
 
 import html.parser
+import sys
 import re
 import threading
 import urllib
@@ -15,9 +16,10 @@ from bot.dbs import Db, find, last, save
 from bot.fnc import edit
 from bot.krn import Cfg
 from bot.obj import Object, get, update
+from bot.prs import spl
+from bot.tbl import Cls
 from bot.tms import Repeater
 from bot.thr import launch
-
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
@@ -74,14 +76,10 @@ class Fetcher(Object):
         result = ""
         dl = []
         try:
-            dl = o.display_list.split(",")
+            dl = o.display_list or "title,link"
         except AttributeError:
-            pass
-        if not dl:
             dl = "title,link"
-        if not dl or not dl[0]:
-            dl = ["title", "link"]
-        for key in dl:
+        for key in spl(dl):
             if not key:
                 continue
             data = get(o, key, None)
@@ -168,7 +166,7 @@ def gettinyurl(url):
 def geturl(url):
     url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
     req = urllib.request.Request(url)
-    req.add_header("User-agent", useragent(Cfg.name.upper()))
+    req.add_header("User-agent", useragent("BOTLIB"))
     response = urllib.request.urlopen(req)
     response.data = response.read()
     return response
@@ -194,13 +192,14 @@ def dpl(event):
         return
     db = Db()
     setter = {"display_list": event.args[1]}
-    name = get(db.names, "rss", "rss")
-    _fn, o = db.lastmatch(name, {"rss": event.args[0]})
-    if o:
-        edit(o, setter)
-        save(o)
-        event.reply("ok")
-
+    names = Cls.full("rss")
+    if names:
+        _fn, o = db.lastmatch(names[0], {"rss": event.args[0]})
+        if o:
+            edit(o, setter)
+            save(o)
+            event.reply("ok")
+    
 
 def ftc(event):
     res = []
