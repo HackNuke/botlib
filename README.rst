@@ -2,7 +2,7 @@ B O T L I B
 ###########
 
 
- *os level integration of bot technology*
+*os level integration of bot technology*
 
 
 **BOTLIB** is programmable, to program the bot you have to have the code
@@ -26,7 +26,7 @@ code
 
 you can fetch the source code (or clone/fork) from git repository.
 
- | ``git clone https://github.com/bthate/botlib``
+ ``git clone https://github.com/bthate/botlib``
 
 
 or download the tar from https://pypi.org/project/botlib/#files
@@ -38,23 +38,23 @@ object programming
 object Programming provides a “move methods to functions”, if you are used
 to functional programming you’ll like it (or not):
 
-obj.method(*args) -> method(obj, *args)
+ ``obj.method(*args) -> method(obj, *args)``
 
 not:
 
- >>> from bot.obj import Object
- >>> o = Object()
- >>> o.set("key", "value")
- >>> o.key
- 'value'
+>>> from bot.obj import Object
+>>> o = Object()
+>>> o.set("key", "value")
+>>> o.key
+'value'
 
 but:
 
- >>> from bot.obj import Object, set
- >>> o = Object()
- >>> set(o, "key", "value")
- >>> o.key
- 'value'
+>>> from bot.obj import Object, set
+>>> o = Object()
+>>> set(o, "key", "value")
+>>> o.key
+'value'
 
 the bot.obj module has the most basic object functions like get, set, update,
 load, save etc.
@@ -67,10 +67,10 @@ complete method less object, it is a pure object what __dict__ is
 concerned (user defined methods):
 
 
- >>> import op
- >>> o = op.Object()
- >>> o.__dict__
- {}
+>>> import op
+>>> o = op.Object()
+>>> o.__dict__
+{}
 
 
 modules
@@ -105,10 +105,11 @@ commands
 
 cd into the extracted directory and add your module to the bot package.
 
-open your module file, in this example it's the hlo (hello) module and
-add your command code to the file.
+open your module file, in this example it's the hlo (hello) module:
 
- | ``joe bot/hlo.py``
+``joe bot/hlo.py``
+
+add your command code to the file.
 
 ::
 
@@ -117,7 +118,7 @@ add your command code to the file.
 
 then add your module to the all module so it get imported on start.
 
- | ``joe bot/all.py``
+``joe bot/all.py``
 
 ::
 
