@@ -68,7 +68,7 @@ concerned (user defined methods):
 
 
 >>> import op
->>> o = op.Object()
+>>> o = bot.Object()
 >>> o.__dict__
 {}
 
