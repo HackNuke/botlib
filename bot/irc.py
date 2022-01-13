@@ -36,7 +36,6 @@ def __dir__():
         "IRC",
         "DCC",
         "cfg",
-        "mre",
         "nck",
         "ops"
     )
@@ -523,20 +522,6 @@ def cfg(event):
     edit(c, event.sets)
     save(c)
     event.reply("ok")
-
-
-def mre(event):
-    if event.channel is None:
-        event.reply("channel is not set.")
-        return
-    if event.channel not in Output.cache:
-        event.reply("no output in %s cache." % event.channel)
-        return
-    for txt in range(3):
-        txt = Output.cache[event.channel].pop(0)
-        if txt:
-            event.say(txt)
-    event.reply("(+%s more)" % Output.size(event.channel))
 
 
 def nck(event):
