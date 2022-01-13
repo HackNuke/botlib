@@ -26,7 +26,7 @@ code
 
 you can fetch the source code (or clone/fork) from git repository.
 
- ``git clone https://github.com/bthate/botlib``
+``git clone https://github.com/bthate/botlib``
 
 
 or download the tar from https://pypi.org/project/botlib/#files
@@ -38,7 +38,7 @@ object programming
 object Programming provides a “move methods to functions”, if you are used
 to functional programming you’ll like it (or not):
 
- ``obj.method(*args) -> method(obj, *args)``
+``obj.method(*args) -> method(obj, *args)``
 
 not:
 
