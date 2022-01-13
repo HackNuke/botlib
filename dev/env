@@ -2,5 +2,5 @@
 
 dev/clean
 python3 setup.py sdist
-python3 -mvirtualenv --system-site-packages env
+python3 -mvirtualenv --system-site-packages --no-download env
 env/bin/pip3 install botlib -f dist --force-reinstall --no-deps

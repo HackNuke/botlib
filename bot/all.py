@@ -16,6 +16,7 @@ from bot import fnc
 from bot import hdl
 from bot import jsn
 from bot import krn
+from bot import opt
 from bot import prs
 from bot import tbl
 from bot import thr
@@ -31,6 +32,7 @@ Tbl.add(fnc)
 Tbl.add(hdl)
 Tbl.add(jsn)
 Tbl.add(krn)
+Tbl.add(opt)
 Tbl.add(prs)
 Tbl.add(tbl)
 Tbl.add(thr)
