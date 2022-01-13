@@ -67,7 +67,7 @@ complete method less object, it is a pure object what __dict__ is
 concerned (user defined methods):
 
 
->>> import op
+>>> import bot
 >>> o = bot.Object()
 >>> o.__dict__
 {}
