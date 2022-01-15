@@ -22,9 +22,11 @@ def __dir__():
     return (
         "Log",
         "cmd",
+        "err",
         "flt",
         "fnd",
         "log",
+        "tdo",
         "thr",
         "upt"
     )
@@ -40,8 +42,24 @@ class Log(Object):
         self.txt = ""
 
 
+class Todo(Object):
+
+    def __init__(self):
+        super().__init__()
+        self.txt = ""
+
+
 def cmd(event):
-    event.reply(",".join((keys(Cmd.cmd))))
+    event.reply(",".join((sorted(keys(Cmd.cmd)))))
+
+
+
+def err(event):
+    if not Cmd.errors:
+        event.reply("no errors")
+        return
+    for bot in Bus.objs:
+        event.reply(Cmd.errors)
 
 
 def flt(event):
@@ -108,14 +126,27 @@ def thr(event):
         event.reply(" ".join(res))
 
 
+def tdo(event):
+    if not event.rest:
+        event.reply("tdo <txt>")
+        return
+    o = Todo()
+    o.txt = event.rest
+    save(o)
+    event.reply("ok")
+
+
 def upt(event):
     event.reply(elapsed(time.time() - starttime))
 
 
 Cls.add(Log)
+Cls.add(Todo)
 Cmd.add(cmd)
+Cmd.add(err)
 Cmd.add(flt)
 Cmd.add(fnd)
 Cmd.add(log)
+Cmd.add(tdo)
 Cmd.add(thr)
 Cmd.add(upt)

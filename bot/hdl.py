@@ -46,7 +46,6 @@ class Handler(Object):
         e.txt = txt
         return e
 
-    @locked(cmdlock)
     def handle(self, e):
         Cmd.handle(e)
 
@@ -55,7 +54,7 @@ class Handler(Object):
             try:
                 e = self.poll()
                 if e:
-                    self.handle(e)
+                    e.thrs.append(launch(self.handle,e))
             except Stop:
                 break
 

@@ -5,6 +5,7 @@
 
 
 from .bus import Bus
+from .lop import Loop
 from .obj import Object
 
 
@@ -14,10 +15,10 @@ def __dir__():
     )
 
 
-class Client(Object):
+class Client(Loop):
 
     def __init__(self):
-        Object.__init__(self)
+        Loop.__init__(self)
         Bus.add(self)
 
     def announce(self, txt):

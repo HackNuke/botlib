@@ -3,13 +3,13 @@
 
 "bot package modules"
 
+
 from bot.tbl import Tbl
 
 
 from bot import bus
 from bot import cfg
 from bot import clt
-from bot import dbg
 from bot import dbs
 from bot import evt
 from bot import fnc
@@ -48,7 +48,6 @@ from bot import usr
 
 
 Tbl.add(bsc)
-Tbl.add(dbg)
 Tbl.add(irc)
 Tbl.add(opt)
 Tbl.add(rss)

@@ -11,10 +11,10 @@ import types
 
 class Thr(threading.Thread):
 
-    def __init__(self, func, *args, daemon=True):
-        super().__init__(None, self.run, "", (), {}, daemon=daemon)
+    def __init__(self, func, name, *args, daemon=True):
+        super().__init__(None, self.run, name, (), {}, daemon=daemon)
         self.errors = []
-        self.name = getname(func)
+        self.name = name
         self.queue = queue.Queue()
         self.queue.put_nowait((func, args))
         self.result = None
@@ -59,6 +59,7 @@ def getname(o):
 
 
 def launch(func, *args, **kwargs):
-    t = Thr(func, *args)
+    name = kwargs.get("name", getname(func))
+    t = Thr(func, name, *args)
     t.start()
     return t

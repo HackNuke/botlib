@@ -8,6 +8,7 @@ import datetime
 import json
 import os
 import time
+import _thread
 
 
 from .fnc import cdir, search
@@ -15,6 +16,7 @@ from .jsn import ObjectDecoder, ObjectEncoder
 from .krn import Cfg
 from .obj import Object, update
 from .tbl import Cls
+from .utl import locked
 
 
 def __dir__():
@@ -28,6 +30,9 @@ def __dir__():
          'save',
          'dump',
     )
+
+
+dblock = _thread.allocate_lock()
 
 
 class Db(Object):
@@ -141,6 +146,7 @@ def fntime(daystr):
     return t
 
 
+@locked(dblock)
 def fns(name, timed=None):
     if not name:
         return []
@@ -169,6 +175,7 @@ def fns(name, timed=None):
     return sorted(res, key=fntime)
 
 
+@locked(dblock)
 def hook(hfn):
     if hfn.count(os.sep) > 3:
         oname = hfn.split(os.sep)[-4:]

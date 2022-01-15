@@ -207,7 +207,7 @@ def ftc(event):
     fetcher.start(False)
     thrs = fetcher.run()
     for thr in thrs:
-        res.append(thr.join() or 0)
+        res.append(thr.join())
     if res:
         event.reply(",".join([str(x) for x in res]))
         return

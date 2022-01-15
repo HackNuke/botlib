@@ -62,7 +62,6 @@ class Cmd(Object):
         if f:
             f(e)
             e.show()
-        e.ready()
 
     @staticmethod
     def handle(e):
@@ -71,6 +70,7 @@ class Cmd(Object):
         except Exception as ex:
             e.errors.append(ex)
             Cmd.errors.append(ex)
+        finally:
             e.ready()
 
     @staticmethod
