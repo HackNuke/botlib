@@ -12,9 +12,9 @@ import time
 
 from .bus import Bus
 from .cfg import Cfg
+from .cmd import Cmd, dispatch
 from .evt import Event
 from .prs import parse
-from .tbl import Cmd
 
 
 def __dir__():
@@ -54,7 +54,7 @@ def kcmd(clt, txt):
     e.channel = ""
     e.orig = repr(clt)
     e.txt = txt
-    Cmd.handle(e)
+    dispatch(clt, e)
     e.wait()
     return e.result
 

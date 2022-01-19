@@ -9,6 +9,9 @@ import threading
 import types
 
 
+from bot.err import Restart, Stop
+
+
 class Thr(threading.Thread):
 
     def __init__(self, func, name, *args, daemon=True):
@@ -35,12 +38,12 @@ class Thr(threading.Thread):
         self.setName(self.name)
         try:
             self.result = func(*args)
+        except (Restart, Stop):
+            pass
         except Exception as ex:
             self.errors.append(ex)
             if args and "errors" in args[0]:
                 args[0].errors.append(self)
-            if args and "ready" in args[0]:
-                args[0].ready()
 
 
 def getname(o):

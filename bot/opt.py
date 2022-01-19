@@ -8,8 +8,8 @@ import queue
 import threading
 
 
+from .cmd import Cmd
 from .obj import Object
-from .tbl import Cmd
 from .thr import launch
 
 

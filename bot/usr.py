@@ -4,9 +4,9 @@
 "user"
 
 
+from .cmd import Cmd
 from .dbs import find, save
 from .obj import Object, update
-from .tbl import Cmd
 
 
 def __dir__():

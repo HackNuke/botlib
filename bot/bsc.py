@@ -9,11 +9,12 @@ import time
 
 
 from bot.bus import Bus
+from bot.cls import Cls
+from bot.cmd import Cmd
 from bot.dbs import Db, fntime, save
 from bot.dbs import find
 from bot.fnc import format
 from bot.obj import Object, get, keys, update
-from bot.tbl import Cls, Cmd
 from bot.thr import getname
 from bot.prs import elapsed
 
@@ -53,13 +54,14 @@ def cmd(event):
     event.reply(",".join((sorted(keys(Cmd.cmd)))))
 
 
-
 def err(event):
-    if not Cmd.errors:
+    if not Cmd.events:
         event.reply("no errors")
         return
-    for bot in Bus.objs:
-        event.reply(Cmd.errors)
+    event.reply("%s events had errors" % len(Cmd.events))
+    for e in Cmd.events:
+        for err in e.errors:
+            event.reply(err)
 
 
 def flt(event):

@@ -9,10 +9,10 @@ import time
 
 
 from bot.bus import Bus
+from bot.cls import Cls
 from bot.dbs import last
 from bot.obj import Object
 from bot.thr import launch
-from bot.tbl import Cls
 
 
 class Cfg(Object):

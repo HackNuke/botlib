@@ -1,11 +1,13 @@
 # This file is placed in the Public Domain.
 
 
-from bot.tbl import Cmd
+from bot.cmd import Cmd
+from bot.err import Restart, Stop
+from bot.lop import Loop
 
 
 def rse(event):
-    raise Exception("debug!")
+    raise Restart
 
 
 Cmd.add(rse)

@@ -29,6 +29,7 @@ class Event(Object):
         self.origin = ""
         self.result = []
         self.thrs = []
+        self.type = "event"
 
     def bot(self):
         return Bus.byorig(self.orig)

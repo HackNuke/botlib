@@ -13,7 +13,6 @@ from bot import clt
 from bot import dbs
 from bot import evt
 from bot import fnc
-from bot import hdl
 from bot import jsn
 from bot import krn
 from bot import opt
@@ -29,7 +28,6 @@ Tbl.add(clt)
 Tbl.add(dbs)
 Tbl.add(evt)
 Tbl.add(fnc)
-Tbl.add(hdl)
 Tbl.add(jsn)
 Tbl.add(krn)
 Tbl.add(opt)
@@ -40,16 +38,20 @@ Tbl.add(tms)
 
 
 from bot import bsc
+from bot import dbg
 from bot import irc
 from bot import opt
 from bot import rss
+from bot import tdr
 from bot import udp
 from bot import usr
 
 
 Tbl.add(bsc)
+Tbl.add(dbg)
 Tbl.add(irc)
 Tbl.add(opt)
 Tbl.add(rss)
+Tbl.add(tdr)
 Tbl.add(udp)
 Tbl.add(usr)

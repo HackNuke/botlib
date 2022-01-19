@@ -11,14 +11,16 @@ import urllib
 
 
 from bot.bus import Bus
+from bot.cls import Cls
+from bot.cmd import Cmd
 from bot.dbs import Db, find, last, save
 from bot.fnc import edit
 from bot.krn import Cfg
 from bot.obj import Object, get, update
 from bot.prs import spl
-from bot.tbl import Cls, Cmd
 from bot.tms import Repeater
 from bot.thr import launch
+
 
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode

@@ -15,14 +15,15 @@ import _thread
 
 
 from bot.bus import Bus
+from bot.cbs import Cbs
 from bot.clt import Client
+from bot.cmd import Cmd
 from bot.dbs import last, save
 from bot.evt import Event
+from bot.err import Restart, Stop
 from bot.fnc import edit, format
-from bot.hdl import Handler, Stop
 from bot.obj import Object
 from bot.opt import Output
-from bot.tbl import Cmd, Dpt
 from bot.thr import launch
 from bot.usr import Users
 from bot.utl import locked
@@ -55,7 +56,7 @@ class Cfg(Object):
     sasl = False
     server = "localhost"
     servermodes = ""
-    sleep = 30
+    sleep = 60
     username = "botlib"
     users = False
 
@@ -91,11 +92,11 @@ class Event(Event):
         self.txt = ""
 
 
-class IRC(Output, Handler):
+class IRC(Output, Client):
 
     def __init__(self):
+        Client.__init__(self)
         Output.__init__(self)
-        Handler.__init__(self)
         self.buffer = []
         self.cfg = Cfg()
         self.connected = threading.Event()
@@ -151,6 +152,7 @@ class IRC(Output, Handler):
         self.state.last = time.time()
 
     def connect(self, server, port=6667):
+        self.connected.clear()
         if self.cfg.password:
             self.cfg.sasl = True
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
@@ -170,7 +172,6 @@ class IRC(Output, Handler):
             return True
         return False
 
-
     def doconnect(self, server, nick, port=6667):
         self.state.nrconnect = 0
         while 1:
@@ -181,6 +182,7 @@ class IRC(Output, Handler):
             except Exception as ex:
                 self.errors.append(ex)
             time.sleep(self.cfg.sleep)
+        self.logon(server, nick)
 
     def dosay(self, channel, txt):
         wrapper = TextWrap()
@@ -218,9 +220,6 @@ class IRC(Output, Handler):
     def fileno(self):
         return self.sock.fileno()
 
-    def handle(self, e):
-        Dpt.dispatch(self, e)
-
     def joinall(self):
         for channel in self.channels:
             self.command("JOIN", channel)
@@ -228,7 +227,7 @@ class IRC(Output, Handler):
     def keep(self):
         while 1:
             self.keeprunning = True
-            time.sleep(60)
+            time.sleep(self.cfg.sleep)
             self.state.pongcheck = True
             self.command("PING", self.cfg.server)
             time.sleep(10.0)
@@ -326,9 +325,6 @@ class IRC(Output, Handler):
         self.state.last = time.time()
         self.state.nrsend += 1
 
-    def register(self, k, v):
-        Dpt.add(k, v)
-
     def say(self, channel, txt):
         self.oput(channel, txt)
 
@@ -355,12 +351,10 @@ class IRC(Output, Handler):
         assert self.cfg.channel
         self.connected.clear()
         self.joined.clear()
-        self.sock = None
-        self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
-        self.logon(self.cfg.server, self.cfg.nick)
-        Bus.add(self)
-        Handler.start(self)
+        #self.sock = None
+        Client.start(self)
         Output.start(self)
+        self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         if not self.keeprunning:
             launch(self.keep)
 
@@ -369,72 +363,11 @@ class IRC(Output, Handler):
             self.sock.shutdown(2)
         except OSError:
             pass
-        Handler.stop(self)
+        Client.stop(self)
         Output.stop(self)
 
     def wait(self):
         self.joined.wait()
-
-
-class DCC(Client, Handler):
-
-    def __init__(self):
-        Client.__init__(self)
-        Handler.__init__(self)
-        self.encoding = "utf-8"
-        self.origin = ""
-        self.sock = None
-        self.speed = "fast"
-
-    def raw(self, txt):
-        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
-
-    def connect(self, dccevent):
-        arguments = dccevent.txt.split()
-        addr = arguments[3]
-        port = int(arguments[4])
-        if ":" in addr:
-            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        else:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            self.sock.connect((addr, port))
-        except ConnectionRefusedError:
-            return
-        self.sock.setblocking(1)
-        os.set_inheritable(self.sock.fileno(), os.O_RDWR)
-        self.origin = dccevent.origin
-        self.start()
-        self.raw("Welcone %s, start at %s" % (self.origin, time.ctime(time.time()).replace("  ", " ")))
-
-    def event(self, txt, origin=None):
-        e = Handler.event(self, txt, origin)
-        e.sock = self.sock
-        return e
-
-    def poll(self):
-        if not self.sock:
-            return
-        txt = str(self.sock.recv(512), "utf8")
-        if txt == "":
-            raise Stop
-        return self.event(txt)
-
-    def start(self):
-        Bus.add(self)
-        Handler.start(self)
-
-
-class TextWrap(textwrap.TextWrapper):
-
-    def __init__(self):
-        super().__init__()
-        self.break_long_words = False
-        self.drop_whitespace = False
-        self.fix_sentence_endings = True
-        self.replace_whitespace = True
-        self.tabsize = 4
-        self.width = 450
 
 
 def AUTH(clt, obj):
@@ -501,13 +434,65 @@ def PRIVMSG(clt, obj):
         obj.txt = " ".join(splitted)
         if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
             return
-        obj.parse()
-        Cmd.handle(obj)
+        obj.type = "event"
+        clt.handle(obj)
 
 
 def QUIT(clt, obj):
     if obj.orig and obj.orig in clt.zelf:
         clt.reconnect()
+
+
+class DCC(Client):
+
+    def __init__(self):
+        Client.__init__(self)
+        self.encoding = "utf-8"
+        self.origin = ""
+        self.sock = None
+        self.speed = "fast"
+
+    def raw(self, txt):
+        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
+
+    def connect(self, dccevent):
+        arguments = dccevent.txt.split()
+        addr = arguments[3]
+        port = int(arguments[4])
+        if ":" in addr:
+            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        else:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.connect((addr, port))
+        except ConnectionRefusedError:
+            return
+        self.sock.setblocking(1)
+        os.set_inheritable(self.sock.fileno(), os.O_RDWR)
+        self.origin = dccevent.origin
+        self.start()
+        self.raw("Welcome %s, start at %s" % (self.origin, time.ctime(time.time()).replace("  ", " ")))
+
+    def poll(self):
+        if not self.sock:
+            return
+        txt = str(self.sock.recv(512), "utf8")
+        if txt == "":
+            raise Stop
+        e =  self.event(txt)
+        e.sock = self.sock
+        return e
+
+class TextWrap(textwrap.TextWrapper):
+
+    def __init__(self):
+        super().__init__()
+        self.break_long_words = False
+        self.drop_whitespace = False
+        self.fix_sentence_endings = True
+        self.replace_whitespace = True
+        self.tabsize = 4
+        self.width = 450
 
 
 def cfg(event):
