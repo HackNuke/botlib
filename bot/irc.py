@@ -4,6 +4,7 @@
 "bot"
 
 
+import base64
 import os
 import queue
 import socket
@@ -14,19 +15,16 @@ import time
 import _thread
 
 
-from bot.bus import Bus
-from bot.cbs import Cbs
-from bot.clt import Client
-from bot.cmd import Cmd
-from bot.dbs import last, save
-from bot.evt import Event
-from bot.err import Restart, Stop
-from bot.fnc import edit, format
-from bot.obj import Object
-from bot.opt import Output
-from bot.thr import launch
-from bot.usr import Users
-from bot.utl import locked
+from .cmd import Cmd
+from .dbs import last, save
+from .evt import Event
+from .fnc import edit, format
+from .hdl import Handler
+from .obj import Object
+from .opt import Output
+from .thr import launch
+from .usr import Users
+from .utl import locked
 
 
 def __dir__():
@@ -48,16 +46,16 @@ saylock = _thread.allocate_lock()
 class Cfg(Object):
 
     cc = "!"
-    channel = "#botlib"
-    nick = "botlib"
+    channel = "#botd"
+    nick = "botd"
     password = ""
     port = 6667
-    realname = "python3 bot library"
+    realname = "24/7 channel daemon"
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = "botlib"
+    username = "botd"
     users = False
 
     def __init__(self):
@@ -88,14 +86,14 @@ class Event(Event):
         self.origin = ""
         self.rawstr = ""
         self.sock = None
-        self.type = ""
+        self.type = "event"
         self.txt = ""
 
 
-class IRC(Output, Client):
+class IRC(Output, Handler):
 
     def __init__(self):
-        Client.__init__(self)
+        Handler.__init__(self)
         Output.__init__(self)
         self.buffer = []
         self.cfg = Cfg()
@@ -172,6 +170,9 @@ class IRC(Output, Client):
             return True
         return False
 
+    def disconnect(self):
+        self.sock.shutdown(2)
+
     def doconnect(self, server, nick, port=6667):
         self.state.nrconnect = 0
         while 1:
@@ -226,15 +227,15 @@ class IRC(Output, Client):
 
     def keep(self):
         while 1:
+            self.connected.wait()
             self.keeprunning = True
             time.sleep(self.cfg.sleep)
             self.state.pongcheck = True
             self.command("PING", self.cfg.server)
             time.sleep(10.0)
             if self.state.pongcheck:
-                self.keeprunning = False
+                #self.keeprunning = False
                 self.restart()
-                break
 
     def logon(self, server, nick):
         self.raw("NICK %s" % nick)
@@ -325,6 +326,13 @@ class IRC(Output, Client):
         self.state.last = time.time()
         self.state.nrsend += 1
 
+
+    def reconnect(self):
+        self.disconnect()
+        self.connected.clear()
+        self.joined.clear()
+        self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
+
     def say(self, channel, txt):
         self.oput(channel, txt)
 
@@ -351,9 +359,8 @@ class IRC(Output, Client):
         assert self.cfg.channel
         self.connected.clear()
         self.joined.clear()
-        #self.sock = None
-        Client.start(self)
-        Output.start(self)
+        launch(Handler.start, self)
+        launch(Output.start, self)
         self.doconnect(self.cfg.server, self.cfg.nick, int(self.cfg.port))
         if not self.keeprunning:
             launch(self.keep)
@@ -363,97 +370,102 @@ class IRC(Output, Client):
             self.sock.shutdown(2)
         except OSError:
             pass
-        Client.stop(self)
         Output.stop(self)
+        Handler.stop(self)
 
     def wait(self):
         self.joined.wait()
 
 
-def AUTH(clt, obj):
-    clt.raw("AUTHENTICATE %s" % clt.cfg.password)
+def AUTH(event):
+    bot = event.bot()
+    bot.raw("AUTHENTICATE %s" % bot.cfg.password)
 
 
-def CAP(clt, obj):
-    if clt.cfg.password and "ACK" in obj.arguments:
-        clt.raw("AUTHENTICATE PLAIN")
+def CAP(event):
+    bot = event.bot()
+    if bot.cfg.password and "ACK" in event.arguments:
+        bot.raw("AUTHENTICATE PLAIN")
     else:
-        clt.raw("CAP REQ :sasl")
+        bot.raw("CAP REQ :sasl")
 
 
-def h903(clt, obj):
-    clt.raw("CAP END")
+def h903(event):
+    bot = event.bot()
+    bot.raw("CAP END")
 
 
-def h904(clt):
-    clt.raw("CAP END")
+def h904(event):
+    bot = event.bot()
+    bot.raw("CAP END")
 
 
-def ERROR(clt, obj):
-    clt.state.nrerror += 1
-    clt.state.error = obj.txt
+def ERROR(event):
+    bot = event.bot()
+    bot.state.nrerror += 1
+    bot.state.error = event.txt
 
 
-def KILL(clt, obj):
+def KILL(event):
     pass
 
 
-def LOG(clt, obj):
+def LOG(event):
     pass
 
 
-def NOTICE(clt, obj):
-    if obj.txt.startswith("VERSION"):
+def NOTICE(event):
+    bot = event.bot()
+    if event.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
-            "botlib",
-            clt.cfg.version or "1",
-            clt.cfg.username or "botlib",
+            "botd",
+            bot.cfg.version or "1",
+            bot.cfg.username or "botd",
         )
-        clt.command("NOTICE", obj.channel, txt)
+        bot.command("NOTICE", event.channel, txt)
 
 
-def PRIVMSG(clt, obj):
-    if obj.txt.startswith("DCC CHAT"):
-        if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
+def PRIVMSG(event):
+    bot = event.bot()
+    if event.txt.startswith("DCC CHAT"):
+        if bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
             return
         try:
             dcc = DCC()
-            dcc.connect(obj)
+            dcc.connect(event)
             return
         except ConnectionError:
             return
-    if obj.txt:
-        if obj.txt[0] in [clt.cfg.cc, "!"]:
-            obj.txt = obj.txt[1:]
-        elif obj.txt.startswith("%s:" % clt.cfg.nick):
-            obj.txt = obj.txt[len(clt.cfg.nick)+1:]
+    if event.txt:
+        if event.txt[0] in [bot.cfg.cc, "!"]:
+            event.txt = event.txt[1:]
+        elif event.txt.startswith("%s:" % bot.cfg.nick):
+            event.txt = event.txt[len(bot.cfg.nick)+1:]
         else:
             return
-        splitted = obj.txt.split()
+        splitted = event.txt.split()
         splitted[0] = splitted[0].lower()
-        obj.txt = " ".join(splitted)
-        if clt.cfg.users and not clt.users.allowed(obj.origin, "USER"):
+        event.txt = " ".join(splitted)
+        if bot.cfg.users and not bot.users.allowed(event.origin, "USER"):
             return
-        obj.type = "event"
-        clt.handle(obj)
+        event.type = "event"
+        bot.handle(event)
 
 
-def QUIT(clt, obj):
-    if obj.orig and obj.orig in clt.zelf:
-        clt.reconnect()
+def QUIT(event):
+    bot = event.bot()
+    if event.orig and event.orig in bot.zelf:
+        bot.reconnect()
 
 
-class DCC(Client):
+class DCC(Handler):
 
     def __init__(self):
-        Client.__init__(self)
+        Handler.__init__(self)
         self.encoding = "utf-8"
         self.origin = ""
         self.sock = None
         self.speed = "fast"
-
-    def raw(self, txt):
-        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
     def connect(self, dccevent):
         arguments = dccevent.txt.split()
@@ -471,17 +483,22 @@ class DCC(Client):
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
         self.origin = dccevent.origin
         self.start()
-        self.raw("Welcome %s, start at %s" % (self.origin, time.ctime(time.time()).replace("  ", " ")))
+        self.raw("BOT start at %s" % time.ctime(time.time()).replace("  ", " "))
 
     def poll(self):
         if not self.sock:
             return
         txt = str(self.sock.recv(512), "utf8")
         if txt == "":
-            raise Stop
-        e =  self.event(txt)
+            raise ConnectionResetError
+        e = Event()
+        e.orig = repr(self)
+        e.txt = txt.rstrip()
         e.sock = self.sock
         return e
+
+    def raw(self, txt):
+        self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
 class TextWrap(textwrap.TextWrapper):
 
@@ -525,6 +542,25 @@ def ops(event):
         bot.command("MODE", event.channel, "+o", event.nick)
 
 
+def pwd(event):
+    if len(event.args) != 2:
+        event.reply("pwd <nick> <password>")
+        return
+    print(event.args)
+    m = "\x00%s\x00%s" % (event.args[0], event.args[1])
+    mb = m.encode("ascii")
+    bb = base64.b64encode(mb)
+    bm = bb.decode("ascii")
+    event.reply(bm)
+
+
+def rct(event):
+    bot = event.bot()
+    if "reconnect" in bot:
+        bot.reconnect()
+
 Cmd.add(cfg)
 Cmd.add(nck)
 Cmd.add(ops)
+Cmd.add(pwd)
+Cmd.add(rct)

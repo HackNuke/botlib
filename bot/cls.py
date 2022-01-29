@@ -1,10 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"table"
-
-
-import _thread
+"classes"
 
 
 from .fnc import register
@@ -37,4 +34,3 @@ class Cls(Object):
     @staticmethod
     def get(nm):
         return get(Cls.cls, nm)
-

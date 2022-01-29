@@ -6,17 +6,30 @@
 
 import queue
 import threading
+import time
 import types
 
 
-from bot.err import Restart, Stop
+from .evt import Event
+
+
+def __dir__():
+    return (
+        "getname",
+        "launch",
+        "thr"
+    )
+
+
+starttime = time.time()
 
 
 class Thr(threading.Thread):
 
     def __init__(self, func, name, *args, daemon=True):
         super().__init__(None, self.run, name, (), {}, daemon=daemon)
-        self.errors = []
+        self.exc = None
+        self.evt = None
         self.name = name
         self.queue = queue.Queue()
         self.queue.put_nowait((func, args))
@@ -35,15 +48,16 @@ class Thr(threading.Thread):
 
     def run(self):
         func, args = self.queue.get()
+        if args and isinstance(args[0], Event):
+            self.evt = args[0]
         self.setName(self.name)
         try:
             self.result = func(*args)
-        except (Restart, Stop):
-            pass
         except Exception as ex:
-            self.errors.append(ex)
-            if args and "errors" in args[0]:
-                args[0].errors.append(self)
+            self.exc = ex
+        if self.evt:
+            self.evt.ready()
+        return self.result
 
 
 def getname(o):

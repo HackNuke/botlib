@@ -8,11 +8,11 @@ import socket
 import time
 
 
-from bot.bus import Bus
-from bot.cls import Cls
-from bot.dbs import last
-from bot.obj import Object
-from bot.thr import launch
+from .cls import Cls
+from .flt import Fleet
+from .dbs import last
+from .obj import Object
+from .thr import launch
 
 
 class Cfg(Object):
@@ -39,7 +39,7 @@ class UDP(Object):
         self.cfg = Cfg()
 
     def output(self, txt, addr):
-        Bus.announce(txt.replace("\00", ""))
+        Fleet.announce(txt.replace("\00", ""))
 
     def server(self):
         try:

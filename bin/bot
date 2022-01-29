@@ -13,13 +13,13 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from bot.bus import Bus
-from bot.clt import Client
+from bot.cbs import Cbs
+from bot.cmd import Cmd
 from bot.evt import Event
-from bot.hdl import Handler
+from bot.flt import Fleet
+from bot.hdl import Handler, dispatch
 from bot.krn import Cfg, boot, kcmd, wait
 from bot.fnc import format
-from bot.tbl import Cmd
 from bot.thr import launch
 
 
@@ -31,20 +31,20 @@ from bot.rss import Fetcher
 import bot.all
 
 
+ICfg.channel = "#botd"
+ICfg.nick = "botd"
+
+
 Cfg.wd = os.path.expanduser("~/.bot")
 
 
-errors = []
-
-
-class Console(Client, Handler):
-
+class Console(Handler):
 
     def __init__(self):
-        Client.__init__(self)
         Handler.__init__(self)
-        Bus.add(self)
 
+    def announce(self, txt):
+        pass
 
     def handle(self, e):
         Handler.handle(self, e)
@@ -52,8 +52,8 @@ class Console(Client, Handler):
 
     def poll(self):
         e = Event()
-        e.orig = repr(self)
         e.txt = input("> ")
+        e.orig = repr(self)
         return e
 
     def raw(self, txt):
@@ -74,6 +74,11 @@ def daemon():
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
+def nprint(txt):
+    print(txt)
+    sys.stdout.flush()
+    
+
 def wrap(func):
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
@@ -82,8 +87,6 @@ def wrap(func):
     except (EOFError, KeyboardInterrupt):
         print("")
     finally:
-        for err in Cmd.errors:
-            traceback.print_exception(type(err), err, err.__traceback__)
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
@@ -92,26 +95,19 @@ def main():
     if Cfg.txt:
         c = Console()
         return kcmd(c, Cfg.otxt)
-    dowait = False
+    nprint("BOT start at %s" % (time.ctime(time.time()).replace("  ", " ")))
     if Cfg.daemon:
         daemon()
-        dowait = True
-    if "c" in Cfg.opts:
-        print("BOT start at %s" % (time.ctime(time.time()).replace("  ", " ")))
-        print(format(ICfg, "server,port,channel,nick,cc,sasl"))
-        sys.stdout.flush()
-        c = Console()
-        c.start()
-        dowait = True
     if "i" in Cfg.opts:
         i = IRC()
         i.start()
-        dowait = True
+        nprint(format(i.cfg, "server,port,channel,nick,cc"))
     if "r" in Cfg.opts:
         f = Fetcher()
         f.start()
-        dowait = True
-    if dowait:
-        wait()
+    c = Console()
+    c.start()
+    wait()
+
 
 wrap(main)

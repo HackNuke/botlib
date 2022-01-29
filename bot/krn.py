@@ -10,10 +10,9 @@ import pwd
 import time
 
 
-from .bus import Bus
 from .cfg import Cfg
-from .cmd import Cmd, dispatch
 from .evt import Event
+from .flt import Fleet
 from .prs import parse
 
 
@@ -50,12 +49,12 @@ def boot(txt):
 def kcmd(clt, txt):
     if not txt:
         return False
+    Fleet.add(clt)
     e = Event()
     e.channel = ""
     e.orig = repr(clt)
     e.txt = txt
-    dispatch(clt, e)
-    e.wait()
+    clt.handle(e)
     return e.result
 
 

@@ -10,16 +10,22 @@ import threading
 import urllib
 
 
-from bot.bus import Bus
-from bot.cls import Cls
-from bot.cmd import Cmd
-from bot.dbs import Db, find, last, save
-from bot.fnc import edit
-from bot.krn import Cfg
-from bot.obj import Object, get, update
-from bot.prs import spl
-from bot.tms import Repeater
-from bot.thr import launch
+try:
+    import feedparser
+except ImportError:
+    pass
+
+
+from .cls import Cls
+from .cmd import Cmd
+from .dbs import Db, find, last, save
+from .flt import Fleet
+from .fnc import edit
+from .krn import Cfg
+from .obj import Object, get, update
+from .prs import spl
+from .rpt import Repeater
+from .thr import launch
 
 
 from urllib.error import HTTPError, URLError
@@ -115,7 +121,7 @@ class Fetcher(Object):
             save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
-            Bus.announce(txt)
+            Fleet.announce(txt)
         return counter
 
     def run(self):
@@ -140,7 +146,6 @@ def getfeed(url):
         return [Object(), Object()]
     if not result:
         return [Object(), Object()]
-    import feedparser
     result = feedparser.parse(result.data)
     if result and "entries" in result:
         for entry in result["entries"]:

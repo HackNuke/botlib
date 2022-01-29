@@ -1,34 +1,24 @@
 # This file is placed in the Public Domain.
 
 
-"handler"
+"event handler"
 
 
-import queue
-import time
-import _thread
+import threading
 
 
-from .evt import Event
+from .cmd import Cmd
+from .cbs import Cbs
+from .flt import Fleet
 from .obj import Object
-from .tbl import Cmd
 from .thr import launch
-from .utl import locked
 
 
 def __dir__():
     return (
         "Handler",
-        "Stop"
+        "dispatch",
     )
-
-
-cmdlock = _thread.allocate_lock()
-
-
-class Stop(Exception):
-
-    pass
 
 
 class Handler(Object):
@@ -36,45 +26,46 @@ class Handler(Object):
     def __init__(self):
         Object.__init__(self)
         self.errors = []
-        self.queue = queue.Queue()
-        self.stopped = False
+        self.stopped = threading.Event()
+        self.register("event", dispatch)
 
-    def event(self, txt, origin=None):
-        e = Event()
-        e.orig = repr(self)
-        e.origin = origin or "user@handler"
-        e.txt = txt
-        return e
+    def announce(self, txt):
+        self.raw(txt)
 
     def handle(self, e):
-        Cmd.handle(e)
+        e.thrs.append(launch(Cbs.callback, e, name=e.txt))
 
     def loop(self):
-        while not self.stopped:
-            try:
-                e = self.poll()
-                if e:
-                    e.thrs.append(launch(self.handle,e))
-            except Stop:
-                break
+        while not self.stopped.isSet():
+            self.handle(self.poll())
 
-    def poll(self):
-        return self.queue.get()
+    def raw(self, txt):
+        raise NotImplementedError
 
-    def put(self, e):
-        self.queue.put_nowait(e)
+    def register(self, typ, cb):
+        Cbs.add(typ, cb)
+
 
     def restart(self):
         self.stop()
         self.start()
 
+    def say(self, channel, txt):
+        self.raw(txt)
+
     def start(self):
+        Fleet.add(self)
+        self.stopped.clear()
         launch(self.loop)
 
     def stop(self):
-        self.stopped = True
-        self.queue.put(None)
+        pass
 
-    def wait(self):
-        while 1:
-            time.sleep(1.0)
+
+def dispatch(e):
+    e.parse()
+    f = Cmd.get(e.cmd)
+    if f:
+        f(e)
+        e.show()
+    e.ready()

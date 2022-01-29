@@ -1,36 +1,34 @@
 # This file is placed in the Public Domain
 
 
-from .obj import Object, get
+"command"
+
+
+from .obj import Object, get, keys
 from .fnc import register
 
+
+def __dir__():
+    return (
+        "cmd",
+    )
 
 class Cmd(Object):
 
     cmd = Object()
-    events = []
 
     @staticmethod
-    def add(cmd):
-        register(Cmd.cmd, cmd.__name__, cmd)
+    def add(command):
+        register(Cmd.cmd, command.__name__, command)
 
     @staticmethod
-    def get(cmd):
-        f =  get(Cmd.cmd, cmd)
+    def get(command):
+        f =  get(Cmd.cmd, command)
         return f
 
 
-def dispatch(clt, e):
-    try:
-        e.parse()
-        f = Cmd.get(e.cmd)
-        if f:
-            f(e)
-            e.show()
-    except (Restart, Stop):
-        pass
-    except Exception as ex:
-        e.errors.append(ex)
-        Cmd.events.append(e)
-    finally:
-        e.ready()
+def cmd(event):
+    event.reply(",".join((sorted(keys(Cmd.cmd)))))
+
+
+Cmd.add(cmd)
