@@ -55,6 +55,7 @@ def kcmd(clt, txt):
     e.orig = repr(clt)
     e.txt = txt
     clt.handle(e)
+    e.wait()
     return e.result
 
 
