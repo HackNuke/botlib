@@ -36,7 +36,8 @@ def __dir__():
         "DCC",
         "cfg",
         "nck",
-        "ops"
+        "ops",
+        "pwd"
     )
 
 
@@ -546,7 +547,6 @@ def pwd(event):
     if len(event.args) != 2:
         event.reply("pwd <nick> <password>")
         return
-    print(event.args)
     m = "\x00%s\x00%s" % (event.args[0], event.args[1])
     mb = m.encode("ascii")
     bb = base64.b64encode(mb)

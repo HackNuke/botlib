@@ -32,11 +32,11 @@ you can fetch the source code (or clone/fork) from git repository.
 or download the tar from https://pypi.org/project/botlib/#files
 
 
-object programming
-------------------
+functional object programming
+=============================
 
-object Programming provides a “move methods to functions”, if you are used
-to functional programming you’ll like it (or not):
+functional object programming provides a “move methods to functions”, if you
+are used to functional programming you’ll like it (or not):
 
 ``obj.method(*args) -> method(obj, *args)``
 
@@ -76,51 +76,54 @@ concerned (user defined methods):
 modules
 -------
 
-| bot.bus      event bus
-| bot.clt      client
+| bot.cbs	callback
+| bot.cfg	config
+| bot.cls	class
+| bot.cmd	command
 | bot.dbs	database
-| bot.dpt	dispatcher
 | bot.evt	event
+| bot.flt	fleet
+| bot.fnc	function
 | bot.fnd	find
-| bot.hdl	handler
-| bot.irc	irc bot
-| bot.log	log command
-| bot.obj	objects
-| bot.ofn	object functions
-| bot.opt	output cache
-| bot.prs	parsing
+| bot.hdl	handle
+| bot.irc	bot
+| bot.jsn	json
+| bot.krn	kernel
+| bot.obj	object
+| bot.opt	output
+| bot.prs	parse
+| bot.que	queue
 | bot.rpt	repeater
-| bot.rss	rss poller
-| bot.run	runtime
-| bot.sys	system commands
+| bot.rss	rss
+| bot.sta	stats
 | bot.tbl	table
-| bot.thr	threads
+| bot.tdo	todo
+| bot.thr	thread
 | bot.tmr	timer
-| bot.tms	times
-| bot.utl	utils
+| bot.udp	relay
+| bot.usr	user
+| bot.utl	utl
 
 
-commands
---------
-
-cd into the extracted directory and add your module to the bot package.
-
-open your module file, in this example it's the hlo (hello) module:
+**commands**
 
 ``joe bot/hlo.py``
 
-add your command code to the file.
-
 ::
+
+ from bot.cmd import Cmd
 
  def hlo(event):
      event.reply("hello!")
 
-then add your module to the all module so it get imported on start.
+ Cmd.add(hlo)
 
 ``joe bot/all.py``
 
 ::
 
- import bot.hlo as hlo
+ from bot.tbl import Tbl
+
+ from bot import hlo
+
  Tbl.add(hlo)
