@@ -8,7 +8,7 @@
 import sys
 
 
-from bot.clt import Client
+from bot.hdl import Handler
 from bot.krn import Cfg, kcmd
 
 
@@ -27,10 +27,14 @@ ICfg.realname = "24/7 channel daemon"
 Cfg.wd = "/var/lib/botd/"
 
 
-def main():
-    clt = Client()
-    for line in kcmd(clt, " ".join(sys.argv[1:])):
-        print(line)
+class CLI(Handler):
 
+    def raw(self, txt):
+        print(txt)
+
+
+def main():
+    c = CLI()
+    kcmd(c, " ".join(sys.argv[1:]))
 
 main()

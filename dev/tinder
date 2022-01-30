@@ -16,7 +16,8 @@ sys.path.insert(0, os.getcwd())
 
 
 from bot.bus import Bus
-from bot.clt import Client
+from bot.cls import Cls
+from bot.cmd import Cmd
 from bot.evt import Event
 from bot.dbs import find, fntime, last, listfiles, save
 from bot.obj import Object, get, items, keys, values, update
@@ -24,7 +25,7 @@ from bot.fnc import edit, format
 from bot.hdl import Handler
 from bot.krn import Cfg, boot
 from bot.prs import elapsed, parse
-from bot.tbl import Cls, Cmd, Tbl
+from bot.tbl import Tbl
 from bot.thr import Thr, getname, launch
 
 
@@ -51,11 +52,7 @@ results = []
 starttime = time.time()
 
 
-class CLI(Client, Handler):
-
-    def __init__(self):
-        Client.__init__(self)
-        Handler.__init__(self)
+class CLI(Handler):
 
     def raw(self, txt):
         results.append(txt)
@@ -125,6 +122,7 @@ def wrap(func):
         for err in errors:
             traceback.print_exception(type(err), err, err.__traceback__)
     print("\n%s events left (%s)" % (len(events), elapsed(time.time()-starttime)))
+
 
 def main():
     print("BOT tinder start at %s" % time.ctime(time.time()).replace("  ", " "))
