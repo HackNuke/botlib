@@ -1,18 +1,22 @@
 # This file is placed in the Public Domain.
 
 
-"parse"
+"parse input"
 
 
-from .obj import Object, update
+from .object import Object, get, update
 
 
 def __dir__():
     return (
+        "aliases"
         "elapsed",
         "parse",
         "spl"
     )
+
+
+aliases = Object()
 
 
 class Token(Object):
@@ -89,6 +93,12 @@ class Url(Token):
 
 
 def parse(o, ptxt):
+    spl = ptxt.split()
+    if spl:
+        w = spl[0]
+        w = get(aliases, w, w)
+        spl [0] = w
+        ptxt = " ".join(spl)
     o.txt = ptxt
     o.otxt = ptxt
     o.gets = Object()

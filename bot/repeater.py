@@ -1,11 +1,11 @@
 # This file is placed in the Public Domain.
 
 
-"repeater"
+"repeaters"
 
 
-from .tmr import Timer
-from .thr import launch
+from .timer import Timer
+from .thread import launch
 
 
 def __dir__():

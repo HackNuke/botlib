@@ -1,38 +1,48 @@
 # This file is placed in the Public Domain.
 
 
-"status"
+"status commands"
 
 
 import threading
 import time
 
 
-from .cmd import Cmd
-from .flt import Fleet
-from .obj import Object, get, update
-from .prs import elapsed
-from .thr import getname, starttime
+from .bus import Bus
+from .command import Command
+from .object import Object, get, keys, update
+from .parse import aliases, elapsed
+from .thread import getname, starttime
 
 
 def __dir__():
     return (
-        "flt",
-        "thr"
+        "commands",
+        "fleet"
+        "threads"
     )
 
 
-def flt(event):
+def commands(event):
+    event.reply(",".join((sorted(keys(Command.cmd)))))
+
+
+cmd = commands
+
+def fleet(event):
     try:
         index = int(event.args[0])
-        event.reply(Fleet.objs[index])
+        event.reply(Bus.objs[index])
         return
     except (KeyError, TypeError, IndexError, ValueError):
         pass
-    event.reply(" | ".join([getname(o) for o in Fleet.objs]))
+    event.reply(" | ".join([getname(o) for o in Bus.objs]))
 
 
-def thr(event):
+flt = fleet
+
+
+def threads(event):
     result = []
     for t in sorted(threading.enumerate(), key=lambda x: x.getName()):
         if str(t).startswith("<_"):
@@ -55,5 +65,12 @@ def thr(event):
         event.reply(" ".join(res))
 
 
-Cmd.add(flt)
-Cmd.add(thr)
+thr = threads
+
+
+Command.add(commands)
+Command.add(fleet)
+Command.add(threads)
+aliases.cmd = "commands"
+aliases.flt = "fleet"
+aliases.thr = "threads"

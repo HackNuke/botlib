@@ -10,10 +10,10 @@ def __dir__():
     )
 
 
-from .cls import Cls
-from .cmd import Cmd
-from .dbs import save
-from .obj import Object
+from .cls import Class
+from .command import Command
+from .database import save
+from .object import Object
 
 
 class Log(Object):
@@ -33,5 +33,5 @@ def log(event):
     event.reply("ok")
 
 
-Cls.add(Log)
-Cmd.add(log)
+Class.add(Log)
+Command.add(log)

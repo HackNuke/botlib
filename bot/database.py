@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"database"
+"database interface"
 
 
 import datetime
@@ -11,12 +11,12 @@ import time
 import _thread
 
 
-from .cls import Cls
-from .fnc import cdir, search
-from .jsn import ObjectDecoder, ObjectEncoder
-from .krn import Cfg
-from .obj import Object, update
-from .utl import locked
+from .cls import Class
+from .function import cdir, search
+from .json import ObjectDecoder, ObjectEncoder
+from .kernel import Config
+from .object import Object, update
+from .util import locked
 
 
 def __dir__():
@@ -38,45 +38,6 @@ dblock = _thread.allocate_lock()
 class Db(Object):
 
     names = Object()
-
-    def all(self, otype, selector=None, index=None, timed=None):
-        nr = -1
-        if selector is None:
-            selector = {}
-        for fn in fns(otype, timed):
-            o = hook(fn)
-            if selector and not search(o, selector):
-                continue
-            if "_deleted" in o and o._deleted:
-                continue
-            nr += 1
-            if index is not None and nr != index:
-                continue
-            yield fn, o
-
-    def deleted(self, otype):
-        for fn in fns(otype):
-            o = hook(fn)
-            if "_deleted" not in o or not o._deleted:
-                continue
-            yield fn, o
-
-    def every(self, selector=None, index=None, timed=None):
-        assert Cfg.wd
-        if selector is None:
-            selector = {}
-        nr = -1
-        for otype in os.listdir(os.path.join(Cfg.wd, "store")):
-            for fn in fns(otype, timed):
-                o = hook(fn)
-                if selector and not search(o, selector):
-                    continue
-                if "_deleted" in o and o._deleted:
-                    continue
-                nr += 1
-                if index is not None and nr != index:
-                    continue
-                yield fn, o
 
     def find(self, otype, selector=None, index=None, timed=None):
         if selector is None:
@@ -124,8 +85,8 @@ class Db(Object):
 
     @staticmethod
     def types():
-        assert Cfg.wd
-        path = os.path.join(Cfg.wd, "store")
+        assert Config.workdir
+        path = os.path.join(Config.workdir, "store")
         if not os.path.exists(path):
             return []
         return sorted(os.listdir(path))
@@ -150,8 +111,8 @@ def fntime(daystr):
 def fns(name, timed=None):
     if not name:
         return []
-    assert Cfg.wd
-    p = os.path.join(Cfg.wd, "store", name) + os.sep
+    assert Config.workdir
+    p = os.path.join(Config.workdir, "store", name) + os.sep
     res = []
     d = ""
     for rootdir, dirs, _files in os.walk(p, topdown=False):
@@ -182,7 +143,7 @@ def hook(hfn):
     else:
         oname = hfn.split(os.sep)
     cname = oname[0]
-    cls = Cls.get(cname)
+    cls = Class.get(cname)
     if cls:
         o = cls()
     else:
@@ -193,15 +154,15 @@ def hook(hfn):
 
 
 def listfiles(workdir):
-    path = os.path.join(Cfg.wd, "store")
+    path = os.path.join(Config.workdir, "store")
     if not os.path.exists(path):
         return []
     return sorted(os.listdir(path))
 
 
 def all(timed=None):
-    assert Cfg.wd
-    p = os.path.join(Cfg.wd, "store")
+    assert Config.workdir
+    p = os.path.join(Config.workdir, "store")
     for name in os.listdir(p):
         for fn in fns(name):
             yield fn
@@ -219,7 +180,7 @@ def dump(o, opath):
 def find(name, selector=None, index=None, timed=None, names=None):
     db = Db()
     if not names:
-        names = Cls.full(name)
+        names = Class.full(name)
     for n in names:
         for fn, o in db.find(n, selector, index, timed):
             yield fn, o
@@ -240,10 +201,10 @@ def last(o):
 def load(o, opath):
     if opath.count(os.sep) != 3:
         return
-    assert Cfg.wd
+    assert Config.workdir
     splitted = opath.split(os.sep)
     stp = os.sep.join(splitted[-4:])
-    lpath = os.path.join(Cfg.wd, "store", stp)
+    lpath = os.path.join(Config.workdir, "store", stp)
     if os.path.exists(lpath):
         with open(lpath, "r") as ofile:
             d = json.load(ofile, cls=ObjectDecoder)
@@ -252,11 +213,11 @@ def load(o, opath):
 
 
 def save(o):
-    assert Cfg.wd
+    assert Config.workdir
     prv = os.sep.join(o.__stp__.split(os.sep)[:2])
     o.__stp__ = os.path.join(prv,
                              os.sep.join(str(datetime.datetime.now()).split()))
-    opath = os.path.join(Cfg.wd, "store", o.__stp__)
+    opath = os.path.join(Config.workdir, "store", o.__stp__)
     dump(o, opath)
     os.chmod(opath, 0o444)
     return o.__stp__

@@ -2,6 +2,9 @@
 # This file is placed in the Public Domain.
 
 
+"irc bot"
+
+
 import os
 import readline
 import termios
@@ -13,29 +16,25 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from bot.cbs import Cbs
-from bot.cmd import Cmd
-from bot.evt import Event
-from bot.flt import Fleet
-from bot.hdl import Handler, dispatch
-from bot.krn import Cfg, boot, kcmd, wait
-from bot.fnc import format
-from bot.thr import launch
-
-
+from bot.event import Event
+from bot.handler import Handler, dispatch
 from bot.irc import IRC
-from bot.irc import Cfg as ICfg
-from bot.rss import Fetcher
+from bot.irc import Config as IRCConfig
+from bot.kernel import Config, boot, kcmd, wait
+from bot.function import format
+from bot.thread import launch
 
 
 import bot.all
 
 
-ICfg.channel = "#botd"
-ICfg.nick = "botd"
+Config.workdir = os.path.expanduser("~/.bot")
 
 
-Cfg.wd = os.path.expanduser("~/.bot")
+IRCConfig.channel = "#botlib"
+IRCConfig.nick = "botlib"
+IRCConfig.realname = "bot library"
+IRCConfig.username = "botlib"
 
 
 class Console(Handler):
@@ -92,20 +91,17 @@ def wrap(func):
 
 def main():
     boot(" ".join(sys.argv[1:]))
-    if Cfg.txt:
+    if Config.txt:
         c = Console()
-        return kcmd(c, Cfg.otxt)
+        return kcmd(c, Config.otxt)
     nprint("BOT start at %s" % (time.ctime(time.time()).replace("  ", " ")))
-    if Cfg.daemon:
+    if Config.daemon:
         daemon()
-    if "i" in Cfg.opts:
-        i = IRC()
-        i.start()
-        nprint(format(i.cfg, "server,port,channel,nick,cc"))
-    if "r" in Cfg.opts:
-        f = Fetcher()
-        f.start()
+    i = IRC()
+    i.start()
+    nprint(format(i.cfg, "server,port,channel,nick,cc"))
     c = Console()
+    c.threaded = True
     c.start()
     wait()
 

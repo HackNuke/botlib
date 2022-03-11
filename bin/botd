@@ -2,40 +2,31 @@
 # This file is placed in the Public Domain.
 
 
-"24/7 channel daemon"
+"OTP-CR-117/19"
 
 
-from bot.evt import Event
-from bot.fnc import format
-from bot.krn import Cfg, boot, kcmd, root, wait
-from bot.obj import Object, update, values
-from bot.prs import parse
-from bot.hdl import Handler
-from bot.thr import launch
+from genocide.event import Event
+from genocide.function import format
+from genocide.kernel import Cfg, boot, kcmd, root, wait
+from genocide.object import Object, update, values
+from genocide.parse import parse
+from genocide.handler import Handler
+from genocide.thread import launch
 
 
-from bot.irc import IRC
-from bot.irc import Cfg as ICfg
-from bot.rss import Fetcher
+from genocide.irc import IRC
+from genocide.model import init
+
+import genocide.all
 
 
-import bot.all
-
-
-ICfg.channel = "#botd"
-ICfg.nick = "botd"
-ICfg.username = "botd"
-ICfg.realname = "24/7 channel daemon"
-
-
-Cfg.wd = "/var/lib/botd/"
+Cfg.wd = "/var/lib/genocide/"
 
 
 def main():
     i = IRC()
     launch(i.start)
-    f = Fetcher()
-    f.start()
+    #init()
     wait()
 
 

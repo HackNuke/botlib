@@ -2,29 +2,20 @@
 # This file is placed in the Public Domain.
 
 
-"24/7 channel daemon"
+"OTP-CR-117/19"
 
 
 import sys
 
 
-from bot.hdl import Handler
-from bot.krn import Cfg, kcmd
+from genocide.handler import Handler
+from genocide.kernel import Cfg, kcmd
 
 
-from bot.irc import Cfg as ICfg
+import genocide.all
 
 
-import bot.all
-
-
-ICfg.channel = "#botd"
-ICfg.nick = "botd"
-ICfg.username = "botd"
-ICfg.realname = "24/7 channel daemon"
-
-
-Cfg.wd = "/var/lib/botd/"
+Cfg.wd = "/var/lib/genocide/"
 
 
 class CLI(Handler):
@@ -36,5 +27,6 @@ class CLI(Handler):
 def main():
     c = CLI()
     kcmd(c, " ".join(sys.argv[1:]))
+
 
 main()

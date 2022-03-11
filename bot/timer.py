@@ -1,24 +1,19 @@
 # This file is placed in the Public Domain.
 
 
-"times"
+"at a time"
 
 
-import time
 import threading
+import time
 
 
-from datetime import datetime
-
-
-from .obj import Object
-from .thr import launch, getname
-
+from .object import Object
+from .thread import getname, launch
 
 
 def __dir__():
     return (
-        "Repeater",
         "Timer",
     )
 
@@ -56,23 +51,3 @@ class Timer(Object):
     def stop(self):
         if self.timer:
             self.timer.cancel()
-
-
-class Repeater(Timer):
-
-    def run(self):
-        thr = launch(self.start)
-        super().run()
-        return thr
-
-
-def tfmt(t):
-    return datetime.now().strftime(t)
-
-
-def hours():
-    return datetime.now().strftime("%H")
-
-
-def minutes():
-    return datetime.now().strftime("%M")

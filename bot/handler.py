@@ -7,11 +7,11 @@
 import threading
 
 
-from .cmd import Cmd
-from .cbs import Cbs
-from .flt import Fleet
-from .obj import Object
-from .thr import launch
+from .bus import Bus
+from .command import Command
+from .callback import Callback
+from .object import Object
+from .thread import launch
 
 
 def __dir__():
@@ -28,12 +28,16 @@ class Handler(Object):
         self.errors = []
         self.stopped = threading.Event()
         self.register("event", dispatch)
+        self.threaded = False
 
     def announce(self, txt):
         self.raw(txt)
 
     def handle(self, e):
-        e.thrs.append(launch(Cbs.callback, e, name=e.txt))
+        if self.threaded:
+            e.thrs.append(launch(Callback.callback, e, name=e.txt))
+            return
+        Callback.callback(e)
 
     def loop(self):
         while not self.stopped.isSet():
@@ -43,7 +47,7 @@ class Handler(Object):
         raise NotImplementedError
 
     def register(self, typ, cb):
-        Cbs.add(typ, cb)
+        Callback.add(typ, cb)
 
 
     def restart(self):
@@ -54,7 +58,7 @@ class Handler(Object):
         self.raw(txt)
 
     def start(self):
-        Fleet.add(self)
+        Bus.add(self)
         self.stopped.clear()
         launch(self.loop)
 
@@ -64,7 +68,7 @@ class Handler(Object):
 
 def dispatch(e):
     e.parse()
-    f = Cmd.get(e.cmd)
+    f = Command.get(e.cmd)
     if f:
         f(e)
         e.show()

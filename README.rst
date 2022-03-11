@@ -42,7 +42,7 @@ are used to functional programming you’ll like it (or not):
 
 not:
 
->>> from bot.obj import Object
+>>> from bot.object import Object
 >>> o = Object()
 >>> o.set("key", "value")
 >>> o.key
@@ -50,7 +50,7 @@ not:
 
 but:
 
->>> from bot.obj import Object, set
+>>> from bot.object import Object, set
 >>> o = Object()
 >>> set(o, "key", "value")
 >>> o.key
@@ -76,54 +76,63 @@ concerned (user defined methods):
 modules
 -------
 
-| bot.cbs	callback
-| bot.cfg	config
-| bot.cls	class
-| bot.cmd	command
-| bot.dbs	database
-| bot.evt	event
-| bot.flt	fleet
-| bot.fnc	function
-| bot.fnd	find
-| bot.hdl	handle
-| bot.irc	bot
-| bot.jsn	json
-| bot.krn	kernel
-| bot.obj	object
-| bot.opt	output
-| bot.prs	parse
-| bot.que	queue
-| bot.rpt	repeater
-| bot.rss	rss
-| bot.sta	stats
-| bot.tbl	table
-| bot.tdo	todo
-| bot.thr	thread
-| bot.tmr	timer
-| bot.udp	relay
-| bot.usr	user
-| bot.utl	utl
+| bot.bus	list of bots
+| bot.callback	callback table
+| bot.cls	classes table
+| bot.command	commands table
+| bot.config	configuration
+| bot.database	database interface
+| bot.event	events
+| bot.find	find objects
+| bot.function	object functions
+| bot.handler	event handler
+| bot.irc	internet relay chat
+| bot.json	json functions
+| bot.kernel	core functions
+| bot.log	log text
+| bot.object	big object
+| bot.output	output cache
+| bot.parse	parsing input
+| bot.queue	queued output
+| bot.repeater	repeater
+| bot.status	status commands
+| bot.table	modules table
+| bot.thread	threading
+| bot.timer	timers
+| bot.todo	todo items
+| bot.udp	udp to irc relay
+| bot.user	users
+| bot.util	utilities
 
 
 **commands**
 
-``joe bot/hlo.py``
+``joe bot/hello.py``
 
 ::
 
- from bot.cmd import Cmd
+ from bot.command import Command
 
- def hlo(event):
+ def hello(event):
      event.reply("hello!")
 
- Cmd.add(hlo)
+ Command.add(hello)
 
 ``joe bot/all.py``
 
 ::
 
- from bot.tbl import Tbl
+ from bot.table import Table
 
- from bot import hlo
+ from bot import hello
 
- Tbl.add(hlo)
+ Table.add(hello)
+
+
+**copyright**
+
+**BOTLIB** is placed in the Public Domain, no Copyright, no LICENSE.
+
+**author**
+
+Bart Thate 

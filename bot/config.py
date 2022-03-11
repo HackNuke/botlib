@@ -1,18 +1,18 @@
 # This file is placed in the Public Domain.
 
 
-"config"
+"configuration"
 
 
-from .obj import Object
+from .object import Object
 
 
 def __dir__():
     return (
-        "Cfg",
+        "Config",
     )
 
 
-class Cfg(Object):
+class Config(Object):
 
     pass

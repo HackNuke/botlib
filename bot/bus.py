@@ -1,10 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"bus"
+"list of bots"
 
 
-from .obj import Object
+from .object import Object
 
 
 def __dir__():

@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"bot"
+"internet relay chat"
 
 
 import base64
@@ -15,64 +15,65 @@ import time
 import _thread
 
 
-from .cmd import Cmd
-from .dbs import last, save
-from .evt import Event
-from .fnc import edit, format
-from .hdl import Handler
-from .obj import Object
-from .opt import Output
-from .thr import launch
-from .usr import Users
-from .utl import locked
+from .command import Command
+from .database import last, save
+from .event import Event
+from .function import edit, format
+from .object import Object
+from .output import Output
+from .parse import aliases
+from .handler import Handler
+from .thread import launch
+from .user import Users
+from .util import locked
 
 
 def __dir__():
     return (
-        "Cfg",
+        "Config",
         "Event",
         "Output",
         "IRC",
         "DCC",
-        "cfg",
-        "nck",
-        "ops",
-        "pwd"
+        "config",
+        "nick",
+        "operator",
+        "password"
     )
 
 
 saylock = _thread.allocate_lock()
 
 
-class Cfg(Object):
+class Config(Object):
 
     cc = "!"
-    channel = "#botd"
-    nick = "botd"
+    channel = "#botlib"
+    nick = "botlib"
     password = ""
     port = 6667
-    realname = "24/7 channel daemon"
+    realname = "botlib"
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = "botd"
+    username = "botlib"
     users = False
 
     def __init__(self):
         super().__init__()
-        self.cc = Cfg.cc
-        self.channel = Cfg.channel
-        self.nick = Cfg.nick
-        self.password = Cfg.password
-        self.port = Cfg.port
-        self.realname = Cfg.realname
-        self.sasl = Cfg.sasl
-        self.server = Cfg.server
-        self.servermodes = Cfg.servermodes
-        self.sleep = Cfg.sleep
-        self.username = Cfg.username
-        self.users = Cfg.users
+        self.cc = Config.cc
+        self.channel = Config.channel
+        self.nick = Config.nick
+        self.password = Config.password
+        self.port = Config.port
+        self.realname = Config.realname
+        self.sasl = Config.sasl
+        self.server = Config.server
+        self.servermodes = Config.servermodes
+        self.sleep = Config.sleep
+        self.username = Config.username
+        self.users = Config.users
 
 
 class Event(Event):
@@ -90,14 +91,25 @@ class Event(Event):
         self.type = "event"
         self.txt = ""
 
+class TextWrap(textwrap.TextWrapper):
 
-class IRC(Output, Handler):
+    def __init__(self):
+        super().__init__()
+        self.break_long_words = True
+        self.drop_whitespace = True
+        self.fix_sentence_endings = True
+        self.replace_whitespace = True
+        self.tabsize = 4
+        self.width = 250
+
+
+class IRC(Handler, Output):
 
     def __init__(self):
         Handler.__init__(self)
         Output.__init__(self)
         self.buffer = []
-        self.cfg = Cfg()
+        self.cfg = Config()
         self.connected = threading.Event()
         self.channels = []
         self.joined = threading.Event()
@@ -174,7 +186,7 @@ class IRC(Output, Handler):
     def disconnect(self):
         self.sock.shutdown(2)
 
-    def doconnect(self, server, nick, port=6667):
+    def doconnect(self, server, nck, port=6667):
         self.state.nrconnect = 0
         while 1:
             self.state.nrconnect += 1
@@ -184,15 +196,24 @@ class IRC(Output, Handler):
             except Exception as ex:
                 self.errors.append(ex)
             time.sleep(self.cfg.sleep)
-        self.logon(server, nick)
+        self.logon(server, nck)
 
     def dosay(self, channel, txt):
         wrapper = TextWrap()
         txt = str(txt).replace("\n", "")
-        for t in wrapper.wrap(txt):
+        txt = txt.replace("  ", " ")
+        c = 0
+        txtlist = wrapper.wrap(txt)
+        for t in txtlist:
             if not t:
                 continue
-            self.command("PRIVMSG", channel, t)
+            if c < 3:
+                self.command("PRIVMSG", channel, t)
+                c += 1
+            else:
+                self.command("PRIVMSG", channel, "%s left in cache, use !mre to show more" % (len(txtlist)-3))
+                self.extend(channel, txtlist[3:])
+                break
 
     def event(self, txt, origin=None):
         if not txt:
@@ -215,8 +236,8 @@ class IRC(Output, Handler):
         elif cmd == "366":
             self.joined.set()
         elif cmd == "433":
-            nick = self.cfg.nick + "_"
-            self.raw("NICK %s" % nick)
+            nck = self.cfg.nick + "_"
+            self.raw("NICK %s" % nck)
         return e
 
     def fileno(self):
@@ -238,14 +259,14 @@ class IRC(Output, Handler):
                 #self.keeprunning = False
                 self.restart()
 
-    def logon(self, server, nick):
-        self.raw("NICK %s" % nick)
+    def logon(self, server, nck):
+        self.raw("NICK %s" % nck)
         self.raw(
             "USER %s %s %s :%s"
-            % (self.cfg.username or "tob",
+            % (self.cfg.username or "opb",
                server,
                server,
-               self.cfg.realname or "tob")
+               self.cfg.realname or "opb")
         )
 
     def parsing(self, txt):
@@ -326,7 +347,6 @@ class IRC(Output, Handler):
                 self.stop()
         self.state.last = time.time()
         self.state.nrsend += 1
-
 
     def reconnect(self):
         self.disconnect()
@@ -419,9 +439,9 @@ def NOTICE(event):
     bot = event.bot()
     if event.txt.startswith("VERSION"):
         txt = "\001VERSION %s %s - %s\001" % (
-            "botd",
+            "op",
             bot.cfg.version or "1",
-            bot.cfg.username or "botd",
+            bot.cfg.username or "op",
         )
         bot.command("NOTICE", event.channel, txt)
 
@@ -501,20 +521,10 @@ class DCC(Handler):
     def raw(self, txt):
         self.sock.send(bytes("%s\n" % txt.rstrip(), self.encoding))
 
-class TextWrap(textwrap.TextWrapper):
-
-    def __init__(self):
-        super().__init__()
-        self.break_long_words = False
-        self.drop_whitespace = False
-        self.fix_sentence_endings = True
-        self.replace_whitespace = True
-        self.tabsize = 4
-        self.width = 450
 
 
-def cfg(event):
-    c = Cfg()
+def config(event):
+    c = Config()
     last(c)
     if not event.sets:
         if not c:
@@ -527,7 +537,7 @@ def cfg(event):
     event.reply("ok")
 
 
-def nck(event):
+def nick(event):
     bot = event.bot()
     if isinstance(bot, IRC):
         bot.command("NICK", event.rest)
@@ -535,7 +545,7 @@ def nck(event):
         save(bot.cfg)
 
 
-def ops(event):
+def operator(event):
     bot = event.bot()
     if isinstance(bot, IRC):
         if not bot.users.allowed(event.origin, "USER"):
@@ -543,9 +553,9 @@ def ops(event):
         bot.command("MODE", event.channel, "+o", event.nick)
 
 
-def pwd(event):
+def password(event):
     if len(event.args) != 2:
-        event.reply("pwd <nick> <password>")
+        event.reply("password <nick> <password>")
         return
     m = "\x00%s\x00%s" % (event.args[0], event.args[1])
     mb = m.encode("ascii")
@@ -554,13 +564,11 @@ def pwd(event):
     event.reply(bm)
 
 
-def rct(event):
-    bot = event.bot()
-    if "reconnect" in bot:
-        bot.reconnect()
-
-Cmd.add(cfg)
-Cmd.add(nck)
-Cmd.add(ops)
-Cmd.add(pwd)
-Cmd.add(rct)
+Command.add(config)
+Command.add(nick)
+Command.add(operator)
+Command.add(password)
+aliases.cfg = "config"
+aliases.nck = "nick"
+aliases.ops = "operator"
+aliases.pwd = "password"

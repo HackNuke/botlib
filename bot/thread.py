@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"thread"
+"threading"
 
 
 import queue
@@ -10,21 +10,21 @@ import time
 import types
 
 
-from .evt import Event
+from .event import Event
 
 
 def __dir__():
     return (
+        "Thread",
         "getname",
         "launch",
-        "thr"
     )
 
 
 starttime = time.time()
 
 
-class Thr(threading.Thread):
+class Thread(threading.Thread):
 
     def __init__(self, func, name, *args, daemon=True):
         super().__init__(None, self.run, name, (), {}, daemon=daemon)
@@ -77,6 +77,6 @@ def getname(o):
 
 def launch(func, *args, **kwargs):
     name = kwargs.get("name", getname(func))
-    t = Thr(func, name, *args)
+    t = Thread(func, name, *args)
     t.start()
     return t

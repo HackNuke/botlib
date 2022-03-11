@@ -1,14 +1,14 @@
 # This file is placed in the Public Domain.
 
 
-"functions"
+"object functions"
 
 
 import os
 import pathlib
 
 
-from .obj import Object, items, keys
+from .object import Object, items, keys
 
 
 def __dir__():
@@ -44,7 +44,7 @@ def edit(o, setter):
         register(o, key, v)
 
 
-def format(o, args="", skip="", sep=" ", **kwargs):
+def format(o, args="", skip="", sep=" ", empty=False, **kwargs):
     res = []
     if args:
         ks = spl(args)
@@ -54,6 +54,8 @@ def format(o, args="", skip="", sep=" ", **kwargs):
         if k in spl(skip) or k.startswith("_"):
             continue
         v = getattr(o, k, None)
+        if not v and not empty:
+            continue
         if isinstance(v, str) and len(v.split()) >= 2:
             txt = '%s="%s"' % (k, v)
         else:

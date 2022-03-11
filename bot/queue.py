@@ -1,13 +1,13 @@
 # This file is placed in the Public Domain.
 
 
-"queued"
+"queued mixin"
 
 
 import queue
 
 
-from .obj import Object
+from .object import Object
 
 
 def __dir__():

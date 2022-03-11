@@ -1,24 +1,24 @@
 # This file is placed in the Public Domain.
 
 
-"things todo"
+"todo items"
 
 
 def __dir__():
     return (
-        "tdo",
+        "todo"
     )
 
 
 import time
 
 
-from .cls import Cls
-from .cmd import Cmd
-from .dbs import find, fntime, save
-from .obj import Object
-from .prs import elapsed
-from .thr import starttime
+
+from .cls import Class
+from .command import Command
+from .database import find, fntime, save
+from .object import Object
+from .parse import aliases, elapsed
 
 
 class Todo(Object):
@@ -28,7 +28,7 @@ class Todo(Object):
         self.txt = ""
 
 
-def tdo(event):
+def todo(event):
     if not event.rest:
         nr = 0
         for fn, o in find("todo"):
@@ -40,9 +40,6 @@ def tdo(event):
     event.reply("ok")
 
 
-def upt(event):
-    event.reply(elapsed(time.time() - starttime))
-
-
-Cls.add(Todo)
-Cmd.add(tdo)
+Class.add(Todo)
+Command.add(todo)
+aliases.tdo = "todo"

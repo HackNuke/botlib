@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"kernel"
+"core functions"
 
 
 import getpass
@@ -10,15 +10,15 @@ import pwd
 import time
 
 
-from .cfg import Cfg
-from .evt import Event
-from .flt import Fleet
-from .prs import parse
+from .bus import Bus
+from .config import Config
+from .event import Event
+from .parse import parse
 
 
 def __dir__():
     return (
-        "Cfg",
+        "Config",
         "boot",
         "kcmd",
         "privileges",
@@ -26,7 +26,7 @@ def __dir__():
     )
 
 
-class Cfg(Cfg):
+class Config(Config):
 
     console = False
     daemon = False
@@ -35,21 +35,21 @@ class Cfg(Cfg):
     otxt = ""
     txt = ""
     verbose = False
-    wd = ""
+    workdir = ".op"
 
 
 def boot(txt):
-    parse(Cfg, txt)
-    Cfg.console = "c" in Cfg.opts
-    Cfg.daemon = "d" in Cfg.opts
-    Cfg.verbose = "v" in Cfg.opts
-    Cfg.debug = "z" in Cfg.opts
+    parse(Config, txt)
+    Config.console = "c" in Config.opts
+    Config.daemon = "d" in Config.opts
+    Config.verbose = "v" in Config.opts
+    Config.debug = "z" in Config.opts
 
 
 def kcmd(clt, txt):
     if not txt:
         return False
-    Fleet.add(clt)
+    Bus.add(clt)
     e = Event()
     e.channel = ""
     e.orig = repr(clt)

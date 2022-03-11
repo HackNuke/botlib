@@ -1,20 +1,21 @@
 # This file is placed in the Public Domain.
 
 
-"user"
+"users"
 
 
-from .cmd import Cmd
-from .dbs import find, save
-from .obj import Object, update
+from .command import Command
+from .database import find, save
+from .object import Object, update
+from .parse import aliases
 
 
 def __dir__():
     return (
         "NoUser",
         "Users",
-        "dlt",
-        "met"
+        "delete",
+        "meet"
     )
 
 
@@ -75,9 +76,9 @@ class Users(Object):
         return user
 
 
-def dlt(event):
+def delete(event):
     if not event.args:
-        event.reply("dlt <username>")
+        event.reply("delete <username>")
         return
     selector = {"user": event.args[0]}
     for _fn, o in find("user", selector):
@@ -87,9 +88,9 @@ def dlt(event):
         break
 
 
-def met(event):
+def meet(event):
     if not event.args:
-        event.reply("met <userhost>")
+        event.reply("meet <userhost>")
         return
     user = User()
     user.user = event.rest
@@ -98,5 +99,7 @@ def met(event):
     event.reply("ok")
 
 
-Cmd.add(dlt)
-Cmd.add(met)
+Command.add(delete)
+Command.add(meet)
+aliases.dlt = "delete"
+aliases.met = "meet"

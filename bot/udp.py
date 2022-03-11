@@ -1,18 +1,18 @@
 # This file is placed in the Public Domain.
 
 
-"relay"
+"udp to irc relay"
 
 
 import socket
 import time
 
 
-from .cls import Cls
-from .flt import Fleet
-from .dbs import last
-from .obj import Object
-from .thr import launch
+from .bus import Bus
+from .cls import Class
+from .database import last
+from .object import Object
+from .thread import launch
 
 
 class Cfg(Object):
@@ -39,7 +39,7 @@ class UDP(Object):
         self.cfg = Cfg()
 
     def output(self, txt, addr):
-        Fleet.announce(txt.replace("\00", ""))
+        Bus.announce(txt.replace("\00", ""))
 
     def server(self):
         try:
@@ -71,4 +71,4 @@ def toudp(host, port, txt):
     sock.sendto(bytes(txt.strip(), "utf-8"), (host, port))
 
 
-Cls.add(UDP)
+Class.add(UDP)

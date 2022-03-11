@@ -1,61 +1,37 @@
 # This file is placed in the Public Domain.
 
 
-"bot package modules"
+"all modules"
 
 
-from bot.tbl import Tbl
+def __dir__():
+    return (
+        "find",
+        "log",
+        "irc",
+        "rss",
+        "status",
+        "todo",
+        "udp",
+        "user"
+    )
 
 
-from bot import cfg
-from bot import cmd
-from bot import dbs
-from bot import evt
-from bot import flt
-from bot import fnc
-from bot import jsn
-from bot import krn
-from bot import opt
-from bot import prs
-from bot import rpt
-from bot import sta
-from bot import tbl
-from bot import thr
-from bot import tmr
+
+from bot.table import Table
 
 
-Tbl.add(cfg)
-Tbl.add(cmd)
-Tbl.add(dbs)
-Tbl.add(evt)
-Tbl.add(flt)
-Tbl.add(fnc)
-Tbl.add(jsn)
-Tbl.add(krn)
-Tbl.add(opt)
-Tbl.add(prs)
-Tbl.add(rpt)
-Tbl.add(sta)
-Tbl.add(tbl)
-Tbl.add(thr)
-Tbl.add(tmr)
-
-
-from bot import fnd
-from bot import irc
+from bot import find
 from bot import log
-from bot import opt
+from bot import irc
 from bot import rss
-from bot import tdo
+from bot import status
+from bot import todo
 from bot import udp
-from bot import usr
+from bot import user
 
 
-Tbl.add(fnd)
-Tbl.add(irc)
-Tbl.add(log)
-Tbl.add(opt)
-Tbl.add(rss)
-Tbl.add(tdo)
-Tbl.add(udp)
-Tbl.add(usr)
+for mn in __dir__():
+    md = getattr(locals(), mn, None)
+    if md:
+        Table.add(md)

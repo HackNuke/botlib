@@ -7,19 +7,20 @@
 import time
 
 
-from .cmd import Cmd
-from .dbs import Db, find, fntime
-from .fnc import format
-from .prs import elapsed
+from .command import Command
+from .database import Db, fntime
+from .database import find as fnd
+from .function import format
+from .parse import aliases, elapsed
 
 
 def __dir__():
     return (
-        "fnd",
+        "find",
     )
 
 
-def fnd(event):
+def find(event):
     if not event.args:
         db = Db()
         res = ",".join(
@@ -30,7 +31,7 @@ def fnd(event):
     otype = event.args[0]
     nr = -1
     got = False
-    for fn, o in find(otype):
+    for fn, o in fnd(otype):
         nr += 1
         txt = "%s %s" % (str(nr), format(o))
         if "t" in event.opts:
@@ -41,4 +42,5 @@ def fnd(event):
         event.reply("no result")
 
 
-Cmd.add(fnd)
+Command.add(find)
+aliases.fnd = "find"

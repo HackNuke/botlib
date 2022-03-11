@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"feeds"
+"rich site syndicate"
 
 
 import html.parser
@@ -16,16 +16,18 @@ except ImportError:
     pass
 
 
-from .cls import Cls
-from .cmd import Cmd
-from .dbs import Db, find, last, save
-from .flt import Fleet
-from .fnc import edit
-from .krn import Cfg
-from .obj import Object, get, update
-from .prs import spl
-from .rpt import Repeater
-from .thr import launch
+
+
+from .bus import Bus
+from .cls import Class
+from .command import Command
+from .database import Db, find, last, save
+from .function import edit
+from .kernel import Config
+from .object import Object, get, update
+from .parse import aliases, spl
+from .repeater import Repeater
+from .thread import launch
 
 
 from urllib.error import HTTPError, URLError
@@ -39,9 +41,9 @@ def __dir__():
         "Rss",
         "Seen",
         "Fetcher",
-        "dpl",
-        "ftc",
-        "rem",
+        "display",
+        "fetch",
+        "remove",
         "rss"
     )
 
@@ -121,7 +123,7 @@ class Fetcher(Object):
             save(Fetcher.seen)
         for o in objs:
             txt = self.display(o)
-            Fleet.announce(txt)
+            Bus.announce(txt)
         return counter
 
     def run(self):
@@ -138,7 +140,7 @@ class Fetcher(Object):
 
 
 def getfeed(url):
-    if Cfg.debug:
+    if Config.debug:
         return [Object(), Object()]
     try:
         result = geturl(url)
@@ -192,13 +194,13 @@ def useragent(txt):
     return "Mozilla/5.0 (X11; Linux x86_64) " + txt
 
 
-def dpl(event):
+def display(event):
     if len(event.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
     db = Db()
     setter = {"display_list": event.args[1]}
-    names = Cls.full("rss")
+    names = Class.full("rss")
     if names:
         _fn, o = db.lastmatch(names[0], {"rss": event.args[0]})
         if o:
@@ -207,7 +209,7 @@ def dpl(event):
             event.reply("ok")
 
 
-def ftc(event):
+def fetch(event):
     res = []
     thrs = []
     fetcher = Fetcher()
@@ -220,7 +222,7 @@ def ftc(event):
         return
 
 
-def rem(event):
+def remove(event):
     if not event.args:
         event.reply("rem <stringinurl>")
         return
@@ -253,10 +255,13 @@ def rss(event):
     event.reply("ok")
 
 
-Cls.add(Feed)
-Cls.add(Rss)
-Cls.add(Seen)
-Cmd.add(dpl)
-Cmd.add(ftc)
-Cmd.add(rem)
-Cmd.add(rss)
+Class.add(Feed)
+Class.add(Rss)
+Class.add(Seen)
+Command.add(display)
+Command.add(fetch)
+Command.add(remove)
+Command.add(rss)
+aliases.dpl = "display"
+aliases.ftc = "fetch"
+aliases.rem = "remove"
