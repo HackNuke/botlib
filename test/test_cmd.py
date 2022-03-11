@@ -1,58 +1,61 @@
 # This file is placed in the Public Domain.
 
 
-"command"
+"command tests"
 
 
 import inspect
+import random
 import unittest
 
 
-from bot.bus import Bus
-from bot.clt import Client
-from bot.evt import Event
-from bot.fnc import format
-from bot.hdl import Handler
-from bot.krn import Cfg
-from bot.obj import Object, get, values
-from bot.tbl import Cls, Cmd, Tbl
+from bot.callback import Callback
+from bot.cls import Class
+from bot.command import Command
+from bot.event import Event
+from bot.function import format
+from bot.handler import Handler, dispatch
+from bot.kernel import Config
+from bot.object import Object, get, keys, values
+from bot.parse import aliases
+from bot.table import Table
+from bot.thread import launch
 
 
 events = []
+cmds = "commands,delete,display,fetch,find,fleet,log,meet,more,remove,rss,threads,todo"
 
 
 param = Object()
-param.add = ["test@shell", "bart", ""]
-param.cfg = ["nick=botje", "server=localhost", ""]
-param.dlt = ["root@shell"]
-param.dne = ["test4", ""]
-param.dpl = ["reddit title,summary,link"]
-param.flt = ["0", ""]
-param.fnd = ["cfg", "log", "rss", "cfg server==localhost", "rss rss==reddit"]
-param.log = ["test1", ""]
-param.met = ["root@shell"]
-param.nck = ["botje"]
-param.pwd = ["bart blabla"]
-param.rem = ["reddit", ""]
+param.commands = [""]
+param.config = ["nick=opbot", "server=localhost", "port=6699"]
+#param.delete = ["root@shell", "test@user"]
+param.display = ["reddit title,summary,link", ""]
+param.fetch = [""]
+param.find = ["log", "log txt==test", "rss", "rss rss==reddit", "config server==localhost"]
+param.fleet = ["0", ""]
+param.log = ["test1", "test2"]
+param.meet = ["root@shell", "test@user"]
+param.more = [""]
+param.nick = ["opb", "opbot", "op_"]
+param.password = ["bart blabla"]
+#param.remove = ["reddit", ""]
 param.rss = ["https://www.reddit.com/r/python/.rss"]
-param.tdo = ["things todo"]
+param.todo = ["things todo"]
 
 
-class CLI(Handler, Client):
+class CLI(Handler):
 
      def __init__(self):
-         Client.__init__(self)
          Handler.__init__(self)
 
      def raw(self, txt):
-         results.append(txt)
-         if Cfg.verbose:
+         if Config.verbose:
              print(txt)
         
          
 c = CLI()
-results = []
-
+c.start()
 
 def consume(events):
     fixed = []
@@ -70,20 +73,28 @@ def consume(events):
 
 class Test_Commands(unittest.TestCase):
 
-    def setUp(self):
-        c.start()
+    #def setUp(self):
+    #    c.start()
         
-    def tearDown(self):
-        c.stop()
+    #def tearDown(self):
+    #    c.stop()
 
     def test_commands(self):
-        cmds = sorted(Cmd.cmd)
+        cmds = sorted(Command.cmd)
+        random.shuffle(cmds)
         for cmd in cmds:
-            for ex in getattr(param, cmd, [""]):
+            for ex in get(param, cmd, [""]):
                 e = Event()
                 e.txt = cmd + " " + ex
                 e.orig = repr(c)
-                c.handle(e)
+                launch(Callback.callback(e))
+                events.append(e)
+        for cmd in keys(aliases):
+            for ex in get(param, cmd, [""]):
+                e = Event()
+                e.txt = cmd + " " + ex
+                e.orig = repr(c)
+                launch(Callback.callback(e))
                 events.append(e)
         consume(events)
         self.assertTrue(not events)

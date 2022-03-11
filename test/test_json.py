@@ -1,14 +1,14 @@
 # This file is placed in the Public Domain.
 
 
-"json"
+"JSON tests"
 
 
 import unittest
 
 
-from bot.jsn import dumps, loads
-from bot.obj import Object
+from bot.json import dumps, loads
+from bot.object import Object
 
 
 validjson = '{"test": "bla"}'

@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"table"
+"object programming tests"
 
 
 import inspect
@@ -10,17 +10,17 @@ import sys
 import unittest
 
 
-from bot.obj import Object, keys, values
-from bot.tbl import Tbl
+from bot.object import Object, keys, values
+from bot.table import Table
 
 
-import bot.bsc
+import bot.table
 
 
-Tbl.add(bot.bsc)
+Table.add(bot.table)
 
 
 class Test_Table(unittest.TestCase):
 
     def test_mod(self):
-        self.assertTrue("bot.bsc" in keys(Tbl.mod))
+        self.assertTrue("bot.table" in keys(Table.mod))

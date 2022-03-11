@@ -13,16 +13,16 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-from bot.krn import Cfg, boot
-from bot.fnc import format
-from bot.obj import Object, values
-from bot.prs import parse
+from bot.kernel import Config, boot
+from bot.function import format
+from bot.object import Object, values
+from bot.parse import parse
 
 
 import bot.all
 
 
-Cfg.wd = ".test"
+Config.workdir = ".test"
 
 
 flags = doctest.REPORT_NDIFF | doctest.FAIL_FAST | doctest.ELLIPSIS
@@ -30,14 +30,14 @@ results = []
 
 
 def main():
-    if os.path.exists(Cfg.wd):
-        shutil.rmtree(Cfg.wd)
+    if os.path.exists(Config.workdir):
+        shutil.rmtree(Config.workdir)
     boot(" ".join(sys.argv[1:]))
-    Cfg.debug = True
+    Config.debug = True
     pat = "test_%s*" % "*"
     suite = unittest.loader.TestLoader().discover("test", pattern=pat)
     unittest.TextTestRunner(verbosity=3).run(suite)
-    if Cfg.verbose:
+    if Config.verbose:
         for txt in results:
             print(txt)
 

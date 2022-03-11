@@ -1,15 +1,15 @@
 # This file is placed in the Public Domain.
 
 
-"composite"
+"composition tests"
 
 
 import unittest
 
 
-from bot.dbs import Db
-from bot.obj import Object
-from bot.jsn import dumps, loads
+from bot.database import Db
+from bot.json import dumps, loads
+from bot.object import Object
 
 
 class Composite(Object):
