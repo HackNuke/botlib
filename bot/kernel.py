@@ -35,7 +35,7 @@ class Config(Config):
     otxt = ""
     txt = ""
     verbose = False
-    workdir = ".op"
+    workdir = ""
 
 
 def boot(txt):

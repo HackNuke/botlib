@@ -154,7 +154,7 @@ def hook(hfn):
 
 
 def listfiles(workdir):
-    path = os.path.join(Config.workdir, "store")
+    path = os.path.join(workdir, "store")
     if not os.path.exists(path):
         return []
     return sorted(os.listdir(path))
