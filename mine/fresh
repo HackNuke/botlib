@@ -1,0 +1,11 @@
+# This file is in the Public Domain
+
+apt-add-repository contrib
+apt-add-repository non-free
+apt update
+apt install -y irssi ircd-irc2 python3-setuptools python3-pip python3-virtualenv python3-feedparser twine pylint
+apt install gnome-shell-extension-autohidetopbar gnome-shell-extension-system-monitor gnome-shell-extension-weather
+apt clean -y
+apt autoremove -y
+apt-add-repository -r contrib
+apt-add-repository -r non-free

@@ -1,0 +1,12 @@
+# This file is in the Public Domain
+
+apt purge update-notifier-common -y
+apt purge unattended-upgrades -y
+apt purge sysstat -y
+apt purge gnome-initial-setup -y 
+apt purge malcontent -y
+apt purge synaptic -y
+apt remove --purge libreoffice* -y
+apt clean -y
+apt autoremoveapt update -y
+apt autoremove -y

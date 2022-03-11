@@ -16,6 +16,7 @@ import _thread
 
 
 from .command import Command
+from .config import Config as CoreConfig
 from .database import last, save
 from .event import Event
 from .function import edit, format
@@ -441,7 +442,7 @@ def NOTICE(event):
         txt = "\001VERSION %s %s - %s\001" % (
             "op",
             bot.cfg.version or "1",
-            bot.cfg.username or "op",
+            bot.cfg.username or "botlib",
         )
         bot.command("NOTICE", event.channel, txt)
 
@@ -504,7 +505,7 @@ class DCC(Handler):
         os.set_inheritable(self.sock.fileno(), os.O_RDWR)
         self.origin = dccevent.origin
         self.start()
-        self.raw("BOT start at %s" % time.ctime(time.time()).replace("  ", " "))
+        self.raw("%s start at %s" % (CoreConfig.name.upper(), time.ctime(time.time()).replace("  ", " ")))
 
     def poll(self):
         if not self.sock:

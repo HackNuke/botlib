@@ -15,4 +15,4 @@ def __dir__():
 
 class Config(Object):
 
-    pass
+    name = "botlib"
