@@ -2,20 +2,20 @@
 # This file is placed in the Public Domain.
 
 
-"OTP-CR-117/19"
+"bot command"
 
 
 import sys
 
 
-from genocide.handler import Handler
-from genocide.kernel import Cfg, kcmd
+from bot.handler import Handler
+from bot.kernel import Cfg, kcmd
 
 
-import genocide.all
+import bot.all
 
 
-Cfg.wd = "/var/lib/genocide/"
+Cfg.wd = "/var/lib/botd/"
 
 
 class CLI(Handler):
