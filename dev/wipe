@@ -1,0 +1,7 @@
+rm -fR dev/*~
+rm -fR bot/*~ bot/__pycache__ __pycache__
+rm -fR files/*~ .test bot/mod/*~ bot/mod/__pycache__
+rm -fR test/__pycache__ test/*~
+rm -fR build dist MANIFEST botlib.egg-info 
+rm -fR bin/*~ *~
+rm -fR env
