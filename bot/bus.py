@@ -9,7 +9,7 @@ from .object import Object
 
 def __dir__():
     return (
-        "Bus"
+        "Bus",
     )
 
 
